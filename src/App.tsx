@@ -7,13 +7,15 @@ function App() {
   return (
     <BrowserRouter>
       <Navbar />
-      <Routes>
-        <Route path={ROUTES.HOME} element={<HomePage />} />
-        <Route path={ROUTES.ABOUT} element={<AboutPage />} />
-        <Route path={ROUTES.PRICING} element={<PricingPage />} />
-        <Route path={ROUTES.CONTACT} element={<ContactPage />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
+      <div className="pt-20 md:pt-24">
+        <Routes>
+          <Route path={ROUTES.HOME} element={<HomePage />} />
+          <Route path={ROUTES.ABOUT} element={<AboutPage />} />
+          <Route path={ROUTES.PRICING} element={<PricingPage />} />
+          <Route path={ROUTES.CONTACT} element={<ContactPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </div>
     </BrowserRouter>
   );
 }
