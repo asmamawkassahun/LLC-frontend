@@ -1,4 +1,3 @@
 // Library configurations and utilities
-// Example: export { apiClient } from './api';
-// Example: export { formatCurrency } from './formatters';
+export { fetchHeroData } from './api/hero';
 

@@ -1,7 +1,10 @@
+import Hero from "@/components/sections/Hero";
+
+
 function HomePage() {
     return (
-      <div className="min-h-screen bg-background">
-        <h1 className="text-4xl font-bold text-primary">Home Page</h1>
+      <div className="">
+       < Hero /> 
       </div>
     );
   }

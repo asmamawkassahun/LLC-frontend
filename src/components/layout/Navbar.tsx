@@ -24,21 +24,21 @@ function Navbar() {
       <nav className="bg-background border-b border-border fixed top-0 left-0 right-0 z-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 2xl:px-20 pt-6">
           <div className="flex items-center justify-between h-16">
-            <Link 
-              to={ROUTES.HOME} 
+            <Link
+              to={ROUTES.HOME}
               className="text-xl font-bold text-primary cursor-pointer"
               onClick={closeMenu}
             >
               Privatily
             </Link>
-            
+
             {/* Desktop Navigation */}
             <div className="hidden md:flex gap-8">
               <Link
                 to={ROUTES.HOME}
                 className={`${isActive(ROUTES.HOME)
-                    ? 'text-accent'
-                    : 'text-foreground hover:text-accent'
+                  ? 'text-accent'
+                  : 'text-foreground hover:text-accent'
                   } transition-colors font-medium cursor-pointer`}
               >
                 Home
@@ -46,8 +46,8 @@ function Navbar() {
               <Link
                 to={ROUTES.ABOUT}
                 className={`${isActive(ROUTES.ABOUT)
-                    ? 'text-accent'
-                    : 'text-foreground hover:text-accent'
+                  ? 'text-accent'
+                  : 'text-foreground hover:text-accent'
                   } transition-colors font-medium cursor-pointer`}
               >
                 About
@@ -55,8 +55,8 @@ function Navbar() {
               <Link
                 to={ROUTES.PRICING}
                 className={`${isActive(ROUTES.PRICING)
-                    ? 'text-accent'
-                    : 'text-foreground hover:text-accent'
+                  ? 'text-accent'
+                  : 'text-foreground hover:text-accent'
                   } transition-colors font-medium cursor-pointer`}
               >
                 Pricing
@@ -64,14 +64,14 @@ function Navbar() {
               <Link
                 to={ROUTES.CONTACT}
                 className={`${isActive(ROUTES.CONTACT)
-                    ? 'text-accent font-semibold'
-                    : 'text-foreground hover:text-accent'
+                  ? 'text-accent font-semibold'
+                  : 'text-foreground hover:text-accent'
                   } transition-colors font-medium cursor-pointer`}
               >
                 Contact us
               </Link>
             </div>
-            
+
             {/* Desktop Actions */}
             <div className='hidden md:flex gap-6 items-center'>
               <button className='cursor-pointer font-medium hover:text-accent transition-colors'>
@@ -85,7 +85,7 @@ function Navbar() {
             {/* Mobile: Start My Business Button and Hamburger (hidden when menu is open) */}
             {!isMenuOpen && (
               <div className='md:hidden flex items-center gap-4'>
-                <Button 
+                <Button
                   className='px-4 py-2 font-medium text-sm cursor-pointer'
                   onClick={closeMenu}
                 >
@@ -119,9 +119,8 @@ function Navbar() {
 
       {/* Mobile Menu Overlay */}
       <div
-        className={`fixed inset-0 bg-background z-40 transition-transform duration-300 ease-in-out md:hidden ${
-          isMenuOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
+        className={`fixed inset-0 bg-background z-40 transition-transform duration-300 ease-in-out md:hidden ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
         style={{ paddingTop: '64px' }}
       >
         <div className="h-full flex flex-col">
@@ -132,44 +131,40 @@ function Navbar() {
               <Link
                 to={ROUTES.HOME}
                 onClick={closeMenu}
-                className={`text-left text-lg font-medium transition-colors cursor-pointer ${
-                  isActive(ROUTES.HOME)
+                className={`text-left text-lg font-medium transition-colors cursor-pointer ${isActive(ROUTES.HOME)
                     ? 'text-accent'
                     : 'text-foreground hover:text-accent'
-                }`}
+                  }`}
               >
                 Home
               </Link>
               <Link
                 to={ROUTES.PRICING}
                 onClick={closeMenu}
-                className={`text-left text-lg font-medium transition-colors cursor-pointer ${
-                  isActive(ROUTES.PRICING)
+                className={`text-left text-lg font-medium transition-colors cursor-pointer ${isActive(ROUTES.PRICING)
                     ? 'text-accent'
                     : 'text-foreground hover:text-accent'
-                }`}
+                  }`}
               >
                 Pricing
               </Link>
               <Link
                 to={ROUTES.ABOUT}
                 onClick={closeMenu}
-                className={`text-left text-lg font-medium transition-colors cursor-pointer ${
-                  isActive(ROUTES.ABOUT)
+                className={`text-left text-lg font-medium transition-colors cursor-pointer ${isActive(ROUTES.ABOUT)
                     ? 'text-accent'
                     : 'text-foreground hover:text-accent'
-                }`}
+                  }`}
               >
                 About
               </Link>
               <Link
                 to={ROUTES.CONTACT}
                 onClick={closeMenu}
-                className={`text-left text-lg font-medium transition-colors cursor-pointer ${
-                  isActive(ROUTES.CONTACT)
+                className={`text-left text-lg font-medium transition-colors cursor-pointer ${isActive(ROUTES.CONTACT)
                     ? 'text-accent'
                     : 'text-foreground hover:text-accent'
-                }`}
+                  }`}
               >
                 Contact us
               </Link>
@@ -178,13 +173,13 @@ function Navbar() {
 
           {/* Mobile Actions at Bottom */}
           <div className="px-4 py-8  flex flex-col items-center gap-4">
-            <button 
+            <button
               className='cursor-pointer font-medium hover:text-accent transition-colors text-lg'
               onClick={closeMenu}
             >
               Sign In
             </button>
-            <Button 
+            <Button
               className='w-full max-w-xs px-6 py-6 font-medium text-base cursor-pointer'
               onClick={closeMenu}
             >
