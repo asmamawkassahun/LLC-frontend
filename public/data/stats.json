@@ -1,0 +1,21 @@
+{
+  "stats": [
+    {
+      "value": "2300",
+      "label": "Clients"
+    },
+    {
+      "value": "2800",
+      "label": "Companies formed"
+    },
+    {
+      "value": "150",
+      "label": "Countries served"
+    },
+    {
+      "value": "6",
+      "label": "Years of experience"
+    }
+  ]
+}
+
