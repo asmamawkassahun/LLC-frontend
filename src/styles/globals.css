@@ -48,6 +48,16 @@
   --color-warning: #f59e0b;
   --color-warning-foreground: #ffffff;
 
+  /* Purple Colors (for pricing/branding) */
+  --color-purple: #9333ea;
+  --color-purple-dark: #7e22ce;
+  --color-purple-foreground: #ffffff;
+
+  /* Orange/Coral Colors (for premium button) */
+  --color-orange: #f97316;
+  --color-orange-dark: #ea580c;
+  --color-orange-foreground: #ffffff;
+
   /* Card */
   --color-card: #ffffff;
   --color-card-foreground: #1a1a1a;
@@ -101,6 +111,16 @@
   /* Warning */
   --color-warning: #f59e0b;
   --color-warning-foreground: #ffffff;
+
+  /* Purple Colors (for pricing/branding) */
+  --color-purple: #9333ea;
+  --color-purple-dark: #7e22ce;
+  --color-purple-foreground: #ffffff;
+
+  /* Orange/Coral Colors (for premium button) */
+  --color-orange: #f97316;
+  --color-orange-dark: #ea580c;
+  --color-orange-foreground: #ffffff;
 
   /* Card */
   --color-card: #ffffff;
@@ -222,4 +242,87 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Square Wave Animation for Profile Avatars */
+@keyframes square-wave-pulse {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 0.8;
+    border-width: 2px;
+    transform: translate(-50%, -50%) scale(0);
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    width: 120px;
+    height: 120px;
+    opacity: 0;
+    border-width: 1px;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes square-wave-double-pulse {
+  /* First pulse */
+  0% {
+    opacity: 0;
+  }
+  2% {
+    opacity: 1;
+  }
+  25% {
+    opacity: 0.8;
+  }
+  30% {
+    opacity: 0;
+  }
+  /* Second pulse */
+  32% {
+    opacity: 1;
+  }
+  55% {
+    opacity: 0.8;
+  }
+  60% {
+    opacity: 0;
+  }
+  /* Delay before repeating */
+  60.01%, 100% {
+    opacity: 0;
+  }
+}
+
+.square-wave {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  border-radius: 4px;
+  pointer-events: none;
+  animation: square-wave-pulse 2.5s ease-out infinite, square-wave-double-pulse 6s ease-in-out infinite;
+}
+
+.square-wave-1 {
+  animation-delay: 0s, 0s;
+}
+
+.square-wave-2 {
+  animation-delay: 0.4s, 0s;
+}
+
+/* Slow Pulse Animation for Notification Card */
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s ease-in-out infinite;
 }

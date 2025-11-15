@@ -19,7 +19,7 @@ const HowMuchTime = () => {
     ];
 
     return (
-        <div className="relative bg-gradient-to-br from-blue-900 via-blue-800 to-purple-800 pt-4 md:pt-8 lg:pt-12 ">
+        <div className="relative bg-linear-to-br from-blue-900 via-blue-800 to-purple-800 pt-4 md:pt-8 lg:pt-12 ">
             <div className=" px-4 sm:px-6 lg:px-16">
                 <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
                     {/* Left Content */}
@@ -28,7 +28,7 @@ const HowMuchTime = () => {
                             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight">
                                 How much time to get your LLC?
                             </h1>
-                            <div className="space-y-2 max-w-md  text-white">
+                            <div className="space-y-2 max-w-md  text-white/80">
                                 <p className="text-base  leading-relaxed">
                                     At Privatily we count delivery time by  hours, not by days or weeks like others do.
                                 </p>
