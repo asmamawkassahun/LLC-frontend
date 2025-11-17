@@ -26,7 +26,7 @@ const WhyInUs = () => {
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Title */}
                 <div className="text-center mb-12 md:mb-16">
-                    <h2 className="text-3xl md:text-5xl lg:text-5xl font-bold text-foreground">
+                    <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-5xl font-bold text-foreground">
                         Why Incorporate In <span className="text-accent">The US</span>
                     </h2>
                 </div>

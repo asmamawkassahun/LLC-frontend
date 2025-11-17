@@ -179,10 +179,10 @@ const TransparentPricing = () => {
                 {/* Dubai & Hong Kong Section */}
                 <div className="mb-16">
                     <div className="text-center mb-8">
-                        <h2 className="text-3xl md:text-5xl font-semibold text-foreground mb-4">
+                        <h2 className="text-[1.6rem] sm:text-3xl md:text-[1.9rem] lg:text-5xl font-semibold text-foreground mb-4">
                             Dubai & Hong Kong Company Setup (Exclusive)
                         </h2>
-                        <p className="text-lg text-muted-foreground">
+                        <p className="text-sm sm:text-base lg:text-lg text-muted-foreground">
                             Now open for selected clients. Join the waitlist — you could be next.
                         </p>
                     </div>
@@ -222,9 +222,9 @@ const TransparentPricing = () => {
                 </div>
 
                 {/* Bonuses Section */}
-                <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 max-w-6xl mx-auto">
+                <div className="flex flex-col md:flex-row items-center gap-8 lg:gap-12 max-w-6xl mx-auto">
                     <div className="flex-1">
-                        <h2 className="text-3xl md:text-5xl font-semibold text-foreground mb-4">
+                        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-foreground mb-4">
                             <span className="text-accent">Bonuses</span> for Premium clients only
                         </h2>
                         <p className="text-base md:text-lg text-muted-foreground leading-relaxed">

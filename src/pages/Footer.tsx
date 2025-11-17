@@ -15,9 +15,9 @@ const FooterSection = () => {
                                 {/* Logo */}
                                 <div className="flex items-center gap-2">
                                     <div className="w-10 h-10 bg-primary-foreground rounded flex items-center justify-center">
-                                        <span className="text-blue-900 font-bold text-xl">P</span>
+                                        <span className="text-blue-900 font-bold text-xl">K</span>
                                     </div>
-                                    <span className="text-2xl font-semibold text-primary-foreground">privatily</span>
+                                    <span className="text-2xl font-semibold text-primary-foreground">KImem</span>
                                 </div>
 
                                 {/* Tagline */}
@@ -28,8 +28,8 @@ const FooterSection = () => {
                                 <div className="space-y-3">
                                     <div className="flex items-center gap-3">
                                         <HiMail className="w-5 h-5 text-primary-foreground shrink-0" />
-                                        <a href="mailto:Support@privatily.com" className="text-primary-foreground hover:text-primary-foreground/80 transition-colors">
-                                            Support@privatily.com
+                                        <a href="mailto:Support@kimem.com" className="text-primary-foreground hover:text-primary-foreground/80 transition-colors">
+                                            Support@kimem.com
                                         </a>
                                     </div>
                                     <div className="flex items-center gap-3">
@@ -114,13 +114,13 @@ const FooterSection = () => {
                                 © 2019-2025 All rights reserved.
                             </p>
                             <p className="text-xs md:text-sm text-primary-foreground/80 leading-relaxed">
-                                Privatily is not a law firm nor can provide legal advice. We specialize in providing tech-based business services and insightful guidance for general understanding. The information on our website, as well as that shared via emails, WhatsApp, Slack, SMS, Zoom, social media, and other communication platforms, is for informational purposes only and should not be taken as legal advice. By using our services and accessing our website, you agree to our Terms of Service, Privacy Policy, and Data Processing Addendum.
+                                Kimem is not a law firm nor can provide legal advice. We specialize in providing tech-based business services and insightful guidance for general understanding. The information on our website, as well as that shared via emails, WhatsApp, Slack, SMS, Zoom, social media, and other communication platforms, is for informational purposes only and should not be taken as legal advice. By using our services and accessing our website, you agree to our Terms of Service, Privacy Policy, and Data Processing Addendum.
                             </p>
                         </div>
                     </div>
 
                     {/* Right Section - Visual Content */}
-                    <div className="flex-1 w-full h-96 relative">
+                    <div className="flex-1 w-full h-96 relative hidden lg:block">
                         <div className="relative">
                             {/* Main Image - Man with Tablet */}
                             <div className="relative z-10">

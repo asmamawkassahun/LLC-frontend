@@ -21,7 +21,7 @@ const HowMuchTime = () => {
     return (
         <div className="relative bg-linear-to-br from-blue-900 via-blue-800 to-purple-800 pt-4 md:pt-8 lg:pt-12 ">
             <div className=" px-4 sm:px-6 lg:px-16">
-                <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+                <div className="flex flex-col md:flex-row items-center gap-8 lg:gap-12">
                     {/* Left Content */}
                     <div className="flex-2 space-y-6  lg:space-y-8">
                         <div className="space-y-4">
@@ -38,12 +38,12 @@ const HowMuchTime = () => {
                             </div>
                         </div>
                         
-                        {/* Hourglass Image */}
-                        <div className="">
+                        {/* Hourglass Image - Desktop only (hidden on mobile) */}
+                        <div className="hidden md:block">
                             <img 
                                 src="https://privatily.com/wp-content/uploads/2023/11/5-2-min.png" 
                                 alt="Hourglass" 
-                                className="w-120 h-120 object-contain"
+                                className="w-120 h-80 object-contain"
                             />
                         </div>
                     </div>
@@ -51,7 +51,7 @@ const HowMuchTime = () => {
                     {/* Right Card */}
                     <div className="flex-1 w-full lg:w-auto">
                         <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 p-6 md:p-8">
-                            <div className="space-y-0 text-center">
+                            <div className=" text-center">
                                 {timelines.map((timeline, index) => (
                                     <div key={index}>
                                         <div className="py-4 md:py-6">
@@ -70,6 +70,15 @@ const HowMuchTime = () => {
                             </div>
                         </div>
                     </div>
+                </div>
+                
+                {/* Hourglass Image - Mobile only (shown below Right Card) */}
+                <div className="md:hidden mt-8 flex justify-center">
+                    <img 
+                        src="https://privatily.com/wp-content/uploads/2023/11/5-2-min.png" 
+                        alt="Hourglass" 
+                        className="w-full max-w-md h-auto object-contain"
+                    />
                 </div>
             </div>
         </div>

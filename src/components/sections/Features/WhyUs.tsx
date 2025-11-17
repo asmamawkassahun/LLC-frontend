@@ -46,14 +46,14 @@ const WhyUs = () => {
                 )}
 
                 {/* Why Privatily Section */}
-                <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+                <div className="flex flex-col md:flex-row items-center gap-8 lg:gap-12">
                     {/* Left Content */}
                     <div className="flex-1 space-y-6 lg:space-y-8">
                         <div className="space-y-4">
                             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
                                 Why Privatily?
                             </h2>
-                            <p className="text-[0.9rem] md:text-[1.085rem] text-muted-foreground leading-relaxed">
+                            <p className="text-[0.9rem] md:text-sm lg:text-[1.085rem] text-muted-foreground leading-relaxed">
                                 We know how to take the complexity out of forming your company because we've been in your shoes. Privatily was born because we struggled ourselves—facing a complicated, lengthy process when trying to set up our own company in a supported country. Since 2019, we've been committed to providing unmatched expertise, affordable prices, and the fastest turnaround time to help entrepreneurs like you start your business journey smoothly and confidently.
                             </p>
                         </div>

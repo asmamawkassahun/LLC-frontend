@@ -23,15 +23,15 @@ const ContactSection = () => {
         </div>
 
         {/* Bottom Section - White Content Area */}
-        <div className="bg-background py-12 md:py-16 lg:py-50">
+        <div className="bg-background py-80 sm:py-100 md:py-100 lg:py-52">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
 
           </div>
         </div>
       </div>
 
-      <div className=" absolute left-1/2 -translate-x-1/2 top-65 max-w-6xl mx-auto w-full bg-background p-10  flex flex-col lg:flex-row items-start gap-8 lg:gap-12 rounded-2xl">            {/* Left Side - Contact Form */}
-        <div className="flex-1 w-full lg:max-w-lg">
+      <div className=" absolute left-1/2 -translate-x-1/2 top-65 max-w-sm sm:max-w-md md:max-w-3xl lg:max-w-6xl mx-auto w-full bg-background px-0 sm:px-6 md:px-8 lg:px-10 py-4 sm:py-6 md:py-20 lg:py-16 flex flex-col lg:flex-row items-start gap-8 lg:gap-12 rounded-2xl">            {/* Left Side - Contact Form */}
+        <div className="flex-1 w-full lg:max-w-lg md:order-2 lg:order-1">
           <div className="bg-card rounded-lg  p-6 md:p-8">
             <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6 md:mb-8">
               Send us a message
@@ -85,7 +85,7 @@ const ContactSection = () => {
         </div>
 
         {/* Right Side - Team Image with UI Elements */}
-        <div className="flex-1 w-full lg:w-auto relative">
+        <div className="flex-1 w-full lg:w-auto md:order-1 lg:order-2 relative">
           <div className="relative">
             {/* Abstract Geometric Outlines (Light Blue Deconstructed Cube) */}
             <div className="absolute inset-0 -z-10">
@@ -101,18 +101,18 @@ const ContactSection = () => {
               <img
                 src="https://privatily.com/wp-content/uploads/2023/08/image-1-min-1.png"
                 alt="Team collaboration"
-                className="w-full h-auto rounded-lg"
+                className="w-full md:w-1/2 lg:w-full mx-auto h-auto rounded-lg"
               />
             </div>
 
             {/* Floating Notification Cards */}
             {/* Top Card - Purple with Checkmark */}
-            <div className="absolute top-4 left-4 md:-top-2 md:-left-12 z-20 bg-[var(--color-purple)] rounded-lg shadow-lg pb-1 px-1 max-w-xs animate-pulse-slow">
-              <span className="text-xs pl-6 text-primary-foreground/70">Just now</span>
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-start gap-1">
-                  <HiCheckCircle className="w-5 h-5 text-primary-foreground shrink-0 mt-0.5" />
-                  <p className="text-xs text-primary-foreground font-medium mb-1">
+            <div className="absolute -top-8 sm:top-4 left-4  md:-top-4 md:left-44 lg:-left-12 z-20 bg-[var(--color-purple)] rounded-lg shadow-lg pb-1 -pt-4 px-1 max-w-xs animate-pulse-slow">
+              <span className="text-[0.4rem] lg:text-xs pl-6 text-primary-foreground/70">Just now</span>
+              <div className="flex items-center justify-between gap-1 lg:gap-3">
+                <div className="flex items-center justify-center gap-0.5 sm:gap-1">
+                  <HiCheckCircle className="w-2 h-2 lg:w-5 lg:h-5 text-primary-foreground shrink-0 mt-0.5" />
+                  <p className="text-[0.4rem] lg:text-xs text-primary-foreground font-medium">
                     Your ticket has been resolved
                   </p>
 
@@ -121,7 +121,7 @@ const ContactSection = () => {
                 <Button
                   variant="secondary"
                   size="sm"
-                  className="bg-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/30 h-6 px-3 text-xs"
+                  className="bg-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/30 h-4 lg:h-6 px-3 rounded-sm text-[0.4rem] lg:text-xs"
                 >
                   View
                 </Button>
@@ -129,13 +129,13 @@ const ContactSection = () => {
             </div>
 
             {/* Bottom Card - Light Gray with Bell */}
-            <div className="absolute top-40 left-4 md:top-15 md:-left-12 z-20 bg-muted rounded-lg shadow-lg p-1 max-w-xs">
-              <span className="text-xs pl-6 text-muted-foreground">30 min ago</span>
-              <div className="flex items-center justify-between gap-1">
+            <div className="absolute top-6  left-4 md:top-10 md:left-44 lg:-left-12 z-20 bg-muted rounded-lg shadow-lg p-1 max-w-xs">
+              <span className="text-[0.4rem] lg:text-xs pl-6 text-muted-foreground">30 min ago</span>
+              <div className="flex items-center justify-between gap-1 lg:gap-3">
 
-                <div className="flex items-start gap-1">
-                  <HiBell className="w-5 h-5 text-foreground shrink-0 mt-0.5" />
-                  <p className="text-xs text-foreground font-medium mb-1">
+                <div className="flex items-center justify-center gap-0.5 sm:gap-1">
+                  <HiBell className="w-2 h-2 lg:w-5 lg:h-5 text-foreground shrink-0 " />
+                  <p className="text-[0.4rem] lg:text-xs text-foreground font-medium ">
                     Your ticket has been received
                   </p>
                 </div>
@@ -143,7 +143,7 @@ const ContactSection = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="h-6 px-3 text-xs"
+                  className="h-4 lg:h-6 px-3 text-[0.4rem] lg:text-xs rounded-sm"
                 >
                   View
                 </Button>

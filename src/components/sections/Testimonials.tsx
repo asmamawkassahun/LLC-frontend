@@ -28,7 +28,7 @@ const TestimonialsSection = () => {
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 {/* Heading */}
                 <div className="text-center mb-12 md:mb-16">
-                    <h2 className="text-3xl md:text-5xl lg:text-5xl font-semibold text-foreground mb-2">
+                    <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-5xl font-semibold text-foreground mb-2">
                         Trusted by entrepreneurs
                     </h2>
                     <h3 className="text-2xl md:text-5xl lg:text-5xl font-semibold text-foreground">
@@ -37,7 +37,7 @@ const TestimonialsSection = () => {
                 </div>
 
                 {/* Testimonial Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 max-w-6xl md:max-w-lg  lg:max-w-6xl mx-auto">
                     {testimonials.map((testimonial, index) => (
                         <div
                             key={index}
