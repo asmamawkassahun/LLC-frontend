@@ -1,3 +1,6 @@
+import { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+
 const HowMuchTime = () => {
     const timelines = [
         {
@@ -17,6 +20,39 @@ const HowMuchTime = () => {
             label: "Avg. order delivery time"
         }
     ];
+
+    // Refs for time counting animations
+    const timeRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+    // Number counting animation for times
+    useEffect(() => {
+        timelines.forEach((timeline, index) => {
+            const timeRef = timeRefs.current[index];
+            if (!timeRef) return;
+
+            const targetValue = parseInt(timeline.time);
+            if (isNaN(targetValue)) return;
+
+            // Create an object to animate
+            const counter = { value: 0 };
+
+            // Set initial value to 0
+            timeRef.textContent = '0h';
+
+            // Animate counting
+            gsap.to(counter, {
+                value: targetValue,
+                duration: 2,
+                ease: 'power2.out',
+                delay: index * 0.2, // Stagger the animations
+                onUpdate: function() {
+                    if (timeRef) {
+                        timeRef.textContent = Math.round(counter.value) + 'h';
+                    }
+                }
+            });
+        });
+    }, []);
 
     return (
         <div className="relative bg-linear-to-br from-blue-900 via-blue-800 to-purple-800 pt-4 md:pt-8 lg:pt-12 ">
@@ -55,8 +91,13 @@ const HowMuchTime = () => {
                                 {timelines.map((timeline, index) => (
                                     <div key={index}>
                                         <div className="py-4 md:py-6">
-                                            <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-2">
-                                                {timeline.time}h
+                                            <div 
+                                                ref={(el) => {
+                                                    if (el) timeRefs.current[index] = el;
+                                                }}
+                                                className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-2"
+                                            >
+                                                0h
                                             </div>
                                             <div className="text-sm md:text-base text-white/90">
                                                 {timeline.label}

@@ -1,8 +1,66 @@
+import { useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { HiCheckCircle, HiBell } from 'react-icons/hi';
+import { gsap } from 'gsap';
 import ContactForm from './ContactForm';
 
 const ContactSection = () => {
+  // Refs for floating notification cards
+  const bottomCardRef = useRef<HTMLDivElement>(null);
+  const topCardRef = useRef<HTMLDivElement>(null);
+
+  // Animation for floating notification cards
+  useEffect(() => {
+    if (!bottomCardRef.current || !topCardRef.current) return;
+
+    // Small delay to ensure layout is ready
+    const timer = setTimeout(() => {
+      const bottomCard = bottomCardRef.current;
+      const topCard = topCardRef.current;
+      
+      if (!bottomCard || !topCard) return;
+
+      // Get the positions of both cards
+      const bottomRect = bottomCard.getBoundingClientRect();
+      const topRect = topCard.getBoundingClientRect();
+      
+      // Calculate the vertical distance between top and bottom card positions
+      const distance = bottomRect.top - topRect.top;
+
+      // Set initial state - bottom card at top card's position (suddenly displayed)
+      gsap.set(bottomCard, {
+        y: -distance, // Position at top card's location
+        opacity: 1 // Suddenly displayed
+      });
+
+      // Set initial state - top card completely hidden (not visible at all)
+      gsap.set(topCard, {
+        y: -30, // Start 30px above its position (much closer)
+        opacity: 0, // Hidden initially
+        visibility: 'hidden' // Completely hidden
+      });
+
+      // Bottom card slowly goes down to its position (slower speed)
+      gsap.to(bottomCard, {
+        y: 0,
+        duration: 2.5, // Increased from 1.5s to 2.5s (slower)
+        ease: 'power3.out',
+      });
+
+      // Top card appears and goes down to its position 1 second after bottom card starts
+      gsap.to(topCard, {
+        visibility: 'visible', // Make visible
+        opacity: 1, // Appear
+        y: 0,
+        duration: 1.5, // Keep same speed
+        ease: 'power3.out',
+        delay: 1.0, // Start 1 second after bottom card starts
+      });
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="relative min-h-screen bg-background">
       <div className="relative">
@@ -65,7 +123,10 @@ const ContactSection = () => {
 
             {/* Floating Notification Cards */}
             {/* Top Card - Purple with Checkmark */}
-            <div className="absolute -top-8 sm:top-4 left-4  md:-top-4 md:left-44 lg:-left-12 z-20 bg-[var(--color-purple)] rounded-lg shadow-lg pb-1 -pt-4 px-1 max-w-xs animate-pulse-slow">
+            <div 
+              ref={topCardRef}
+              className="absolute -top-8 sm:top-4 left-4  md:-top-4 md:left-44 lg:-left-12 z-20 bg-purple rounded-lg shadow-lg pb-1 -pt-4 px-1 max-w-xs animate-pulse-slow"
+            >
               <span className="text-[0.4rem] lg:text-xs pl-6 text-primary-foreground/70">Just now</span>
               <div className="flex items-center justify-between gap-1 lg:gap-3">
                 <div className="flex items-center justify-center gap-0.5 sm:gap-1">
@@ -87,7 +148,10 @@ const ContactSection = () => {
             </div>
 
             {/* Bottom Card - Light Gray with Bell */}
-            <div className="absolute top-6  left-4 md:top-10 md:left-44 lg:-left-12 z-20 bg-muted rounded-lg shadow-lg p-1 max-w-xs">
+            <div 
+              ref={bottomCardRef}
+              className="absolute top-6  left-4 md:top-10 md:left-44 lg:-left-12 z-20 bg-muted rounded-lg shadow-lg p-1 max-w-xs"
+            >
               <span className="text-[0.4rem] lg:text-xs pl-6 text-muted-foreground">30 min ago</span>
               <div className="flex items-center justify-between gap-1 lg:gap-3">
 

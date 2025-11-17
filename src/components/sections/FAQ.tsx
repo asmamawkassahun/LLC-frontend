@@ -1,9 +1,12 @@
-
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { HiPlus, HiMinus } from 'react-icons/hi';
+import { gsap } from 'gsap';
 
 const FAQSection = () => {
     const [openIndex, setOpenIndex] = useState<number>(0);
+    
+    // Refs for profile avatars (6 profiles)
+    const profileRefs = useRef<(HTMLDivElement | null)[]>([]);
 
     const faqs = [
         {
@@ -63,6 +66,28 @@ const FAQSection = () => {
     const toggleQuestion = (index: number) => {
         setOpenIndex(openIndex === index ? -1 : index);
     };
+
+    // Animation for profile avatars - appear one after another
+    useEffect(() => {
+        profileRefs.current.forEach((profileRef, index) => {
+            if (!profileRef) return;
+
+            // Set initial state (hidden and scaled down)
+            gsap.set(profileRef, {
+                scale: 0,
+                opacity: 0
+            });
+
+            // Animate each profile sequentially
+            gsap.to(profileRef, {
+                scale: 1,
+                opacity: 1,
+                duration: 0.6,
+                ease: 'back.out(1.7)',
+                delay: index * 0.2, // Stagger by 0.2s between each profile
+            });
+        });
+    }, []);
 
     return (
         <div className=" py-12 md:py-16 lg:py-20">
@@ -154,7 +179,12 @@ const FAQSection = () => {
                         {/* Profile Avatars with Location Pins and Square Wave Animations */}
                         <div className="absolute inset-0">
                             {/* Profile 1 - Top-left (North Atlantic/Europe) - Light Green */}
-                            <div className="absolute top-[12%] left-[18%]">
+                            <div 
+                                ref={(el) => {
+                                    if (el) profileRefs.current[0] = el;
+                                }}
+                                className="absolute top-[12%] left-[18%]"
+                            >
                                 <div className="relative">
                                     {/* Square Wave Animations */}
                                     <div className="absolute inset-0 flex items-center justify-center">
@@ -171,7 +201,12 @@ const FAQSection = () => {
                             </div>
 
                             {/* Profile 2 - Mid-top (North America) - Light Blue */}
-                            <div className="absolute top-[8%] left-[35%]">
+                            <div 
+                                ref={(el) => {
+                                    if (el) profileRefs.current[1] = el;
+                                }}
+                                className="absolute top-[8%] left-[35%]"
+                            >
                                 <div className="relative">
                                     {/* Square Wave Animations */}
                                     <div className="absolute inset-0 flex items-center justify-center">
@@ -188,7 +223,12 @@ const FAQSection = () => {
                             </div>
 
                             {/* Profile 3 - Mid-left (Africa) - Light Pink */}
-                            <div className="absolute top-[42%] left-[12%]">
+                            <div 
+                                ref={(el) => {
+                                    if (el) profileRefs.current[2] = el;
+                                }}
+                                className="absolute top-[42%] left-[12%]"
+                            >
                                 <div className="relative">
                                     {/* Square Wave Animations */}
                                     <div className="absolute inset-0 flex items-center justify-center">
@@ -205,7 +245,12 @@ const FAQSection = () => {
                             </div>
 
                             {/* Profile 4 - Mid-right (Europe/Asia border) - Light Brown */}
-                            <div className="absolute top-[28%] right-[20%]">
+                            <div 
+                                ref={(el) => {
+                                    if (el) profileRefs.current[3] = el;
+                                }}
+                                className="absolute top-[28%] right-[20%]"
+                            >
                                 <div className="relative">
                                     {/* Square Wave Animations */}
                                     <div className="absolute inset-0 flex items-center justify-center">
@@ -222,7 +267,12 @@ const FAQSection = () => {
                             </div>
 
                             {/* Profile 5 - Bottom-middle (southern Africa/Middle East) - Light Pink */}
-                            <div className="absolute bottom-[30%] left-[45%]">
+                            <div 
+                                ref={(el) => {
+                                    if (el) profileRefs.current[4] = el;
+                                }}
+                                className="absolute bottom-[30%] left-[45%]"
+                            >
                                 <div className="relative">
                                     {/* Square Wave Animations */}
                                     <div className="absolute inset-0 flex items-center justify-center">
@@ -239,7 +289,12 @@ const FAQSection = () => {
                             </div>
 
                             {/* Profile 6 - Bottom-right (Southeast Asia/Oceania) - Light Brown */}
-                            <div className="absolute bottom-[20%] right-[18%]">
+                            <div 
+                                ref={(el) => {
+                                    if (el) profileRefs.current[5] = el;
+                                }}
+                                className="absolute bottom-[20%] right-[18%]"
+                            >
                                 <div className="relative">
                                     {/* Square Wave Animations */}
                                     <div className="absolute inset-0 flex items-center justify-center">
