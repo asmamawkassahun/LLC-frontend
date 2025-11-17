@@ -326,3 +326,14 @@
 .animate-pulse-slow {
   animation: pulse-slow 3s ease-in-out infinite;
 }
+
+
+
+
+.smooth-text {
+  transition: font-size 0.3s ease;
+}
+
+.smooth-text:hover {
+  font-size: 0.875rem; /* text-sm */
+}

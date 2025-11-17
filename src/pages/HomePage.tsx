@@ -1,10 +1,10 @@
 import Hero from "@/components/sections/Hero";
 import FeaturesSection from "@/components/sections/FeaturesSection";
 import TestimonialsSection from "@/components/sections/Testimonials";
-import OurMissionSection from "./OurMission";
-import FAQSection from "./FAQ";
-import FooterSection from "./Footer";
-import ContactSection from "./ContactPage";
+import OurMissionSection from "../components/sections/OurMission";
+import FAQSection from "../components/sections/FAQ";
+import FooterSection from "../components/sections/Footer";
+import ContactSection from "../components/sections/ContactPage";
 function HomePage() {
   return (
     <div className="">
