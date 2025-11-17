@@ -86,29 +86,29 @@ const TransparentPricing = () => {
                         Transparent <span className="text-accent">Pricing</span>
                     </h1>
                     <div className="space-y-4">
-                        <p className="text-lg text-foreground">
+                        <p className="text-base text-foreground">
                             Where do you want to Incorporate?
                         </p>
-                        <div className="flex justify-center gap-2 max-w-72 mx-auto bg-primary/5 rounded-full p-3">
+                        <div className="flex justify-center gap-2 max-w-64 mx-auto bg-purple-900/15 rounded-full py-2">
                             <button
                                 onClick={() => setSelectedCountry('US')}
-                                className={`flex items-center gap-2 p-4 rounded-full text-base font-medium transition-colors ${selectedCountry === 'US'
+                                className={`flex items-center gap-2  px-4 rounded-full text-base font-medium transition-colors ${selectedCountry === 'US'
                                     ? 'bg-card text-foreground '
-                                    : 'bg-muted text-foreground  '
+                                    : ' text-foreground hover:bg-card cursor-pointer'
                                     }`}
                             >
                                 <span className="">🇺🇸</span>
-                                <span className="text-base">In the US</span>
+                                <span className="text-sm">In the US</span>
                             </button>
                             <button
                                 onClick={() => setSelectedCountry('UK')}
                                 className={`flex items-center gap-2 p-3 rounded-full font-medium transition-colors ${selectedCountry === 'UK'
                                     ? ' bg-card text-foreground'
-                                    : 'bg-muted text-foreground'
+                                    : ' text-foreground hover:bg-card cursor-pointer'
                                     }`}
                             >
                                 <span className="">🇬🇧</span>
-                                <span>In the UK</span>
+                                <span className="text-sm">In the UK</span>
                             </button>
                         </div>
                     </div>

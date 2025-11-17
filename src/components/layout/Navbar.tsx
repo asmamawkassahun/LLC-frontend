@@ -1,13 +1,25 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ROUTES } from '@/constants/routes';
 import { Button } from '@/components/ui/button';
 import { HiOutlineMenuAlt1 } from 'react-icons/hi';
 import { HiX } from 'react-icons/hi';
+import { gsap } from 'gsap';
 
 function Navbar() {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const lastScrollY = useRef(0);
+
+  // Refs for navbar items (in order: logo → home → about → pricing → contact → sign in → start my business)
+  const logoRef = useRef<HTMLAnchorElement>(null);
+  const homeRef = useRef<HTMLAnchorElement>(null);
+  const aboutRef = useRef<HTMLAnchorElement>(null);
+  const pricingRef = useRef<HTMLAnchorElement>(null);
+  const contactRef = useRef<HTMLAnchorElement>(null);
+  const signInRef = useRef<HTMLButtonElement>(null);
+  const startBusinessRef = useRef<HTMLButtonElement>(null);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -19,12 +31,94 @@ function Navbar() {
     setIsMenuOpen(false);
   };
 
+  // Animation function for navbar items
+  const animateNavbarItems = () => {
+    const items = [
+      logoRef.current,
+      homeRef.current,
+      aboutRef.current,
+      pricingRef.current,
+      contactRef.current,
+      signInRef.current,
+      startBusinessRef.current,
+    ].filter(Boolean) as HTMLElement[];
+
+    if (items.length === 0) return;
+
+    // Set initial state (hidden above)
+    gsap.set(items, { y: -50, opacity: 0 });
+
+    // Animate items sequentially from left to right
+    const tl = gsap.timeline();
+    items.forEach((item, index) => {
+      tl.to(item, {
+        y: 0,
+        opacity: 1,
+        duration: 0.4,
+        ease: 'power2.out',
+      }, index * 0.1); // Stagger by 0.1s between each item
+    });
+  };
+
+  // Animate on mount and route change
+  useEffect(() => {
+    // Small delay to ensure DOM is ready
+    const timer = setTimeout(() => {
+      animateNavbarItems();
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [location.pathname]);
+
+  // Animate when navbar becomes visible (after scroll)
+  useEffect(() => {
+    if (isVisible) {
+      const timer = setTimeout(() => {
+        animateNavbarItems();
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [isVisible]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      const scrollDifference = currentScrollY - lastScrollY.current;
+      const isBottom = windowHeight + currentScrollY >= documentHeight - 10; // 10px threshold
+      const isAtTop = currentScrollY <= 0;
+
+      if (isAtTop) {
+        // At top: always show navbar
+        setIsVisible(true);
+      } else if (isBottom) {
+        // At bottom: always show navbar smoothly from top
+        setIsVisible(true);
+      } else if (scrollDifference < 0) {
+        // Scrolling up: show navbar
+        setIsVisible(true);
+      } else if (scrollDifference > 0) {
+        // Scrolling down: hide navbar (goes off to top slowly)
+        setIsVisible(false);
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <>
-      <nav className="bg-background border-b border-border fixed top-0 left-0 right-0 z-50">
+      <nav className={`bg-background  fixed top-0 left-0 right-0 z-50 will-change-transform transition-transform duration-500 ease-in-out ${
+        isVisible ? 'translate-y-0' : '-translate-y-full'
+      }`}>
         <div className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 2xl:px-20 pt-6">
           <div className="flex items-center justify-between h-16">
             <Link
+              ref={logoRef}
               to={ROUTES.HOME}
               className="text-xl font-bold text-primary cursor-pointer"
               onClick={closeMenu}
@@ -35,6 +129,7 @@ function Navbar() {
             {/* Desktop Navigation */}
             <div className="hidden md:flex gap-8">
               <Link
+                ref={homeRef}
                 to={ROUTES.HOME}
                 className={`${isActive(ROUTES.HOME)
                   ? 'text-accent'
@@ -44,6 +139,7 @@ function Navbar() {
                 Home
               </Link>
               <Link
+                ref={aboutRef}
                 to={ROUTES.ABOUT}
                 className={`${isActive(ROUTES.ABOUT)
                   ? 'text-accent'
@@ -53,6 +149,7 @@ function Navbar() {
                 About
               </Link>
               <Link
+                ref={pricingRef}
                 to={ROUTES.PRICING}
                 className={`${isActive(ROUTES.PRICING)
                   ? 'text-accent'
@@ -62,6 +159,7 @@ function Navbar() {
                 Pricing
               </Link>
               <Link
+                ref={contactRef}
                 to={ROUTES.CONTACT}
                 className={`${isActive(ROUTES.CONTACT)
                   ? 'text-accent font-semibold'
@@ -74,10 +172,16 @@ function Navbar() {
 
             {/* Desktop Actions */}
             <div className='hidden md:flex gap-6 items-center'>
-              <button className='cursor-pointer font-medium hover:text-accent transition-colors'>
+              <button 
+                ref={signInRef}
+                className='cursor-pointer font-medium hover:text-accent transition-colors'
+              >
                 Sign in
               </button>
-              <Button className='px-6 py-6 font-medium text-base cursor-pointer'>
+              <Button 
+                ref={startBusinessRef}
+                className='px-6 py-6 font-medium text-base cursor-pointer'
+              >
                 Start My Business
               </Button>
             </div>
