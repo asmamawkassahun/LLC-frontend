@@ -62,15 +62,15 @@ const HowMuchTime = () => {
                     <div className="flex-2 space-y-6  lg:space-y-8">
                         <div className="space-y-4">
                             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight">
-                                How much time to get your LLC?
-                            </h1>
+                        How much time to get your LLC?
+                    </h1>
                             <div className="space-y-2 max-w-md  text-white/80">
                                 <p className="text-base  leading-relaxed">
                                     At Privatily we count delivery time by  hours, not by days or weeks like others do.
-                                </p>
+                    </p>
                                 <p className="text-base  leading-relaxed">
-                                    However, please be aware that these timelines are applicable only if you opt for LLC registration in one of our recommended US states.
-                                </p>
+                        However, please be aware that these timelines are applicable only if you opt for LLC registration in one of our recommended US states.
+                    </p>
                             </div>
                         </div>
                         

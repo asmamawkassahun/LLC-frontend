@@ -32,19 +32,19 @@ const CTASection = () => {
                                 />
                             </div>
                         </div>
-                    </div>
+            </div>
 
                     {/* Right Section - Text and Buttons */}
                     <div className="flex-1 space-y-6 order-1 sm:order-2">
                         {/* Text Content */}
                         <div className="space-y-4 max-w-md">
                             <h1 className="text-2xl md:text-4xl lg:text-5xl font-semibold text-foreground leading-tight">
-                                Do you have any questions?
-                            </h1>
+                        Do you have any questions?
+                    </h1>
                             <p className="text-base md:text-lg text-muted-foreground">
-                                Our team will be happy to assist.
-                            </p>
-                        </div>
+                        Our team will be happy to assist.
+                    </p>
+                </div>
 
                         {/* Buttons and Contact Info */}
                         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">

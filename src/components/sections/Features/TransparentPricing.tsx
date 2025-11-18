@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { HiCheck, HiArrowRight } from 'react-icons/hi';
 import { BsLightning } from 'react-icons/bs';
 import { Button } from '@/components/ui/button';
+import { gsap } from 'gsap';
 
 const TransparentPricing = () => {
     const [selectedCountry, setSelectedCountry] = useState<'US' | 'UK'>('US');
+    const headingRef = useRef<HTMLHeadingElement>(null);
 
     // Pricing data for US and UK
     const pricingData = {
@@ -77,12 +79,29 @@ const TransparentPricing = () => {
 
     const currentPricing = pricingData[selectedCountry];
 
+    // Animate heading from bottom to top on mount
+    useEffect(() => {
+        if (!headingRef.current) return;
+
+        gsap.set(headingRef.current, {
+            y: 80,
+            opacity: 0
+        });
+
+        gsap.to(headingRef.current, {
+            y: 0,
+            opacity: 1,
+            duration: 1.2,
+            ease: 'power3.out'
+        });
+    }, []);
+
     return (
         <div className="bg-background py-12 md:py-16 lg:py-20">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Transparent Pricing Header */}
                 <div className="text-center mb-12">
-                    <h1 className="text-xl md:text-5xl lg:text-5xl font-bold text-foreground mb-6">
+                    <h1 ref={headingRef} className="text-xl md:text-5xl lg:text-5xl font-bold text-foreground mb-6">
                         Transparent <span className="text-accent">Pricing</span>
                     </h1>
                     <div className="space-y-4">
@@ -114,7 +133,7 @@ const TransparentPricing = () => {
                     </div>
                 </div>
 
-                {/* Pricing Cards */}
+                    {/* Pricing Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4 mb-16 max-w-6xl mx-auto">
                     {/* Basic Plan Card */}
                     <div className="bg-card border border-border rounded-lg px-4 md:px-6 pt-6 md:pt-8">
@@ -185,11 +204,11 @@ const TransparentPricing = () => {
                         <p className="text-sm sm:text-base lg:text-lg text-muted-foreground">
                             Now open for selected clients. Join the waitlist — you could be next.
                         </p>
-                    </div>
+            </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-6xl mx-auto">
                         {/* Hong Kong Card */}
                         <div className="flex justify-between bg-card hover:border-accent hover:shadow-lg transition-all duration-300 border border-border rounded-lg p-6 md:p-8 shadow-sm">
-                            <div>
+            <div>
                                 <div className='flex items-center gap-2'>
                                     <div className="text-3xl bg-accent-foreground rounded-full p-2 mb-4">🇭🇰</div>
                                     <h3 className="text-xl font-semibold text-foreground mb-3">Hong Kong</h3>
@@ -205,7 +224,7 @@ const TransparentPricing = () => {
 
                         {/* Dubai Card */}
                         <div className="flex justify-between bg-card hover:border-accent hover:shadow-lg transition-all duration-300 border border-border rounded-lg p-6 md:p-8 shadow-sm">
-                            <div>
+                <div>
                                 <div className='flex items-center gap-2'>
                                     <div className="text-3xl bg-accent-foreground rounded-full p-2 mb-4">🇦🇪</div>
                                     <h3 className="text-lg font-semibold text-foreground mb-3">Dubai, UAE</h3>
