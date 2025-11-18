@@ -3,6 +3,8 @@ import { HiCheck, HiArrowRight } from 'react-icons/hi';
 import { BsLightning } from 'react-icons/bs';
 import { Button } from '@/components/ui/button';
 import { gsap } from 'gsap';
+import { PiCheckLight, PiCheckThin } from 'react-icons/pi';
+import { VscArrowRight } from "react-icons/vsc";
 
 const TransparentPricing = () => {
     const [selectedCountry, setSelectedCountry] = useState<'US' | 'UK'>('US');
@@ -133,7 +135,7 @@ const TransparentPricing = () => {
                     </div>
                 </div>
 
-                    {/* Pricing Cards */}
+                {/* Pricing Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4 mb-16 max-w-6xl mx-auto">
                     {/* Basic Plan Card */}
                     <div className="bg-card border border-border rounded-lg px-4 md:px-6 pt-6 md:pt-8">
@@ -142,7 +144,7 @@ const TransparentPricing = () => {
                             <span className="text-3xl font-semibold text-foreground">{currentPricing.basic.price}</span>
                             <span className="text-lg text-muted-foreground ml-2">and then {currentPricing.basic.yearly}</span>
                         </div>
-                        <p className="text-lg text-muted-foreground mb-6">If you're operating with a low budget.</p>
+                        <p className="text-base md:text-base lg:text-lg text-muted-foreground mb-12">If you're operating with a low budget.</p>
                         <Button className="w-full bg-primary mb-6 text-primary-foreground hover:bg-primary/90 py-6 text-lg font-medium">
                             Go Basic
                         </Button>
@@ -150,8 +152,8 @@ const TransparentPricing = () => {
                         <ul className="space-y-4 mb-8">
                             {currentPricing.basic.features.map((feature, index) => (
                                 <li key={index} className="flex items-start gap-3">
-                                    <HiCheck className="w-5 h-5 text-success shrink-0 mt-0.5" />
-                                    <span className="text-lg text-foreground">{feature}</span>
+                                    <PiCheckLight className="w-5 h-5 text-success shrink-0 mt-0.5" />
+                                    <span className="text-sm md:text-base lg:text-lg text-foreground">{feature}</span>
                                 </li>
                             ))}
                         </ul>
@@ -161,7 +163,7 @@ const TransparentPricing = () => {
 
                     {/* Premium Plan Card */}
                     <div className="bg-blue-700 rounded-lg px-4 md:px-6 pt-6 md:pt-8 relative">
-                        <div className="absolute top-4 right-4 bg-primary-foreground text-accent px-3 py-1 rounded-full text-base font-medium">
+                        <div className="absolute top-4 right-4 bg-primary-foreground text-accent px-3 py-1 rounded-full text-xs font-medium">
                             Priority Processing
                         </div>
                         <h2 className="text-xl font-semibold text-primary-foreground mb-4">Premium</h2>
@@ -169,7 +171,7 @@ const TransparentPricing = () => {
                             <span className="text-3xl font-semibold text-primary-foreground">{currentPricing.premium.price}</span>
                             <span className="text-lg text-primary-foreground/80 ml-2">and then {currentPricing.premium.yearly}</span>
                         </div>
-                        <p className="text-lg text-primary-foreground/90 mb-6">Enhanced, fast, and exclusive service.</p>
+                        <p className="text-base text-primary-foreground/90 mb-12">Enhanced, fast, and exclusive service.</p>
                         <Button className="w-full bg-orange-dark mb-6 hover:bg-orange text-primary-foreground py-6 text-lg font-medium">
                             Go Premium
                         </Button>
@@ -178,15 +180,15 @@ const TransparentPricing = () => {
                             {currentPricing.premium.features.map((feature, index) => (
                                 <li key={index} className="flex items-start gap-3">
                                     {feature.icon === 'arrow' && (
-                                        <HiArrowRight className="w-5 h-5 font-light text-primary-foreground shrink-0 mt-0.5" />
+                                        <VscArrowRight className="w-5 h-5 font-light text-primary-foreground shrink-0 mt-0.5" />
                                     )}
                                     {feature.icon === 'lightning' && (
                                         <BsLightning className="w-5 h-5 text-primary-foreground shrink-0 mt-0.5" />
                                     )}
                                     {feature.icon === 'check' && (
-                                        <HiCheck className="w-5 h-5 text-primary-foreground shrink-0 mt-0.5" />
+                                        <PiCheckLight className="w-5 h-5 text-primary-foreground shrink-0 mt-0.5" />
                                     )}
-                                    <span className="text-lg text-primary-foreground">{feature.text}</span>
+                                    <span className="text-sm md:text-base lg:text-lg text-primary-foreground">{feature.text}</span>
                                 </li>
                             ))}
                         </ul>
@@ -198,44 +200,44 @@ const TransparentPricing = () => {
                 {/* Dubai & Hong Kong Section */}
                 <div className="mb-16">
                     <div className="text-center mb-8">
-                        <h2 className="text-[1.6rem] sm:text-3xl md:text-[1.9rem] lg:text-5xl font-semibold text-foreground mb-4">
+                        <h2 className="text-[1.6rem] sm:text-3xl md:text-[2rem] md:text-5xl font-semibold text-foreground mb-4 leading-tight">
                             Dubai & Hong Kong Company Setup (Exclusive)
                         </h2>
                         <p className="text-sm sm:text-base lg:text-lg text-muted-foreground">
                             Now open for selected clients. Join the waitlist — you could be next.
                         </p>
-            </div>
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-6xl mx-auto">
                         {/* Hong Kong Card */}
-                        <div className="flex justify-between bg-card hover:border-accent hover:shadow-lg transition-all duration-300 border border-border rounded-lg p-6 md:p-8 shadow-sm">
-            <div>
-                                <div className='flex items-center gap-2'>
+                        <div className="flex flex-col gap-4 bg-card hover:border-accent hover:shadow-lg transition-all duration-300 border border-border rounded-lg p-6 md:p-4 lg:p-8 shadow-sm">
+                            <div className='flex justify-between items-center'>
+                                <div className='flex items-center justify-center gap-2'>
                                     <div className="text-3xl bg-accent-foreground rounded-full p-2 mb-4">🇭🇰</div>
                                     <h3 className="text-xl font-semibold text-foreground mb-3">Hong Kong</h3>
                                 </div>
-                                <p className="text-muted-foreground text-lg">
-                                    Gateway to Asia with world-class financial infrastructure
-                                </p>
+                                <div className=" bg-blue-700  text-primary-foreground  h-8 text-center justify-center py-2 px-2 rounded-sm text-sm font-medium">
+                                    Join Waitlist
+                                </div>
                             </div>
-                            <div className=" bg-blue-700  text-primary-foreground w-42 h-10 text-center justify-center py-2 rounded-sm text-lg font-medium">
-                                Join Waitlist
-                            </div>
+                            <p className="text-muted-foreground text-lg md:text-base lg:text-lg text-center">
+                                Gateway to Asia with world-class financial infrastructure
+                            </p>
                         </div>
 
                         {/* Dubai Card */}
-                        <div className="flex justify-between bg-card hover:border-accent hover:shadow-lg transition-all duration-300 border border-border rounded-lg p-6 md:p-8 shadow-sm">
-                <div>
+                        <div className="flex flex-col gap-4 bg-card hover:border-accent hover:shadow-lg transition-all duration-300 border border-border rounded-lg p-6 md:p-4 lg:p-8 shadow-sm">
+                            <div className='flex justify-between items-center'>
                                 <div className='flex items-center gap-2'>
                                     <div className="text-3xl bg-accent-foreground rounded-full p-2 mb-4">🇦🇪</div>
-                                    <h3 className="text-lg font-semibold text-foreground mb-3">Dubai, UAE</h3>
+                                    <h3 className="text-xl font-semibold text-foreground mb-3">Dubai, UAE</h3>
                                 </div>
-                                <p className="text-muted-foreground text-lg">
-                                    Most millionaires & future millionaires launch their businesses here
-                                </p>
+                                <div className=" bg-blue-700  text-primary-foreground  h-8 text-center justify-center p-2 px-2 rounded-sm text-sm font-medium">
+                                    Join Waitlist
+                                </div>
                             </div>
-                            <div className=" bg-blue-700  text-primary-foreground w-42 h-10 text-center justify-center py-2 rounded-sm text-lg font-medium">
-                                Join Waitlist
-                            </div>
+                            <p className="text-muted-foreground text-lg md:text-base lg:text-lg text-center">
+                                Most millionaires & future millionaires launch their businesses here
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -243,10 +245,10 @@ const TransparentPricing = () => {
                 {/* Bonuses Section */}
                 <div className="flex flex-col md:flex-row items-center gap-8 lg:gap-12 max-w-6xl mx-auto">
                     <div className="flex-1">
-                        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-foreground mb-4">
+                        <h2 className="text-2xl sm:text-3xl lg:text-5xl font-semibold text-foreground mb-4">
                             <span className="text-accent">Bonuses</span> for Premium clients only
                         </h2>
-                        <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+                        <p className="text-base lg:text-lg text-muted-foreground leading-relaxed">
                             As a Premium client, we'll assist you in setting up all the financial services available to you. You'll have a dedicated account manager and our exceptional support team, ready to assist you via chat, email, and phone.
                         </p>
                     </div>

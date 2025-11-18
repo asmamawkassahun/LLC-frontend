@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { HiPlus, HiMinus } from 'react-icons/hi';
+import { LiaMinusSolid, LiaPlusSolid } from "react-icons/lia";
 import { gsap } from 'gsap';
+
 
 const FAQSection = () => {
     const [openIndex, setOpenIndex] = useState<number>(0);
-    
+
     // Refs for profile avatars (6 profiles)
     const profileRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -91,7 +93,7 @@ const FAQSection = () => {
 
     return (
         <div className=" py-12 md:py-16 lg:py-20">
-            <div className="max-w-86 md:max-w-3xl lg:max-w-7xl mx-auto bg-blue-500/5 rounded-xl  px-4 sm:px-6 lg:px-8 py-12">
+            <div className="max-w-96 md:max-w-3xl lg:max-w-7xl mx-auto bg-blue-500/5 rounded-xl  px-4 sm:px-6 lg:px-8 py-12">
                 <div className="max-w-4xl mx-auto text-center">
                     {/* White Container Card */}
                     <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8 md:mb-12">
@@ -120,9 +122,9 @@ const FAQSection = () => {
                                             </span>
                                             <div className="shrink-0">
                                                 {isOpen ? (
-                                                    <HiMinus className="w-6 h-6 text-purple" />
+                                                    <LiaMinusSolid className="w-6 h-6 text-purple" />
                                                 ) : (
-                                                    <HiPlus className="w-6 h-6 text-purple" />
+                                                    <LiaPlusSolid className="w-6 h-6 text-purple" />
                                                 )}
                                             </div>
                                         </button>
@@ -131,15 +133,15 @@ const FAQSection = () => {
                                         {isOpen && faq.answer.points.length > 0 && (
                                             <div className="px-5 md:px-6 pb-5 md:pb-6 pt-0">
                                                 {faq.answer.subheading && (
-                                                    <h3 className="font-semibold text-foreground mb-3 mt-4">
+                                                    <h3 className=" text-muted-foreground  text-start text-sm md:text-base mb-3 mt-4">
                                                         {faq.answer.subheading}
                                                     </h3>
                                                 )}
                                                 <ul className="space-y-2">
                                                     {faq.answer.points.map((point, pointIndex) => (
                                                         <li key={pointIndex} className="flex items-start gap-3">
-                                                            <span className="text-purple mt-1.5">•</span>
-                                                            <span className="text-base text-muted-foreground  text-start leading-relaxed">
+                                                            <span className="text-purple">•</span>
+                                                            <span className="text-sm md:text-base text-muted-foreground  text-start leading-relaxed">
                                                                 {point}
                                                             </span>
                                                         </li>
@@ -159,10 +161,10 @@ const FAQSection = () => {
                 <div className="flex flex-col md:flex-row items-center gap-8 lg:gap-12">
                     {/* Left Column - Text */}
                     <div className="flex-1 space-y-6">
-                        <h1 className="text-2xl sm:text-3xl  lg:text-5xl font-bold text-foreground leading-tight">
-                            Launch your company from <span className="text-accent">→ anywhere</span>
+                        <h1 className="text-[1.5rem] sm:text-3xl  lg:text-5xl font-semibold text-foreground leading-tight">
+                            Launch your company from <span className="text-blue-700">→ anywhere</span>
                         </h1>
-                        <p className="text-xs  sm:text-sm lg:text-lg text-muted-foreground leading-relaxed">
+                        <p className="text-sm px-2 sm:text-base lg:text-lg text-muted-foreground leading-relaxed">
                             Act now! Gain exclusive access to top-tier financial solutions, reserved solely for US-based companies, and significantly boost your business's potential for success.
                         </p>
                     </div>
@@ -173,13 +175,13 @@ const FAQSection = () => {
                         <img
                             src="https://privatily.com/wp-content/uploads/2023/04/Team-Testimonial-BG.webp"
                             alt="World map with team members"
-                            className="w-full h-auto object-cover"
+                            className="w-full h-100 md:h-76 object-contain"
                         />
 
                         {/* Profile Avatars with Location Pins and Square Wave Animations */}
                         <div className="absolute inset-0">
                             {/* Profile 1 - Top-left (North Atlantic/Europe) - Light Green */}
-                            <div 
+                            <div
                                 ref={(el) => {
                                     if (el) profileRefs.current[0] = el;
                                 }}
@@ -191,7 +193,7 @@ const FAQSection = () => {
                                         <div className="square-wave square-wave-1"></div>
                                         <div className="square-wave square-wave-2"></div>
                                     </div>
-                                    <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-primary-foreground border-2 border-primary-foreground shadow-lg overflow-hidden relative z-10">
+                                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary-foreground border-2 border-primary-foreground shadow-lg overflow-hidden relative z-10">
                                         <div className="w-full h-full bg-gradient-to-br from-green-300 to-green-500 flex items-center justify-center text-primary-foreground font-bold text-lg">
                                             A
                                         </div>
@@ -201,7 +203,7 @@ const FAQSection = () => {
                             </div>
 
                             {/* Profile 2 - Mid-top (North America) - Light Blue */}
-                            <div 
+                            <div
                                 ref={(el) => {
                                     if (el) profileRefs.current[1] = el;
                                 }}
@@ -213,7 +215,7 @@ const FAQSection = () => {
                                         <div className="square-wave square-wave-1"></div>
                                         <div className="square-wave square-wave-2"></div>
                                     </div>
-                                    <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-primary-foreground border-2 border-primary-foreground shadow-lg overflow-hidden relative z-10">
+                                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary-foreground border-2 border-primary-foreground shadow-lg overflow-hidden relative z-10">
                                         <div className="w-full h-full bg-gradient-to-br from-blue-300 to-blue-500 flex items-center justify-center text-primary-foreground font-bold text-lg">
                                             B
                                         </div>
@@ -223,7 +225,7 @@ const FAQSection = () => {
                             </div>
 
                             {/* Profile 3 - Mid-left (Africa) - Light Pink */}
-                            <div 
+                            <div
                                 ref={(el) => {
                                     if (el) profileRefs.current[2] = el;
                                 }}
@@ -235,7 +237,7 @@ const FAQSection = () => {
                                         <div className="square-wave square-wave-1"></div>
                                         <div className="square-wave square-wave-2"></div>
                                     </div>
-                                    <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-primary-foreground border-2 border-primary-foreground shadow-lg overflow-hidden relative z-10">
+                                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary-foreground border-2 border-primary-foreground shadow-lg overflow-hidden relative z-10">
                                         <div className="w-full h-full bg-gradient-to-br from-pink-300 to-pink-500 flex items-center justify-center text-primary-foreground font-bold text-lg">
                                             C
                                         </div>
@@ -245,7 +247,7 @@ const FAQSection = () => {
                             </div>
 
                             {/* Profile 4 - Mid-right (Europe/Asia border) - Light Brown */}
-                            <div 
+                            <div
                                 ref={(el) => {
                                     if (el) profileRefs.current[3] = el;
                                 }}
@@ -257,7 +259,7 @@ const FAQSection = () => {
                                         <div className="square-wave square-wave-1"></div>
                                         <div className="square-wave square-wave-2"></div>
                                     </div>
-                                    <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-primary-foreground border-2 border-primary-foreground shadow-lg overflow-hidden relative z-10">
+                                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary-foreground border-2 border-primary-foreground shadow-lg overflow-hidden relative z-10">
                                         <div className="w-full h-full bg-gradient-to-br from-amber-300 to-amber-500 flex items-center justify-center text-primary-foreground font-bold text-lg">
                                             D
                                         </div>
@@ -267,7 +269,7 @@ const FAQSection = () => {
                             </div>
 
                             {/* Profile 5 - Bottom-middle (southern Africa/Middle East) - Light Pink */}
-                            <div 
+                            <div
                                 ref={(el) => {
                                     if (el) profileRefs.current[4] = el;
                                 }}
@@ -279,7 +281,7 @@ const FAQSection = () => {
                                         <div className="square-wave square-wave-1"></div>
                                         <div className="square-wave square-wave-2"></div>
                                     </div>
-                                    <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-primary-foreground border-2 border-primary-foreground shadow-lg overflow-hidden relative z-10">
+                                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary-foreground border-2 border-primary-foreground shadow-lg overflow-hidden relative z-10">
                                         <div className="w-full h-full bg-gradient-to-br from-pink-300 to-pink-500 flex items-center justify-center text-primary-foreground font-bold text-lg">
                                             E
                                         </div>
@@ -289,7 +291,7 @@ const FAQSection = () => {
                             </div>
 
                             {/* Profile 6 - Bottom-right (Southeast Asia/Oceania) - Light Brown */}
-                            <div 
+                            <div
                                 ref={(el) => {
                                     if (el) profileRefs.current[5] = el;
                                 }}
@@ -301,7 +303,7 @@ const FAQSection = () => {
                                         <div className="square-wave square-wave-1"></div>
                                         <div className="square-wave square-wave-2"></div>
                                     </div>
-                                    <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-primary-foreground border-2 border-primary-foreground shadow-lg overflow-hidden relative z-10">
+                                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary-foreground border-2 border-primary-foreground shadow-lg overflow-hidden relative z-10">
                                         <div className="w-full h-full bg-gradient-to-br from-amber-300 to-amber-500 flex items-center justify-center text-primary-foreground font-bold text-lg">
                                             F
                                         </div>

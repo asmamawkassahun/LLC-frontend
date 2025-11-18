@@ -127,7 +127,7 @@ function Navbar() {
             </Link>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex gap-8">
+            <div className="hidden lg:flex gap-8">
               <Link
                 ref={homeRef}
                 to={ROUTES.HOME}
@@ -171,7 +171,7 @@ function Navbar() {
             </div>
 
             {/* Desktop Actions */}
-            <div className='hidden md:flex gap-6 items-center'>
+            <div className='hidden lg:flex gap-6 items-center'>
               <button 
                 ref={signInRef}
                 className='cursor-pointer font-medium hover:text-accent transition-colors'
@@ -188,7 +188,7 @@ function Navbar() {
 
             {/* Mobile: Start My Business Button and Hamburger (hidden when menu is open) */}
             {!isMenuOpen && (
-              <div className='md:hidden flex items-center gap-4'>
+              <div className='lg:hidden flex items-center gap-4'>
                 <Button
                   className='px-4 py-2 font-medium text-sm cursor-pointer'
                   onClick={closeMenu}
@@ -207,7 +207,7 @@ function Navbar() {
 
             {/* Mobile: X icon when menu is open */}
             {isMenuOpen && (
-              <div className='md:hidden'>
+              <div className='lg:hidden'>
                 <button
                   onClick={toggleMenu}
                   className="text-foreground hover:text-accent transition-colors p-2 cursor-pointer"
@@ -223,7 +223,7 @@ function Navbar() {
 
       {/* Mobile Menu Overlay */}
       <div
-        className={`fixed inset-0 bg-background z-40 transition-transform duration-300 ease-in-out md:hidden ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'
+        className={`fixed inset-0 bg-background z-40 transition-transform duration-300 ease-in-out lg:hidden ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
         style={{ paddingTop: '64px' }}
       >

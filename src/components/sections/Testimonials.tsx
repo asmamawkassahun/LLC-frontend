@@ -33,8 +33,8 @@ const TestimonialsSection = () => {
         if (!h2Ref.current || !h3Ref.current) return;
 
         // Set initial state - start with only left side visible
-        gsap.set([h2Ref.current, h3Ref.current], { 
-            y: 80, 
+        gsap.set([h2Ref.current, h3Ref.current], {
+            y: 80,
             opacity: 0,
             clipPath: 'inset(0 100% 0 0)' // Only left side visible initially
         });
@@ -92,44 +92,46 @@ const TestimonialsSection = () => {
         <div className="bg-background py-12 md:py-16 lg:py-20 relative overflow-hidden">
             {/* Gradient Background */}
             <div className="absolute inset-0 bg-gradient-to-r from-purple-200/30 via-blue-200/30 to-orange-200/30 blur-3xl -z-10"></div>
-            
+
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 {/* Heading */}
-                <div className="text-center mb-12 md:mb-16">
-                    <h2 
+                <div className="text-center w-full mb-12 md:mb-16">
+                    <h2
                         ref={h2Ref}
-                        className="text-2xl sm:text-3xl md:text-5xl lg:text-5xl font-semibold text-foreground mb-2"
+                        className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold md:font-semibold text-foreground mb-2"
                     >
                         Trusted by entrepreneurs
                     </h2>
-                    <h3 
+                    <h3
                         ref={h3Ref}
-                        className="text-2xl md:text-5xl lg:text-5xl font-semibold text-foreground"
+                        className="text-2xl md:text-4xl lg:text-5xl font-bold md:font-semibold text-foreground"
                     >
                         from 150+ countries
                     </h3>
                 </div>
 
                 {/* Testimonial Cards */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 max-w-6xl md:max-w-lg  lg:max-w-6xl mx-auto">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 max-w-5xl md:max-w-md  lg:max-w-6xl mx-auto">
                     {testimonials.map((testimonial, index) => (
                         <div
                             key={index}
                             ref={(el) => {
                                 if (el) cardRefs.current[index] = el;
                             }}
-                            className="bg-card rounded-lg shadow-md p-6 md:p-8 hover:shadow-lg transition-shadow"
+                            className="bg-card rounded-lg shadow-md p-4 md:p-8 hover:shadow-lg transition-shadow max-w-84 md:max-w-md lg:max-w-6xl mx-auto"
                         >
                             {/* Quote */}
-                            <p className="text-lg font-medium text-foreground mb-6 leading-relaxed">
-                                "{testimonial.quote}"
+                            <p className="text-[0.9rem] md:text-base font-medium text-foreground mb-6 leading-relaxed">
+                                {testimonial.quote}
                             </p>
 
                             {/* Name and Country */}
-                            <div className="flex items-center gap-2">
+                            <div className="flex flex-col items-start gap-2">
                                 <span className="font-semibold text-foreground">{testimonial.name}</span>
-                                <span className="text-muted-foreground">From {testimonial.country}</span>
-                                <span className="text-2xl">{testimonial.flag}</span>
+                                <div className='flex items-center gap-2'>
+                                    <span className=" text-sm md:text-base text-muted-foreground">From {testimonial.country}</span>
+                                    <span className=" text-base md:text-2xl">{testimonial.flag}</span>
+                                </div>
                             </div>
                         </div>
                     ))}

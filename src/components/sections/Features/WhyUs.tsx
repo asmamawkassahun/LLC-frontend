@@ -88,7 +88,7 @@ const WhyUs = () => {
     }, [isLoading, data]);
 
     return (
-        <div className="bg-background py-12 md:py-16 lg:py-24">
+        <div className="bg-background pb-12 md:pb-16 lg:pb-24">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-18">
                 {/* Stats Section */}
                 {!isLoading && data && (
@@ -118,13 +118,13 @@ const WhyUs = () => {
                         <div className="space-y-4">
                             <h2 
                                 ref={headingRef}
-                                className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground"
+                                className="text-2xl md:text-4xl lg:text-5xl font-bold text-foreground"
                             >
                                 Why Privatily?
                             </h2>
                             <p 
                                 ref={descriptionRef}
-                                className="text-[0.9rem] md:text-sm lg:text-[1.085rem] text-muted-foreground leading-relaxed"
+                                className="text-[0.9rem] md:text-[0.93rem] lg:text-[1.085rem] text-muted-foreground leading-relaxed"
                             >
                                 We know how to take the complexity out of forming your company because we've been in your shoes. Privatily was born because we struggled ourselves—facing a complicated, lengthy process when trying to set up our own company in a supported country. Since 2019, we've been committed to providing unmatched expertise, affordable prices, and the fastest turnaround time to help entrepreneurs like you start your business journey smoothly and confidently.
                             </p>
@@ -140,9 +140,9 @@ const WhyUs = () => {
                                 return (
                                     <div key={index} className="flex items-center gap-3">
                                         <div className="shrink-0 bg-accent/10 p-3 rounded-full">
-                                            <Icon className="w-6 h-6 text-accent" />
+                                            <Icon className="w-4 h-4 lg:w-6 md:h-6 text-accent" />
                                         </div>
-                                        <p className="text-sm font-bold md:text-lg text-foreground">
+                                        <p className="text-sm font-semibold md:text-base text-foreground">
                                             {benefit.text}
                                         </p>
                                     </div>

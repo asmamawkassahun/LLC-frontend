@@ -8,7 +8,7 @@ const ContactInfoSection = () => {
             <div className="flex flex-col md:flex-row gap-6 lg:gap-8 items-start justify-between">
                 {/* Left Section - Contact Form */}
                 <div className="flex-1 w-full lg:max-w-lg order-2 md:order-1">
-                    {/* <div className="bg-card rounded-lg shadow-md p-6 md:p-8"> */}
+                    {/* <div className="bg-card rounded-lg shadoContact Informationw-md p-6 md:p-8"> */}
                     {/* <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6 md:mb-8">
                             Send us a message
                         </h2> */}
@@ -35,7 +35,7 @@ const ContactInfoSection = () => {
                         {/* Content */}
                         <div className="relative z-10 p-8 md:p-10 lg:p-12">
                             {/* Title */}
-                            <h1 className="text-2xl md:text-3xl font-bold text-white mb-4 md:mb-6">
+                            <h1 className="text-xl md:text-2xl font-sebold text-white mb-4 md:mb-6">
                                 Contact Information
                             </h1>
 

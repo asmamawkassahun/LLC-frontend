@@ -46,12 +46,12 @@ const ContactHeroSection = () => {
                 <div className="text-center">
                     <div ref={headingBlockRef}>
                         {/* Heading */}
-                    <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 md:mb-6">
+                    <h1 className="text-2xl md:text-[2rem] lg:text-4xl font-bold text-foreground mb-4 md:mb-6">
                         Get in Touch
                     </h1>
                     
                     {/* Description */}
-                    <p className="text-sm sm:text-base md:text-lg text-muted-foreground mb-8 md:mb-12 max-w-xl mx-auto leading-relaxed">
+                    <p className="text-sm sm:text-base  text-muted-foreground mb-8 md:mb-12 max-w-xl mx-auto leading-relaxed">
                         We are fluent in 6 languages and are working towards offering support in additional languages as well to get even closer to you!
                     </p>
                     </div>

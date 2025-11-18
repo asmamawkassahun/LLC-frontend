@@ -45,8 +45,8 @@ const OurMissionSection = () => {
                     </div>
 
                     {/* Left Section - Visual (Second on mobile, first on md and above) */}
-                    <div className="flex-1 w-full lg:w-auto relative order-2 md:order-1">
-                        <div className="relative">
+                    <div className="flex-1 w-full lg:w-auto relative order-2 md:order-1 overflow-hidden">
+                        <div className="relative overflow-hidden">
                             {/* Purple Abstract Shape Background */}
                             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-[var(--color-purple)] rounded-full blur-3xl opacity-20 -z-10"></div>
                             

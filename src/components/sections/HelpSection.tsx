@@ -16,8 +16,8 @@ const HelpSection = ({
     variant = "gradient"
 }: HelpSectionProps) => {
     return (
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 lg:py-20">
-            <div className="relative rounded-2xl overflow-hidden">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 lg:py-20 ">
+            <div className="relative rounded-2xl overflow-hidden py-4">
                 {/* Background based on variant */}
                 {variant === "gradient" ? (
                     <>
@@ -27,23 +27,23 @@ const HelpSection = ({
                         {/* Abstract Circular Orbs - Layered Effect */}
                         <div className="absolute inset-0 overflow-hidden">
                             {/* Light Blue Orb - Top Left */}
-                            <div className="absolute -top-20 -left-20 w-64 h-64 bg-blue-300/30 rounded-full blur-3xl"></div>
+                            <div className="absolute -top-20 -left-20 w-64 h-64 bg-white/90 rounded-full blur-3xl z-30"></div>
                             {/* Light Purple Orb - Top Right */}
-                            <div className="absolute -top-16 -right-16 w-56 h-56 bg-purple-300/30 rounded-full blur-3xl"></div>
+                            <div className="absolute -top-16 -right-16 w-56 h-56 bg-white/90 rounded-full blur-3xl z-30"></div>
                             {/* Medium Blue Orb - Bottom Left */}
-                            <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-400/20 rounded-full blur-2xl"></div>
+                            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/90 rounded-full blur-2xl z-30"></div>
                             {/* Medium Purple Orb - Bottom Right */}
-                            <div className="absolute -bottom-12 -right-12 w-72 h-72 bg-purple-400/25 rounded-full blur-3xl"></div>
+                            <div className="absolute -bottom-12 -right-12 w-72 h-72 bg-white/90 rounded-full blur-3xl z-30"></div>
                             {/* Small Blue Orb - Center Left */}
-                            <div className="absolute top-1/2 left-1/4 w-32 h-32 bg-blue-300/20 rounded-full blur-xl"></div>
+                            <div className="absolute top-1/2 left-1/4 w-32 h-32 bg-white/90 rounded-full blur-xl z-30"></div>
                             {/* Small Purple Orb - Center Right */}
-                            <div className="absolute top-1/3 right-1/4 w-40 h-40 bg-purple-300/25 rounded-full blur-2xl"></div>
+                            <div className="absolute top-1/3 right-1/4 w-40 h-40 bg-white/90 rounded-full blur-2xl z-30"></div>
                         </div>
                     </>
                 ) : (
                     <>
                         {/* Solid Dark Blue Background */}
-                        <div className="absolute inset-0 bg-blue-900"></div>
+                        <div className="absolute inset-0 bg-blue-600"></div>
                         
                         {/* Subtle Dots Pattern - Lower Half */}
                         <div className="absolute inset-0 overflow-hidden">
@@ -61,12 +61,12 @@ const HelpSection = ({
                 {/* Content */}
                 <div className="relative z-10 px-8 md:px-12 lg:px-16 py-12 md:py-16 lg:py-20 text-center">
                     {/* Heading */}
-                    <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 md:mb-6">
+                    <h1 className="text-2xl md:text-[2rem] lg:text-4xl font-bold text-white mb-4 md:mb-6">
                         {heading}
                     </h1>
                     
                     {/* Description */}
-                    <p className="text-base md:text-lg lg:text-xl text-white/90 mb-8 md:mb-10 max-w-2xl mx-auto leading-relaxed">
+                    <p className="text-sm md:text-base lg:text-lg text-white/90 mb-8 md:mb-10 max-w-xl mx-auto leading-relaxed">
                         {description}
                     </p>
                     

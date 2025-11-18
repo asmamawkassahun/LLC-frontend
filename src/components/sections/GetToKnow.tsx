@@ -14,48 +14,52 @@ const GetToKnow = () => {
                     {/* Left Section - Text and Statistics */}
                     <div className="flex-1 space-y-8">
                         {/* Heading */}
-                        <div className="space-y-2 text-center justify-center items-center">
-                            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground">
+                        <div className="-space-y-4 text-center justify-center items-center">
+                            <h2 className="text-[2.5rem] md:text-6xl font-semibold text-foreground">
                                 Get to Know
                             </h2>
-                            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-accent">
+                            <h2 className="text-[2.5rem] md:text-6xl font-semibold text-accent">
                                 Privatily
                             </h2>
                         </div>
-                        <div className='md:py-6 lg:py-20'></div>
+                        <div className=' py-0.5 md:py-6 lg:py-20'></div>
 
 
                         {/* Statistics */}
                         {!isLoading && data && (
-                            <div className="flex flex-col sm:flex-row gap-6 md:gap-8">
+                            <div className="flex flex-row gap-6 md:gap-8">
                                 {/* Statistics Block 1 - Companies */}
-                                <div className="flex items-start gap-4">
+                                <div className="flex items-center">
                                     <div className=" rounded-lg px-4 md:px-6 py-3 md:py-4">
-                                        <div className="text-3xl md:text-4xl lg:text-5xl ">
+                                        <div className="text-3xl md:text-5xl lg:text-5xl ">
                                             {data.companiesFormed}+
                                         </div>
                                     </div>
                                     <div className="flex flex-col">
-                                        <span className="text-sm md:text-base font-medium text-foreground">Companies</span>
-                                            <span className="text-sm md:text-base font-medium text-foreground">formed</span>
-                                        <div className="flex items-center gap-2">
-                                            <div className="flex gap-0.5">
-                                                <div className="w-0.5 h-4 bg-muted-foreground/30 rotate-45"></div>
-                                                <div className="w-0.5 h-4 bg-muted-foreground/30 rotate-45"></div>
-                                                <div className="w-0.5 h-4 bg-muted-foreground/30 rotate-45"></div>
-                                            </div>
-                                        </div>
+                                        <span className="text-xs md:text-sm  text-foreground">Companies</span>
+                                        <span className="text-xs md:text-sm  text-foreground">formed</span>
+
                                     </div>
+                                </div>
+                                <div className="flex items-center ">
+                                    <div className="flex flex-col">
+                                        <div className="-mt-2.5 sm:-mt-2 w-0.25 h-4 bg-muted-foreground/30 rotate-60"></div>
+                                        <div className="-mt-2.5 sm:-mt-2 w-0.25 h-4 bg-muted-foreground/30 rotate-60"></div>
+                                        <div className="-mt-2.5 sm:-mt-2 w-0.25 h-4 bg-muted-foreground/30 rotate-60"></div>
+                                        <div className="-mt-2.5 sm:-mt-2 w-0.25 h-4 bg-muted-foreground/30 rotate-60"></div>
+                                        <div className="-mt-2.5 sm:-mt-2 w-0.25 h-4 bg-muted-foreground/30 rotate-60"></div>
+                                    </div>
+
                                 </div>
 
                                 {/* Statistics Block 2 - Countries */}
-                                <div className="flex items-start gap-4">
-                                    <div className="text-3xl md:text-4xl lg:text-5xl text-foreground">
+                                <div className="flex items-center gap-4">
+                                    <div className="text-3xl md:text-5xl lg:text-5xl text-foreground">
                                         {data.countriesServed}+
                                     </div>
                                     <div className="flex flex-col">
-                                        <span className="text-sm md:text-base font-medium text-foreground">Countries</span>
-                                        <span className="text-sm md:text-base font-medium text-foreground">served</span>
+                                        <span className="text-xs md:text-sm text-foreground">Countries</span>
+                                        <span className="text-xs md:text-sm text-foreground">served</span>
                                     </div>
                                 </div>
                             </div>
@@ -63,12 +67,12 @@ const GetToKnow = () => {
                     </div>
 
                     {/* Right Section - Image with Background Graphics */}
-                    <div className="flex-1 w-full lg:w-auto relative">
+                    <div className="flex-1 w-full lg:w-auto relative overflow-hidden">
                         <div className="relative max-w-xs md:max-w-sm mx-auto ">
                             {/* Large Blue-Purple Irregular Shape */}
-                            <div className="absolute inset-0 -z-10">
+                            <div className="absolute inset-0 -z-10 overflow-hidden">
                                 <div className="absolute top-0 right-0 w-[120%] h-[110%] bg-gradient-to-br from-blue-700 via-blue-600 to-[var(--color-purple)] rounded-[40%] transform translate-x-1/4 -translate-y-1/4"></div>
-                                
+
                                 {/* Concentric Semi-Circles */}
                                 <div className="absolute bottom-0 right-0 w-full h-full overflow-hidden">
                                     <svg className="absolute bottom-0 right-0 w-full h-full" viewBox="0 0 400 400" preserveAspectRatio="none">
@@ -112,7 +116,7 @@ const GetToKnow = () => {
                                     />
                                 </svg>
                             </div>
-                            
+
                             {/* Orange-Yellow squiggly line */}
                             <div className="absolute top-4 right-4 z-20">
                                 <svg className="w-12 h-12" viewBox="0 0 100 100" preserveAspectRatio="none">

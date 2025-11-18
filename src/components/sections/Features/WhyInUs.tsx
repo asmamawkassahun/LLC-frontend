@@ -26,7 +26,7 @@ const WhyInUs = () => {
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Title */}
                 <div className="text-center mb-12 md:mb-16">
-                    <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-5xl font-bold text-foreground">
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-foreground">
                         Why Incorporate In <span className="text-accent">The US</span>
                     </h2>
                 </div>
@@ -38,7 +38,7 @@ const WhyInUs = () => {
                         return (
                             <div 
                                 key={index}
-                                className="bg-card rounded-lg shadow-md p-6 md:p-8 hover:shadow-lg transition-shadow"
+                                className="bg-card rounded-lg shadow-md p-4 md:p-6 lg:p-8 hover:shadow-lg transition-shadow"
                             >
                                 {/* Icon */}
                                 <div className="mb-6">
@@ -48,12 +48,12 @@ const WhyInUs = () => {
                                 </div>
 
                                 {/* Title */}
-                                <h3 className="text-xl font-semibold text-foreground mb-4">
+                                <h3 className=" md:text-lg lg:text-xl font-medium text-foreground mb-4">
                                     {benefit.title}
                                 </h3>
 
                                 {/* Description */}
-                                <p className="text-lg text-muted-foreground leading-relaxed">
+                                <p className="text-base md:text-sm lg:text-lg text-muted-foreground leading-relaxed">
                                     {benefit.description}
                                 </p>
                             </div>

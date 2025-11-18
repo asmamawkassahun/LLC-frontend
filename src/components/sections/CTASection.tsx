@@ -32,22 +32,22 @@ const CTASection = () => {
                                 />
                             </div>
                         </div>
-            </div>
+                    </div>
 
                     {/* Right Section - Text and Buttons */}
-                    <div className="flex-1 space-y-6 order-1 sm:order-2">
+                    <div className="flex-1 space-y-24 order-1 sm:order-2">
                         {/* Text Content */}
                         <div className="space-y-4 max-w-md">
                             <h1 className="text-2xl md:text-4xl lg:text-5xl font-semibold text-foreground leading-tight">
-                        Do you have any questions?
-                    </h1>
-                            <p className="text-base md:text-lg text-muted-foreground">
-                        Our team will be happy to assist.
-                    </p>
-                </div>
+                                Do you have any questions?
+                            </h1>
+                            <p className="text-base lg:text-lg text-muted-foreground">
+                                Our team will be happy to assist.
+                            </p>
+                        </div>
 
                         {/* Buttons and Contact Info */}
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                        <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4">
                             <Button className="group bg-primary text-primary-foreground px-6 h-[56px] min-w-[160px] font-medium rounded-lg transition-all duration-300 hover:bg-accent hover:text-accent-foreground flex items-center justify-center">
                                 <span className="text-base group-hover:text-sm transition-all duration-300 whitespace-nowrap">Contact Us</span>
                                 <FaAngleRight className="w-5 h-5 ml-2 shrink-0" />

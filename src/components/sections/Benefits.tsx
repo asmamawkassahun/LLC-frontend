@@ -1,24 +1,27 @@
-import { HiClock, HiGlobeAlt, HiPhone, HiCurrencyDollar } from 'react-icons/hi';
+import {  HiGlobeAlt, HiPhone, HiCurrencyDollar } from 'react-icons/hi';
+import { CiClock2 } from "react-icons/ci";
+import { TfiHeadphoneAlt, TfiWorld } from 'react-icons/tfi';
+import { PiCurrencyDollarLight } from 'react-icons/pi';
 
 const Benefits = () => {
     const benefits = [
         {
-            icon: HiClock,
+            icon: CiClock2,
             title: "Quick delivery",
             description: "Efficient processes ensure fast company formation in the US & the UK."
         },
         {
-            icon: HiGlobeAlt,
+            icon: TfiWorld,
             title: "We accept all countries",
             description: "Entrepreneurs worldwide can access our services, regardless of location, promoting global business growth."
         },
         {
-            icon: HiPhone,
+            icon: TfiHeadphoneAlt,
             title: "Expert Support",
             description: "Our dedicated experts provide top-notch support, addressing concerns and ensuring a seamless experience throughout the process."
         },
         {
-            icon: HiCurrencyDollar,
+            icon: PiCurrencyDollarLight,
             title: "Competitive prices",
             description: "High-quality services at affordable rates, providing exceptional value without compromising on results."
         }
@@ -44,19 +47,19 @@ const Benefits = () => {
                         return (
                             <div key={index} className="flex flex-col items-center text-center">
                                 {/* Icon Badge */}
-                                <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-accent/10 flex items-center justify-center mb-4 md:mb-6">
-                                    <div className='w-10 h-10 md:w-12 md:h-12 rounded-full bg-accent/15 flex items-center justify-center'>
-                                        <Icon className="w-10 h-10 md:w-6 md:h-6 text-accent" />
+                                <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mb-4 md:mb-6">
+                                    <div className=' w-12 h-12 rounded-full bg-accent/15 flex items-center justify-center'>
+                                        <Icon className="w-6 h-6 md:w-6 md:h-6 text-blue-700" />
                                     </div>
                                 </div>
 
                                 {/* Title */}
-                                <h3 className="text-lg md:text-xl font-bold text-foreground mb-3 md:mb-4">
+                                <h3 className="text-lg md:text-xl font-medium text-foreground mb-3 md:mb-4">
                                     {benefit.title}
                                 </h3>
 
                                 {/* Description */}
-                                <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
+                                <p className="text-sm md:text-base max-w-[20.625rem] mx-auto text-muted-foreground leading-relaxed">
                                     {benefit.description}
                                 </p>
                             </div>

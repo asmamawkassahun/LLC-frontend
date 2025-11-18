@@ -71,10 +71,10 @@ const ContactSection = () => {
 
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary-foreground mb-4 md:mb-6">
+              <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-primary-foreground px-4 mb-4 md:mb-6">
                 Reach Out, We're Here to Help!
               </h1>
-              <p className="text-base md:text-lg  text-primary-foreground/90  ">
+              <p className="text-base md:text-lg px-4  text-primary-foreground/90  ">
                 Complete the form, and our team will promptly respond to your inquiry within our working hours!
               </p>
             </div>

@@ -45,7 +45,7 @@ const HowMuchTime = () => {
                 duration: 2,
                 ease: 'power2.out',
                 delay: index * 0.2, // Stagger the animations
-                onUpdate: function() {
+                onUpdate: function () {
                     if (timeRef) {
                         timeRef.textContent = Math.round(counter.value) + 'h';
                     }
@@ -61,37 +61,38 @@ const HowMuchTime = () => {
                     {/* Left Content */}
                     <div className="flex-2 space-y-6  lg:space-y-8">
                         <div className="space-y-4">
-                            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight">
-                        How much time to get your LLC?
-                    </h1>
+                            <h1 className="text-[1.6rem] md:text-3xl lg:text-5xl font-bold text-white leading-tight">
+                                How much time to get your LLC?
+                            </h1>
                             <div className="space-y-2 max-w-md  text-white/80">
-                                <p className="text-base  leading-relaxed">
+                                <p className="text-sm md:text-base lg:text-base  leading-relaxed">
                                     At Privatily we count delivery time by  hours, not by days or weeks like others do.
-                    </p>
-                                <p className="text-base  leading-relaxed">
-                        However, please be aware that these timelines are applicable only if you opt for LLC registration in one of our recommended US states.
-                    </p>
+                                </p>
+                                <p className="text-sm md:text-base lg:text-base  leading-relaxed">
+                                    However, please be aware that these timelines are applicable only if you opt for LLC registration in one of our recommended US states.
+                                </p>
                             </div>
                         </div>
-                        
+                        <div className=' md:py-16 lg:py-20'></div>
+
                         {/* Hourglass Image - Desktop only (hidden on mobile) */}
                         <div className="hidden md:block">
-                            <img 
-                                src="https://privatily.com/wp-content/uploads/2023/11/5-2-min.png" 
-                                alt="Hourglass" 
+                            <img
+                                src="https://privatily.com/wp-content/uploads/2023/11/5-2-min.png"
+                                alt="Hourglass"
                                 className="w-120 h-80 object-contain"
                             />
                         </div>
                     </div>
 
                     {/* Right Card */}
-                    <div className="flex-1 w-full lg:w-auto">
-                        <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 p-6 md:p-8">
-                            <div className=" text-center">
+                    <div className="flex-1 w-full h-fit lg:w-auto">
+                        <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-lg border border-white/20">
+                            <div className="text-center pt-6 md:pt-8">
                                 {timelines.map((timeline, index) => (
                                     <div key={index}>
-                                        <div className="py-4 md:py-6">
-                                            <div 
+                                        <div className="py-6 md:py-8">
+                                            <div
                                                 ref={(el) => {
                                                     if (el) timeRefs.current[index] = el;
                                                 }}
@@ -104,7 +105,7 @@ const HowMuchTime = () => {
                                             </div>
                                         </div>
                                         {index < timelines.length - 1 && (
-                                            <div className="border-t border-white/20"></div>
+                                            <div className="border-t w-full border-white/20"></div>
                                         )}
                                     </div>
                                 ))}
@@ -112,12 +113,12 @@ const HowMuchTime = () => {
                         </div>
                     </div>
                 </div>
-                
+
                 {/* Hourglass Image - Mobile only (shown below Right Card) */}
                 <div className="md:hidden mt-8 flex justify-center">
-                    <img 
-                        src="https://privatily.com/wp-content/uploads/2023/11/5-2-min.png" 
-                        alt="Hourglass" 
+                    <img
+                        src="https://privatily.com/wp-content/uploads/2023/11/5-2-min.png"
+                        alt="Hourglass"
                         className="w-full max-w-md h-auto object-contain"
                     />
                 </div>
