@@ -13,7 +13,7 @@ const LoginForm = () => {
     const [rememberMe, setRememberMe] = useState(false);
 
     return (
-        <div className="w-full max-w-md mx-auto">
+        <div className="w-full max-w-md mx-auto min-h-screen">
             {/* Heading */}
             <div className="text-center mb-8">
                 <h1 className="text-3xl font-extrabold text-foreground mb-2">

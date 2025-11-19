@@ -5,7 +5,7 @@ import AuthDescription from '@/components/sections/auth/AuthDescription';
 
 const RegisterPage = () => {
     return (
-        <div className="min-h-screen  overflow-y-hidden bg-accent sm:bg-button-secondary px-6 pt-6 sm:p-0 flex">
+        <div className="min-h-screen overflow-y-hidden bg-accent sm:bg-button-secondary px-6 pt-6 sm:p-0 flex">
             {/* Left Column - Branding and Illustration */}
             <AuthDescription />
 

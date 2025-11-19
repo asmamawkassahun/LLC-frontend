@@ -18,10 +18,10 @@ const AuthDescription = () => {
 
                 {/* Heading and Tagline */}
                 <div className=" max-w-lg flex-1 flex flex-col justify-center">
-                    <h1 className="text-4xl lg:text-5xl font-bold text-foreground mb-4 pr-28 leading-tight">
+                    <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4 pr-28 md:pr-0 lg:pr-28 leading-tight">
                         Your journey starts here
                     </h1>
-                    <p className="text-sm text-foreground leading-relaxed">
+                    <p className="text-sm md:text-base text-foreground leading-relaxed">
                         Every great business starts with a solid foundation — let's build yours.
                     </p>
                 </div>

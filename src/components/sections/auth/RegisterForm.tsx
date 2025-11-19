@@ -261,9 +261,9 @@ const RegisterForm = () => {
     const selectedCountry = uniqueCountries.find(c => c.code === countryCode) || uniqueCountries[0];
 
     return (
-        <div className="flex flex-col justify-between w-full md:h-auto ">
+        <div className="flex flex-col justify-between w-full min-h-screen ">
             <div className="max-w-md mx-auto w-full">
-                <div className='flex flex-col space-y-6 mt-18 items-center'>
+                <div className='flex flex-col space-y-6 lg:mt-18 items-center'>
                     <h2 className="text-3xl lg:text-4xl font-extrabold text-foreground ">
                         Let's get started!
                     </h2>

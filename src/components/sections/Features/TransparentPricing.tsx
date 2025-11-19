@@ -1,12 +1,16 @@
 import { useState, useRef, useEffect } from 'react';
-import { HiCheck, HiArrowRight } from 'react-icons/hi';
 import { BsLightning } from 'react-icons/bs';
 import { Button } from '@/components/ui/button';
 import { gsap } from 'gsap';
-import { PiCheckLight, PiCheckThin } from 'react-icons/pi';
+import { PiCheckLight } from 'react-icons/pi';
 import { VscArrowRight } from "react-icons/vsc";
+import { HiChat } from 'react-icons/hi';
 
-const TransparentPricing = () => {
+interface TransparentPricingProps {
+    variant?: 'features' | 'dashboard';
+}
+
+const TransparentPricing = ({ variant = 'features' }: TransparentPricingProps) => {
     const [selectedCountry, setSelectedCountry] = useState<'US' | 'UK'>('US');
     const headingRef = useRef<HTMLHeadingElement>(null);
 
@@ -81,61 +85,110 @@ const TransparentPricing = () => {
 
     const currentPricing = pricingData[selectedCountry];
 
-    // Animate heading from bottom to top on mount
+    // Animate heading from bottom to top on mount (only for features variant)
     useEffect(() => {
-        if (!headingRef.current) return;
+        if (variant === 'features' && headingRef.current) {
+            gsap.set(headingRef.current, {
+                y: 80,
+                opacity: 0
+            });
 
-        gsap.set(headingRef.current, {
-            y: 80,
-            opacity: 0
-        });
-
-        gsap.to(headingRef.current, {
-            y: 0,
-            opacity: 1,
-            duration: 1.2,
-            ease: 'power3.out'
-        });
-    }, []);
+            gsap.to(headingRef.current, {
+                y: 0,
+                opacity: 1,
+                duration: 1.2,
+                ease: 'power3.out'
+            });
+        }
+    }, [variant]);
 
     return (
         <div className="bg-background py-12 md:py-16 lg:py-20">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                {/* Transparent Pricing Header */}
-                <div className="text-center mb-12">
-                    <h1 ref={headingRef} className="text-xl md:text-5xl lg:text-5xl font-bold text-foreground mb-6">
-                        Transparent <span className="text-accent">Pricing</span>
-                    </h1>
-                    <div className="space-y-4">
-                        <p className="text-base text-foreground">
-                            Where do you want to Incorporate?
+            <div className={variant === 'dashboard' ? 'max-w-6xl mx-auto px-4 sm:px-6 lg:px-8' : 'container mx-auto px-4 sm:px-6 lg:px-8'}>
+                {/* Header Section - Conditional based on variant */}
+                {variant === 'dashboard' ? (
+                    <div className="text-center mb-8 md:mb-12">
+                        {/* Icon */}
+                        <div className="flex justify-center mb-4 md:mb-6">
+                            <img
+                                src="https://app.privatily.com/assets/img/header-icons/pricing.png"
+                                alt="Pricing icon"
+                                className="w-12 h-12 md:w-32 md:h-28"
+                            />
+                        </div>
+
+                        {/* Title */}
+                        <h1 className="text-3xl  font-bold text-foreground mb-2">
+                            Transparent Pricing
+                        </h1>
+
+                        {/* Subtitle */}
+                        <p className="text-base md:text-base text-foreground mb-6 md:mb-8">
+                            Two Packages, One Goal: Premium business formation services.
                         </p>
-                        <div className="flex justify-center gap-2 max-w-64 mx-auto bg-purple-900/15 rounded-full py-2">
-                            <button
-                                onClick={() => setSelectedCountry('US')}
-                                className={`flex items-center gap-2  px-4 rounded-full text-base font-medium transition-colors ${selectedCountry === 'US'
-                                    ? 'bg-card text-foreground '
-                                    : ' text-foreground hover:bg-card cursor-pointer'
-                                    }`}
-                            >
-                                <span className="">🇺🇸</span>
-                                <span className="text-sm">In the US</span>
-                            </button>
-                            <button
-                                onClick={() => setSelectedCountry('UK')}
-                                className={`flex items-center gap-2 p-3 rounded-full font-medium transition-colors ${selectedCountry === 'UK'
-                                    ? ' bg-card text-foreground'
-                                    : ' text-foreground hover:bg-card cursor-pointer'
-                                    }`}
-                            >
-                                <span className="">🇬🇧</span>
-                                <span className="text-sm">In the UK</span>
-                            </button>
+
+                        {/* Country Selection Toggle */}
+                        <div className="flex justify-center max-w-lg mx-auto">
+                            <div className="inline-flex w-full bg-accent/10 rounded-full p-1">
+                                <button
+                                    onClick={() => setSelectedCountry('US')}
+                                    className={`flex w-full items-center justify-center gap-2 px-4 md:px-6 py-2 md:py-3 rounded-full text-sm md:text-base font-medium transition-all ${selectedCountry === 'US'
+                                            ? 'bg-background text-foreground'
+                                            : ' hover:text-foreground'
+                                        }`}
+                                >
+                                    <span>In the US</span>
+                                    <span className="text-lg">🇺🇸</span>
+                                </button>
+                                <button
+                                    onClick={() => setSelectedCountry('UK')}
+                                    className={`flex w-full items-center justify-center gap-2 px-4 md:px-6 py-2 md:py-3 rounded-full text-sm md:text-base font-medium transition-all ${selectedCountry === 'UK'
+                                            ? 'bg-background text-foreground'
+                                            : ' hover:text-foreground'
+                                        }`}
+                                >
+                                    <span>In the UK</span>
+                                    <span className="text-lg">🇬🇧</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
+                ) : (
+                    <div className="text-center mb-12">
+                        <h1 ref={headingRef} className="text-xl md:text-5xl lg:text-5xl font-bold text-foreground mb-6">
+                            Transparent <span className="text-accent">Pricing</span>
+                        </h1>
+                        <div className="space-y-4">
+                            <p className="text-base text-foreground">
+                                Where do you want to Incorporate?
+                            </p>
+                            <div className="flex justify-center gap-2 max-w-64 mx-auto bg-purple-900/15 rounded-full py-2">
+                                <button
+                                    onClick={() => setSelectedCountry('US')}
+                                    className={`flex items-center gap-2  px-4 rounded-full text-base font-medium transition-colors ${selectedCountry === 'US'
+                                        ? 'bg-card text-foreground '
+                                        : ' text-foreground hover:bg-card cursor-pointer'
+                                        }`}
+                                >
+                                    <span className="">🇺🇸</span>
+                                    <span className="text-sm">In the US</span>
+                                </button>
+                                <button
+                                    onClick={() => setSelectedCountry('UK')}
+                                    className={`flex items-center gap-2 p-3 rounded-full font-medium transition-colors ${selectedCountry === 'UK'
+                                        ? ' bg-card text-foreground'
+                                        : ' text-foreground hover:bg-card cursor-pointer'
+                                        }`}
+                                >
+                                    <span className="">🇬🇧</span>
+                                    <span className="text-sm">In the UK</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
-                {/* Pricing Cards */}
+                {/* Shared Pricing Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4 mb-16 max-w-6xl mx-auto">
                     {/* Basic Plan Card */}
                     <div className="bg-card border border-border rounded-lg px-4 md:px-6 pt-6 md:pt-8">
@@ -157,8 +210,6 @@ const TransparentPricing = () => {
                                 </li>
                             ))}
                         </ul>
-
-
                     </div>
 
                     {/* Premium Plan Card */}
@@ -192,12 +243,11 @@ const TransparentPricing = () => {
                                 </li>
                             ))}
                         </ul>
-
-
                     </div>
                 </div>
 
-                {/* Dubai & Hong Kong Section */}
+                {/* Dubai & Hong Kong Section - Only for features variant */}
+                {variant === 'features' && (
                 <div className="mb-16">
                     <div className="text-center mb-8">
                         <h2 className="text-[1.6rem] sm:text-3xl md:text-[2rem] md:text-5xl font-semibold text-foreground mb-4 leading-tight">
@@ -242,7 +292,10 @@ const TransparentPricing = () => {
                     </div>
                 </div>
 
-                {/* Bonuses Section */}
+                )}
+
+                {/* Bonuses Section - Only for features variant */}
+                {variant === 'features' && (
                 <div className="flex flex-col md:flex-row items-center gap-8 lg:gap-12 max-w-6xl mx-auto">
                     <div className="flex-1">
                         <h2 className="text-2xl sm:text-3xl lg:text-5xl font-semibold text-foreground mb-4">
@@ -260,7 +313,17 @@ const TransparentPricing = () => {
                         />
                     </div>
                 </div>
+                )}
             </div>
+
+            {/* Fixed Chat Icon - Only for dashboard variant */}
+            {variant === 'dashboard' && (
+                <div className="fixed bottom-6 right-6 z-50">
+                    <button className="w-12 h-12 md:w-14 md:h-14 bg-purple hover:bg-purple-dark rounded-full flex items-center justify-center shadow-lg transition-colors">
+                        <HiChat className="w-6 h-6 md:w-7 md:h-7 text-white" />
+                    </button>
+                </div>
+            )}
         </div>
     );
 };

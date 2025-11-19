@@ -18,8 +18,8 @@ function Navbar() {
   const aboutRef = useRef<HTMLAnchorElement>(null);
   const pricingRef = useRef<HTMLAnchorElement>(null);
   const contactRef = useRef<HTMLAnchorElement>(null);
-  const signInRef = useRef<HTMLButtonElement>(null);
-  const startBusinessRef = useRef<HTMLButtonElement>(null);
+  const signInRef = useRef<HTMLAnchorElement>(null);
+  const startBusinessRef = useRef<HTMLAnchorElement>(null);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -172,17 +172,20 @@ function Navbar() {
 
             {/* Desktop Actions */}
             <div className='hidden lg:flex gap-6 items-center'>
-              <button 
+              <Link 
                 ref={signInRef}
+                to={ROUTES.LOGIN}
                 className='cursor-pointer font-medium hover:text-accent transition-colors'
               >
                 Sign in
-              </button>
+              </Link>
               <Button 
-                ref={startBusinessRef}
+                asChild
                 className='px-6 py-6 font-medium text-base cursor-pointer'
               >
-                Start My Business
+                <Link ref={startBusinessRef} to={ROUTES.REGISTER}>
+                  Start My Business
+                </Link>
               </Button>
             </div>
 
@@ -190,10 +193,12 @@ function Navbar() {
             {!isMenuOpen && (
               <div className='lg:hidden flex items-center gap-4'>
                 <Button
+                  asChild
                   className='px-4 py-2 font-medium text-sm cursor-pointer'
-                  onClick={closeMenu}
                 >
-                  Start My Business
+                  <Link to={ROUTES.REGISTER} onClick={closeMenu}>
+                    Start My Business
+                  </Link>
                 </Button>
                 <button
                   onClick={toggleMenu}
@@ -277,17 +282,20 @@ function Navbar() {
 
           {/* Mobile Actions at Bottom */}
           <div className="px-4 py-8  flex flex-col items-center gap-4">
-            <button
-              className='cursor-pointer font-medium hover:text-accent transition-colors text-lg'
+            <Link
+              to={ROUTES.LOGIN}
+              className='cursor-pointer font-medium w-full hover:text-accent transition-colors text-lg'
               onClick={closeMenu}
             >
               Sign In
-            </button>
+            </Link>
             <Button
-              className='w-full max-w-xs px-6 py-6 font-medium text-base cursor-pointer'
-              onClick={closeMenu}
+              asChild
+              className='w-full max-w-full px-6 py-6 font-medium text-base cursor-pointer'
             >
-              Start My Business
+              <Link to={ROUTES.REGISTER} onClick={closeMenu}>
+                Start My Business
+              </Link>
             </Button>
           </div>
         </div>

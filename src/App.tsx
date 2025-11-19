@@ -1,8 +1,11 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ROUTES } from '@/constants/routes';
-import { HomePage, AboutPage, PricingPage, ContactPage, LoginPage, RegisterPage, NotFoundPage } from '@/pages';
+import { HomePage, AboutPage, PricingPage, ContactPage, LoginPage, RegisterPage, NotFoundPage, DashboardPage } from '@/pages';
 import MainLayout from '@/layouts/MainLayout';
 import AuthLayout from '@/layouts/AuthLayout';
+import DashboardLayout from '@/layouts/DashboardLayout';
+import AddOrderPage from './pages/order/Add';
+import PaymentPage from './pages/order/Payment';
 
 function App() {
   return (
@@ -21,6 +24,13 @@ function App() {
         <Route element={<AuthLayout />}>
           <Route path={ROUTES.LOGIN} element={<LoginPage />} />
           <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
+        </Route>
+
+        {/* Routes with DashboardLayout (with Navbar) */}
+        <Route element={<DashboardLayout />}>
+          <Route path={ROUTES.DASHBOARD} element={<DashboardPage />} />
+          <Route path={ROUTES.ORDER_ADD} element={<AddOrderPage />} />
+          <Route path={ROUTES.ORDER_PAYMENT} element={<PaymentPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
