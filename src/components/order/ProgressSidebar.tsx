@@ -12,7 +12,7 @@ interface ProgressSidebarProps {
 
 const ProgressSidebar = ({ currentStep, steps }: ProgressSidebarProps) => {
     return (
-        <div className="w-64 h-full bg-muted/30 px-6 py-8">
+        <div className="w-48 lg:w-64 h-full bg-muted/30 px-6 py-8">
             <div className="flex flex-col gap-6">
                 {steps.map((step, index) => {
                     const isCompleted = step.number < currentStep;
@@ -20,12 +20,12 @@ const ProgressSidebar = ({ currentStep, steps }: ProgressSidebarProps) => {
                     const isFuture = step.number > currentStep;
 
                     return (
-                        <div key={step.number} className="relative flex items-start h-32 gap-4">
+                        <div key={step.number} className="relative flex items-start h-28 gap-4">
                             {/* Vertical Line */}
                             {index < steps.length - 1 && (
                                 <div 
                                     className={`absolute left-4 w-0.5 ${isCompleted || isActive ? 'bg-purple' : 'bg-muted'}`}
-                                    style={{ top: '2.3rem', height: '7rem' }}
+                                    style={{ top: '2.3rem', height: '6rem' }}
                                 />
                             )}
                             

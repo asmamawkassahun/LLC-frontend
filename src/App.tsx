@@ -29,7 +29,10 @@ function App() {
         {/* Routes with DashboardLayout (with Navbar) */}
         <Route element={<DashboardLayout />}>
           <Route path={ROUTES.DASHBOARD} element={<DashboardPage />} />
+          <Route path="/order/:plan" element={<AddOrderPage />} />
           <Route path={ROUTES.ORDER_ADD} element={<AddOrderPage />} />
+        </Route>
+        <Route>
           <Route path={ROUTES.ORDER_PAYMENT} element={<PaymentPage />} />
         </Route>
       </Routes>

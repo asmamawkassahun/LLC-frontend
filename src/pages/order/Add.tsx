@@ -1,4 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { gsap } from 'gsap';
+import { ROUTES } from '@/constants/routes';
+import { Button } from '@/components/ui/button';
+import { HiCheck,  HiDownload } from 'react-icons/hi';
+import { MdNavigateNext } from "react-icons/md";
 import ProgressSidebar from '@/components/order/ProgressSidebar';
 import ProgressBar from '@/components/order/ProgressBar';
 import Step1CompanyName from '@/components/order/Step1CompanyName';
@@ -6,7 +12,6 @@ import Step2StateSelection from '@/components/order/Step2StateSelection';
 import Step3Owners from '@/components/order/Step3Owners';
 import Step4Address from '@/components/order/Step4Address';
 import Step5OrderSummary from '@/components/order/Step5OrderSummary';
-import ChatIcon from '@/components/order/ChatIcon';
 
 const steps = [
     { number: 1, label: 'The company' },
@@ -17,11 +22,59 @@ const steps = [
 ];
 
 const AddOrderPage = () => {
+    const { plan } = useParams<{ plan?: string }>();
+    const navigate = useNavigate();
+    const stepContainerRef = useRef<HTMLDivElement>(null);
+    const isAnimatingRef = useRef<boolean>(false);
+    const [lastSaved, setLastSaved] = useState<Date>(new Date());
+
+    // Log the plan for debugging (can be used later for premium implementation)
+    useEffect(() => {
+        if (plan) {
+            console.log('Selected plan:', plan);
+        }
+    }, [plan]);
+
+    // Initial animation on mount
+    useEffect(() => {
+        if (stepContainerRef.current) {
+            const initialStepElement = stepContainerRef.current.querySelector('[data-step="1"]') as HTMLElement;
+            if (initialStepElement) {
+                gsap.set(initialStepElement, { y: 50 });
+                gsap.to(initialStepElement, {
+                    y: 0,
+                    duration: 0.5,
+                    ease: 'power2.out'
+                });
+            }
+        }
+    }, []);
+
+    // Update last saved time periodically
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setLastSaved(new Date());
+        }, 60000); // Update every minute
+
+        return () => clearInterval(interval);
+    }, []);
+
+    const getTimeAgo = (date: Date): string => {
+        const now = new Date();
+        const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / 60000);
+
+        if (diffInMinutes < 1) return 'just now';
+        if (diffInMinutes === 1) return '1 minute ago';
+        return `${diffInMinutes} minutes ago`;
+    };
+
+
     const [currentStep, setCurrentStep] = useState(1);
+    const [animatingStep, setAnimatingStep] = useState<number | null>(null);
     const [formData, setFormData] = useState({
         companyName: '',
         type: 'LLC',
-        category: '',
+        category: [] as string[],
         state: '',
         owners: [] as Array<{ id: string; fullName: string; ownershipPercentage: number; isCompany: boolean }>,
         address: {
@@ -30,7 +83,7 @@ const AddOrderPage = () => {
             state: '',
             zipCode: '',
             country: 'United States',
-            hasSSNOrITIN: null as boolean | null,
+            hasSSNOrITIN: false,
             ssnOrITIN: '',
         },
     });
@@ -39,30 +92,145 @@ const AddOrderPage = () => {
         setFormData((prev) => ({ ...prev, ...data }));
     };
 
+    const animateStepTransition = (newStep: number, direction: 'next' | 'back', currentStepValue: number) => {
+        if (isAnimatingRef.current || !stepContainerRef.current) return;
+
+        isAnimatingRef.current = true;
+        const container = stepContainerRef.current;
+
+        // Set animating step (old step) and current step (new step) so both render
+        setAnimatingStep(currentStepValue);
+        setCurrentStep(newStep);
+
+        // Wait for React to render new step
+        setTimeout(() => {
+            const oldStepElement = container.querySelector(`[data-step="${currentStepValue}"]`) as HTMLElement;
+            const newStepElement = container.querySelector(`[data-step="${newStep}"]`) as HTMLElement;
+
+            if (!oldStepElement || !newStepElement) {
+                isAnimatingRef.current = false;
+                setAnimatingStep(null);
+                return;
+            }
+
+            // Set initial position for new step (below viewport)
+            gsap.set(newStepElement, {
+                y: direction === 'next' ? window.innerHeight : -window.innerHeight,
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                width: '100%'
+            });
+
+            // Ensure old step is positioned relatively
+            gsap.set(oldStepElement, {
+                position: 'relative'
+            });
+
+            // Animate both steps simultaneously
+            const tl = gsap.timeline({
+                onComplete: () => {
+                    // Clean up
+                    setAnimatingStep(null);
+                    gsap.set(oldStepElement, { clearProps: 'all' });
+                    gsap.set(newStepElement, { clearProps: 'all' });
+                    // Scroll to top of container
+                    container.scrollTo({ top: 0, behavior: 'smooth' });
+                    isAnimatingRef.current = false;
+                }
+            });
+
+            // Animate old step out and new step in simultaneously
+            tl.to(oldStepElement, {
+                y: direction === 'next' ? -window.innerHeight : window.innerHeight,
+                duration: 0.6,
+                ease: 'power2.inOut'
+            }, 0)
+                .to(newStepElement, {
+                    y: 0,
+                    duration: 0.6,
+                    ease: 'power2.inOut'
+                }, 0);
+        }, 10);
+    };
+
     const handleNext = () => {
-        if (currentStep < steps.length) {
-            setCurrentStep(currentStep + 1);
+        if (currentStep < steps.length && !isAnimatingRef.current) {
+            animateStepTransition(currentStep + 1, 'next', currentStep);
         }
     };
 
     const handleBack = () => {
-        if (currentStep > 1) {
-            setCurrentStep(currentStep - 1);
+        if (currentStep > 1 && !isAnimatingRef.current) {
+            animateStepTransition(currentStep - 1, 'back', currentStep);
         }
     };
+
 
     const handleSubmit = () => {
         // Handle order submission
         console.log('Order submitted:', formData);
-        // You can add navigation to a success page or show a success message here
+        // Navigate to payment page
+        navigate(ROUTES.ORDER_PAYMENT);
     };
 
     const handleEditStep = (step: number) => {
-        setCurrentStep(step);
+        if (!isAnimatingRef.current) {
+            const direction = step > currentStep ? 'next' : 'back';
+            animateStepTransition(step, direction, currentStep);
+        }
+    };
+
+    // Validation functions for each step
+    const isStep1Valid = () => {
+        return !!(formData.companyName && formData.type && formData.category.length > 0);
+    };
+
+    const isStep2Valid = () => {
+        // Valid if state is selected (either predefined state or "other" state name)
+        // "other" alone is not valid - user must select an actual state
+        return !!(formData.state && formData.state.trim() !== '' && formData.state !== 'other');
+    };
+
+    const isStep3Valid = () => {
+        if (formData.owners.length === 0) return false;
+        const allOwnersHaveNames = formData.owners.every(owner => owner.fullName.trim() !== '');
+        const totalPercentage = formData.owners.reduce((sum, owner) => sum + owner.ownershipPercentage, 0);
+        return allOwnersHaveNames && totalPercentage === 100;
+    };
+
+    const isStep4Valid = () => {
+        const address = formData.address;
+        return !!(
+            address.streetAddress.trim() !== '' &&
+            address.city.trim() !== '' &&
+            address.state.trim() !== '' &&
+            address.zipCode.trim() !== '' &&
+            address.country.trim() !== '' &&
+            (address.hasSSNOrITIN === false || address.ssnOrITIN.trim() !== '')
+        );
+    };
+
+    const isCurrentStepValid = () => {
+        switch (currentStep) {
+            case 1:
+                return isStep1Valid();
+            case 2:
+                return isStep2Valid();
+            case 3:
+                return isStep3Valid();
+            case 4:
+                return isStep4Valid();
+            case 5:
+                return true; // Step 5 doesn't need validation
+            default:
+                return false;
+        }
     };
 
     return (
-        <div className="min-h-screen max-w-7xl mx-auto flex flex-col md:flex-row gap-2 bg-background px-4 md:px-6">
+        <div className="h-[calc(100vh-96px)] w-full max-w-[1920px] mx-auto flex flex-col md:flex-row gap-2 bg-background px-2 sm:px-4 md:px-6 mb-6 overflow-hidden">
             {/* Mobile Progress Bar */}
             <div className="md:hidden pt-4">
                 <ProgressBar
@@ -73,60 +241,133 @@ const AddOrderPage = () => {
             </div>
 
             {/* Main Content */}
-            <div className="md:flex-3 lg:flex-2  lg:px-12 pt-6 md:pt-8 sm:border border-border rounded-lg overflow-y-auto">
-                {currentStep === 1 && (
-                    <Step1CompanyName
-                        onNext={handleNext}
-                        formData={{
-                            companyName: formData.companyName,
-                            type: formData.type,
-                            category: formData.category,
-                        }}
-                        onFormDataChange={handleFormDataChange}
-                    />
-                )}
-                {currentStep === 2 && (
-                    <Step2StateSelection
-                        onNext={handleNext}
-                        onBack={handleBack}
-                        selectedState={formData.state}
-                        onStateChange={(state) => handleFormDataChange({ state })}
-                        companyName={formData.companyName || 'your'}
-                    />
-                )}
-                {currentStep === 3 && (
-                    <Step3Owners
-                        onNext={handleNext}
-                        onBack={handleBack}
-                        companyName={formData.companyName || 'your company'}
-                        owners={formData.owners}
-                        onOwnersChange={(owners) => handleFormDataChange({ owners })}
-                    />
-                )}
-                {currentStep === 4 && (
-                    <Step4Address
-                        onNext={handleNext}
-                        onBack={handleBack}
-                        companyName={formData.companyName || 'your company'}
-                        address={formData.address}
-                        onAddressChange={(address) => handleFormDataChange({ address })}
-                        selectedState={formData.state}
-                    />
-                )}
-                {currentStep === 5 && (
-                    <Step5OrderSummary
-                        onBack={handleBack}
-                        onSubmit={handleSubmit}
-                        formData={formData}
-                        onEditStep={handleEditStep}
-                    />
-                )}
+            <div className="flex-1 flex flex-col md:flex-row gap-2 min-w-0">
+                <div
+                    ref={stepContainerRef}
+                    className="flex-1 md:flex-2 lg:flex-3 min-w-0 sm:border border-border rounded-lg flex flex-col h-full"
+                >
+                    {/* Scrollable Content Area */}
+                    <div className="flex-1 overflow-y-auto relative  sm:px-6 md:px-8 lg:px-12 pt-4 sm:pt-6 md:pt-8 min-w-0">
+                        <div className="relative">
+                            {/* Render steps - show current and animating step during transition */}
+                            {(currentStep === 1 || animatingStep === 1) && (
+                                <div data-step="1" className="relative">
+                                    <Step1CompanyName
+                                        formData={{
+                                            companyName: formData.companyName,
+                                            type: formData.type,
+                                            category: formData.category,
+                                        }}
+                                        onFormDataChange={handleFormDataChange}
+                                    />
+                                </div>
+                            )}
+                            {(currentStep === 2 || animatingStep === 2) && (
+                                <div data-step="2" className="relative">
+                                    <Step2StateSelection
+                                        selectedState={formData.state}
+                                        onStateChange={(state) => handleFormDataChange({ state })}
+                                        companyName={formData.companyName || 'your'}
+                                    />
+                                </div>
+                            )}
+                            {(currentStep === 3 || animatingStep === 3) && (
+                                <div data-step="3" className="relative">
+                                    <Step3Owners
+                                        companyName={formData.companyName || 'your company'}
+                                        owners={formData.owners}
+                                        onOwnersChange={(owners) => handleFormDataChange({ owners })}
+                                    />
+                                </div>
+                            )}
+                            {(currentStep === 4 || animatingStep === 4) && (
+                                <div data-step="4" className="relative">
+                                    <Step4Address
+                                        companyName={formData.companyName || 'your company'}
+                                        address={formData.address}
+                                        onAddressChange={(address) => handleFormDataChange({ address })}
+                                        selectedState={formData.state}
+                                    />
+                                </div>
+                            )}
+                            {(currentStep === 5 || animatingStep === 5) && (
+                                <div data-step="5" className="relative">
+                                    <Step5OrderSummary
+                                        formData={formData}
+                                        onEditStep={handleEditStep}
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Global Footer - Sticky at bottom of container */}
+                    <div className="sticky bottom-0 bg-background border-t border-border z-40 px-4 sm:px-6 py-3 sm:py-4 mt-auto shrink-0">
+                        <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
+                            {/* Left: Saved Status */}
+                            <div className="flex items-center gap-2 text-sm text-green-600">
+                                <HiCheck className="w-5 h-5" />
+                                <span className='text-xs lg:text-sm'>Saved {getTimeAgo(lastSaved)}</span>
+                            </div>
+
+                            {/* Right: Navigation Buttons */}
+                            <div className="flex gap-3 sm:gap-8 items-center">
+                                {/* Download Summary Button - Only for Step 5 */}
+                                {currentStep === 5 && (
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => {
+                                            // TODO: Implement download summary functionality
+                                            console.log('Download summary');
+                                        }}
+                                        className="px-6 py-2 text-sm font-medium border-border"
+                                    >
+                                        <HiDownload className="w-4 h-4 mr-2" />
+                                        Download Summary
+                                    </Button>
+                                )}
+
+                                {/* Back Button - Show for steps 2-5 */}
+                                {currentStep > 1 && (
+                                    <button
+                                        onClick={handleBack}
+                                        className="text-sm text-foreground hover:text-purple transition-colors cursor-pointer"
+                                    >
+                                        Back
+                                    </button>
+                                )}
+
+                                {/* Next/Save & Confirm Button */}
+                                {currentStep === 5 ? (
+                                    <Button
+                                        onClick={handleSubmit}
+                                        className="bg-purple hover:bg-purple-dark text-white px-6 py-2 text-sm font-medium"
+                                    >
+                                        <HiCheck className="w-4 h-4 mr-2" />
+                                        Save & Confirm
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        onClick={handleNext}
+                                        disabled={!isCurrentStepValid()}
+                                        className="bg-purple hover:bg-purple-dark text-white px-6 py-2 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        Next
+                                        <MdNavigateNext className="w-4 h-4" />
+                                    </Button>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Progress Sidebar - Hidden on mobile */}
+                <div className="hidden md:block border border-border rounded-lg overflow-y-hidden">
+                    <ProgressSidebar currentStep={currentStep} steps={steps} />
+                </div>
             </div>
 
-            {/* Progress Sidebar - Hidden on mobile */}
-            <div className="hidden md:block border border-border rounded-lg">
-                <ProgressSidebar currentStep={currentStep} steps={steps} />
-            </div>
+
 
             {/* Chat Icon */}
             {/* <ChatIcon /> */}

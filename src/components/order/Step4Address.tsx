@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import StepHeader from './StepHeader';
-import NavigationButtons from './NavigationButtons';
 
 interface AddressData {
     streetAddress: string;
@@ -8,7 +7,7 @@ interface AddressData {
     state: string;
     zipCode: string;
     country: string;
-    hasSSNOrITIN: boolean | null;
+    hasSSNOrITIN: boolean;
     ssnOrITIN: string;
 }
 
@@ -36,22 +35,20 @@ const COUNTRIES = [
 ];
 
 interface Step4AddressProps {
-    onNext: () => void;
-    onBack: () => void;
     companyName: string;
     address: AddressData;
     onAddressChange: (address: AddressData) => void;
     selectedState?: string; // State selected in step 2
 }
 
-const Step4Address = ({ onNext, onBack, companyName, address, onAddressChange, selectedState }: Step4AddressProps) => {
+const Step4Address = ({ companyName, address, onAddressChange, selectedState }: Step4AddressProps) => {
     const [localAddress, setLocalAddress] = useState<AddressData>(address || {
         streetAddress: '',
         city: '',
         state: selectedState || '',
         zipCode: '',
         country: 'United States',
-        hasSSNOrITIN: null,
+        hasSSNOrITIN: false,
         ssnOrITIN: '',
     });
 
@@ -75,7 +72,6 @@ const Step4Address = ({ onNext, onBack, companyName, address, onAddressChange, s
         localAddress.state.trim() !== '' &&
         localAddress.zipCode.trim() !== '' &&
         localAddress.country.trim() !== '' &&
-        localAddress.hasSSNOrITIN !== null &&
         (localAddress.hasSSNOrITIN === false || localAddress.ssnOrITIN.trim() !== '');
 
     return (
@@ -83,7 +79,7 @@ const Step4Address = ({ onNext, onBack, companyName, address, onAddressChange, s
             <div className="flex flex-col gap-24">
                 <StepHeader
                     icon="https://app.privatily.com/assets/img/header-icones/adresse.png"
-                    title={`Address of ${companyName}`}
+                    title="Residential Address"
                     subtitle="This is the home address of my name, You can be located in any country."
                 />
 
@@ -223,12 +219,6 @@ const Step4Address = ({ onNext, onBack, companyName, address, onAddressChange, s
                 </div>
             </div>
 
-            <NavigationButtons
-                onNext={onNext}
-                onBack={onBack}
-                showBack={true}
-                nextDisabled={!isValid}
-            />
         </div>
     );
 };

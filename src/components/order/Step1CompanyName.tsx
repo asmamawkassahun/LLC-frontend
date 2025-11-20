@@ -3,17 +3,15 @@ import { HiInformationCircle } from 'react-icons/hi';
 import { HiChevronLeft, HiChevronRight } from 'react-icons/hi';
 import StepHeader from './StepHeader';
 import CategoryCard from './CategoryCard';
-import NavigationButtons from './NavigationButtons';
 import Tooltip from './Tooltip';
 
 interface Step1CompanyNameProps {
-    onNext: () => void;
     formData: {
         companyName: string;
         type: string;
-        category: string;
+        category: string[];
     };
-    onFormDataChange: (data: Partial<{ companyName: string; type: string; category: string }>) => void;
+    onFormDataChange: (data: Partial<{ companyName: string; type: string; category: string[] }>) => void;
 }
 
 const categories = [
@@ -37,7 +35,7 @@ const categories = [
 
 const types = ['LLC', 'L.L.C.', 'LIMITED LIABILITY COMPANY'];
 
-const Step1CompanyName = ({ onNext, formData, onFormDataChange }: Step1CompanyNameProps) => {
+const Step1CompanyName = ({ formData, onFormDataChange }: Step1CompanyNameProps) => {
     const [currentPage, setCurrentPage] = useState(0);
     const [itemsPerPage, setItemsPerPage] = useState(4);
 
@@ -57,14 +55,17 @@ const Step1CompanyName = ({ onNext, formData, onFormDataChange }: Step1CompanyNa
 
     const totalPages = Math.ceil(categories.length / itemsPerPage);
 
-    const handleNext = () => {
-        if (formData.companyName && formData.type && formData.category) {
-            onNext();
-        }
-    };
-
     const handleCategoryClick = (categoryId: string) => {
-        onFormDataChange({ category: categoryId });
+        const currentCategories = formData.category || [];
+        const isSelected = currentCategories.includes(categoryId);
+        
+        if (isSelected) {
+            // Remove category if already selected
+            onFormDataChange({ category: currentCategories.filter(id => id !== categoryId) });
+        } else {
+            // Add category if not selected
+            onFormDataChange({ category: [...currentCategories, categoryId] });
+        }
     };
 
     const handlePrevPage = () => {
@@ -133,29 +134,29 @@ const Step1CompanyName = ({ onNext, formData, onFormDataChange }: Step1CompanyNa
                     <label className="sm:text-sm text-xs text-center font-medium text-foreground mb-4 block">
                         Categories <span className="text-red-500">*</span>
                     </label>
-                    <div className="flex items-center gap- md:gap-3 lg:gap-4">
+                    <div className="flex items-center md:gap-3 lg:gap-4">
                         <button
                             onClick={handlePrevPage}
                             disabled={currentPage === 0}
-                            className="w-5 h-5 sm:w-10 sm:h-10 md:w-10 md:h-10 flex items-center justify-center bg-white border border-gray-300 rounded-full hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all shrink-0 shadow-sm"
+                            className="w-5 h-5 flex items-center justify-center bg-white border border-gray-300 rounded-full hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all shrink-0 shadow-sm"
                         >
                             <HiChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 md:w-5 md:h-5 text-gray-600" />
                         </button>
                         <div className="flex-1 overflow-hidden">
                             <div 
-                                className="flex gap-2 md:gap-3 lg:gap-4 transition-transform duration-300 ease-in-out"
+                                className="flex gap-2 sm:gap-3 lg:gap-4 transition-transform duration-300 ease-in-out"
                                 style={{ 
                                     transform: `translateX(-${currentPage * 100}%)` 
                                 }}
                             >
                                 {Array.from({ length: totalPages }).map((_, pageIndex) => (
-                                    <div key={pageIndex} className="flex gap-2 md:gap-3 lg:gap-4 shrink-0 w-full mx-auto -mr-2 sm:-mr-3 lg:-mr-4">
+                                    <div key={pageIndex} className="flex py-2  gap-2 md:gap-3 lg:gap-4 shrink-0 w-full mx-auto -mr-2 sm:-mr-3 lg:-mr-4 px-2">
                                         {categories.slice(pageIndex * itemsPerPage, (pageIndex + 1) * itemsPerPage).map((category) => (
                                             <div key={category.id} className="flex-1 shrink-0" style={{ minWidth: 0 }}>
                                                 <CategoryCard
                                                     icon={category.icon}
                                                     label={category.label}
-                                                    isSelected={formData.category === category.id}
+                                                    isSelected={formData.category?.includes(category.id) || false}
                                                     onClick={() => handleCategoryClick(category.id)}
                                                 />
                                             </div>
@@ -167,7 +168,7 @@ const Step1CompanyName = ({ onNext, formData, onFormDataChange }: Step1CompanyNa
                         <button
                             onClick={handleNextPage}
                             disabled={currentPage === totalPages - 1}
-                            className="w-5 h-5 lg:w-10 lg:h-10 flex items-center justify-center bg-white border border-gray-300 rounded-full hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all shrink-0 shadow-sm"
+                            className="w-5 h-5  flex items-center justify-center bg-white border border-gray-300 rounded-full hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all shrink-0 shadow-sm"
                         >
                             <HiChevronRight className="w-4 h-4 lg:w-5 lg:h-5 text-gray-600" />
                         </button>
@@ -185,10 +186,6 @@ const Step1CompanyName = ({ onNext, formData, onFormDataChange }: Step1CompanyNa
                 </div>
             </div>
 
-            <NavigationButtons
-                onNext={handleNext}
-                nextDisabled={!formData.companyName || !formData.type || !formData.category}
-            />
         </div>
     );
 };

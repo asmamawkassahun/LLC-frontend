@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { BsLightning } from 'react-icons/bs';
 import { Button } from '@/components/ui/button';
 import { gsap } from 'gsap';
@@ -13,6 +14,17 @@ interface TransparentPricingProps {
 const TransparentPricing = ({ variant = 'features' }: TransparentPricingProps) => {
     const [selectedCountry, setSelectedCountry] = useState<'US' | 'UK'>('US');
     const headingRef = useRef<HTMLHeadingElement>(null);
+    const navigate = useNavigate();
+
+    const handleGoBasic = () => {
+        const plan = selectedCountry === 'US' ? 'Basic_us' : 'Basic_uk';
+        navigate(`/order/${plan}`);
+    };
+
+    const handleGoPremium = () => {
+        // Will be implemented later
+        console.log('Premium plan selected');
+    };
 
     // Pricing data for US and UK
     const pricingData = {
@@ -198,7 +210,10 @@ const TransparentPricing = ({ variant = 'features' }: TransparentPricingProps) =
                             <span className="text-lg text-muted-foreground ml-2">and then {currentPricing.basic.yearly}</span>
                         </div>
                         <p className="text-base md:text-base lg:text-lg text-muted-foreground mb-12">If you're operating with a low budget.</p>
-                        <Button className="w-full bg-primary mb-6 text-primary-foreground hover:bg-primary/90 py-6 text-lg font-medium">
+                        <Button 
+                            onClick={handleGoBasic}
+                            className="w-full bg-primary mb-6 text-primary-foreground hover:bg-primary/90 py-6 text-lg font-medium"
+                        >
                             Go Basic
                         </Button>
 
@@ -223,7 +238,10 @@ const TransparentPricing = ({ variant = 'features' }: TransparentPricingProps) =
                             <span className="text-lg text-primary-foreground/80 ml-2">and then {currentPricing.premium.yearly}</span>
                         </div>
                         <p className="text-base text-primary-foreground/90 mb-12">Enhanced, fast, and exclusive service.</p>
-                        <Button className="w-full bg-orange-dark mb-6 hover:bg-orange text-primary-foreground py-6 text-lg font-medium">
+                        <Button 
+                            onClick={handleGoPremium}
+                            className="w-full bg-orange-dark mb-6 hover:bg-orange text-primary-foreground py-6 text-lg font-medium"
+                        >
                             Go Premium
                         </Button>
 

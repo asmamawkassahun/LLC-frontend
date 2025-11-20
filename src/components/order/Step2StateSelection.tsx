@@ -1,14 +1,22 @@
+import { useState, useRef, useEffect } from 'react';
 import StepHeader from './StepHeader';
 import StateCard from './StateCard';
-import NavigationButtons from './NavigationButtons';
 
 interface Step2StateSelectionProps {
-    onNext: () => void;
-    onBack: () => void;
     selectedState: string;
     onStateChange: (state: string) => void;
     companyName?: string;
 }
+
+const US_STATES = [
+    'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware',
+    'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky',
+    'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi',
+    'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico',
+    'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania',
+    'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont',
+    'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
+];
 
 const states = [
     {
@@ -51,7 +59,68 @@ const states = [
     },
 ];
 
-const Step2StateSelection = ({ onNext, onBack, selectedState, onStateChange, companyName = 'your' }: Step2StateSelectionProps) => {
+const Step2StateSelection = ({ selectedState, onStateChange, companyName = 'your' }: Step2StateSelectionProps) => {
+    const [isOtherDropdownOpen, setIsOtherDropdownOpen] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+    const dropdownRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    // Check if selected state is an "other" state (not one of the predefined states)
+    const isOtherStateSelected = selectedState === 'other' || 
+        (selectedState && !['new-mexico', 'wyoming', 'delaware'].includes(selectedState));
+    
+    // Get the selected state name if it's an "other" state
+    const getSelectedOtherState = () => {
+        if (isOtherStateSelected && selectedState !== 'other') {
+            return selectedState;
+        }
+        return '';
+    };
+
+    const [selectedOtherState, setSelectedOtherState] = useState(getSelectedOtherState());
+
+    useEffect(() => {
+        setSelectedOtherState(getSelectedOtherState());
+    }, [selectedState]);
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsOtherDropdownOpen(false);
+            }
+        };
+
+        if (isOtherDropdownOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isOtherDropdownOpen]);
+
+    const handleOtherCardClick = () => {
+        if (selectedState !== 'other') {
+            onStateChange('other');
+        }
+        setIsOtherDropdownOpen(true);
+        setTimeout(() => {
+            inputRef.current?.focus();
+        }, 100);
+    };
+
+    const handleStateSelect = (stateName: string) => {
+        onStateChange(stateName);
+        setSelectedOtherState(stateName);
+        setIsOtherDropdownOpen(false);
+        setSearchTerm('');
+    };
+
+    const filteredStates = US_STATES.filter(state =>
+        state.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     return (
         <div className="max-w-5xl mx-auto">
             <StepHeader
@@ -68,18 +137,29 @@ const Step2StateSelection = ({ onNext, onBack, selectedState, onStateChange, com
                         cost={state.cost}
                         description={state.description}
                         tags={state.tags}
-                        isSelected={selectedState === state.id}
-                        onClick={() => onStateChange(state.id)}
+                        isSelected={state.id === 'other' ? isOtherStateSelected : selectedState === state.id}
+                        onClick={() => {
+                            if (state.id === 'other') {
+                                handleOtherCardClick();
+                            } else {
+                                onStateChange(state.id);
+                                setIsOtherDropdownOpen(false);
+                            }
+                        }}
+                        isOther={state.id === 'other'}
+                        showDropdown={state.id === 'other' && isOtherStateSelected}
+                        isDropdownOpen={isOtherDropdownOpen}
+                        dropdownRef={dropdownRef}
+                        inputRef={inputRef}
+                        searchTerm={searchTerm}
+                        onSearchChange={setSearchTerm}
+                        filteredStates={filteredStates}
+                        selectedOtherState={selectedOtherState}
+                        onStateSelect={handleStateSelect}
                     />
                 ))}
             </div>
 
-            <NavigationButtons
-                onBack={onBack}
-                onNext={onNext}
-                showBack={true}
-                nextDisabled={!selectedState || selectedState === 'other'}
-            />
         </div>
     );
 };

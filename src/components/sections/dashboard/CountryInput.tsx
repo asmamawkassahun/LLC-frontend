@@ -1,7 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { HiChat } from 'react-icons/hi';
 
-const CountryInput = () => {
+interface CountryInputProps {
+    onCountrySelect?: () => void;
+}
+
+const CountryInput = ({ onCountrySelect }: CountryInputProps) => {
     const countries = [
         {
             flag: '🇺🇸',
@@ -61,6 +65,11 @@ const CountryInput = () => {
                     {countries.map((country, index) => (
                         <div
                             key={index}
+                            onClick={() => {
+                                if (onCountrySelect) {
+                                    onCountrySelect();
+                                }
+                            }}
                             className="bg-card rounded-lg shadow-sm border border-border hover:border-accent transition-all duration-300 hover:scale-102 px-4 md:px-6 py-4 flex items-center gap-4 cursor-pointer"
                         >
                             {/* Flag Icon */}
@@ -82,8 +91,16 @@ const CountryInput = () => {
 
                             {/* Button (if applicable) */}
                             {country.hasButton && (
-                                <div className="shrink-0">
-                                    <Button className="bg-purple hover:bg-purple-dark text-white px-4   rounded-sm font-medium text-xs whitespace-nowrap">
+                                <div className="shrink-0" onClick={(e) => e.stopPropagation()}>
+                                    <Button 
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            if (onCountrySelect) {
+                                                onCountrySelect();
+                                            }
+                                        }}
+                                        className="bg-purple hover:bg-purple-dark text-white px-4 rounded-sm font-medium text-xs whitespace-nowrap"
+                                    >
                                         {country.buttonText}
                                     </Button>
                                 </div>

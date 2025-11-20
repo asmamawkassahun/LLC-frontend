@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { HiInformationCircle } from 'react-icons/hi';
 import StepHeader from './StepHeader';
-import NavigationButtons from './NavigationButtons';
 import Tooltip from './Tooltip';
 import { IoIosAddCircleOutline } from 'react-icons/io';
-
+import { CiCircleMinus } from "react-icons/ci";
 interface Owner {
     id: string;
     fullName: string;
@@ -13,14 +12,12 @@ interface Owner {
 }
 
 interface Step3OwnersProps {
-    onNext: () => void;
-    onBack: () => void;
     companyName: string;
     owners: Owner[];
     onOwnersChange: (owners: Owner[]) => void;
 }
 
-const Step3Owners = ({ onNext, onBack, companyName, owners, onOwnersChange }: Step3OwnersProps) => {
+const Step3Owners = ({ companyName, owners, onOwnersChange }: Step3OwnersProps) => {
     const [localOwners, setLocalOwners] = useState<Owner[]>(owners.length > 0 ? owners : [
         { id: '1', fullName: '', ownershipPercentage: 100, isCompany: false }
     ]);
@@ -59,16 +56,7 @@ const Step3Owners = ({ onNext, onBack, companyName, owners, onOwnersChange }: St
         }
     };
 
-    const handlePercentageChange = (id: string, delta: number) => {
-        const owner = localOwners.find(o => o.id === id);
-        if (owner) {
-            const newValue = Math.max(0, Math.min(100, owner.ownershipPercentage + delta));
-            handleOwnerChange(id, 'ownershipPercentage', newValue);
-        }
-    };
-
     const totalPercentage = localOwners.reduce((sum, owner) => sum + owner.ownershipPercentage, 0);
-    const isValid = localOwners.every(owner => owner.fullName.trim() !== '') && totalPercentage === 100;
 
     return (
         <div className="max-w-4xl mx-auto px-4! md:px-0 pb-6 md:pb-8 space-y-24">
@@ -112,24 +100,11 @@ const Step3Owners = ({ onNext, onBack, companyName, owners, onOwnersChange }: St
                                             }}
                                             min="0"
                                             max="100"
-                                            className="w-full px-4 py-1 pr-13  md:pr-6 lg:pr-10 border border-input rounded-sm focus:outline-none focus:ring-2 focus:ring-purple focus:border-transparent text-foreground bg-background"
+                                            className="w-full pl-1 pr-8 py-1  border border-input rounded-sm focus:outline-none focus:ring-2 focus:ring-purple focus:border-transparent text-foreground bg-background"
                                         />
-                                        <div className="absolute right-[0.5px] top-1/2 border border-border rounded-r-sm h-full w-1/6 bg-accent-foreground -translate-y-1/2 flex items-center gap-0.5 text-center">
-                                            {/* <button
-                                                type="button"
-                                                onClick={() => handlePercentageChange(owner.id, -1)}
-                                                className="p-0.5 hover:bg-gray-100 rounded transition-colors flex items-center justify-center"
-                                            >
-                                                <HiChevronDown className="w-3.5 h-3.5 text-gray-600" />
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => handlePercentageChange(owner.id, 1)}
-                                                className="p-0.5 hover:bg-gray-100 rounded transition-colors flex items-center justify-center"
-                                            >
-                                                <HiChevronUp className="w-3.5 h-3.5 text-gray-600" />
-                                            </button> */}
-                                            <span className="text-muted-foreground ml-1.5 text-sm text-center">%</span>
+                                        <div className="absolute right-[0.5px] top-1/2 border border-border rounded-r-sm h-full w-8 bg-accent-foreground -translate-y-1/2 flex items-center gap-0.5 text-center">
+                                            
+                                            <span className="text-muted-foreground text-sm ml-2 text-center">%</span>
                                         </div>
                                     </div>
                                 </div>
@@ -139,7 +114,7 @@ const Step3Owners = ({ onNext, onBack, companyName, owners, onOwnersChange }: St
                             <div className='flex items-center justify-start gap-4'>
                                 
                                 {/* Checkbox and Remove Button */}
-                                <div className="flex items-center justify-between">
+                                <div className="flex gap-2 items-center justify-between">
                                     <label className="flex items-center gap-2 cursor-pointer">
                                         <input
                                             type="checkbox"
@@ -149,25 +124,28 @@ const Step3Owners = ({ onNext, onBack, companyName, owners, onOwnersChange }: St
                                         />
                                         <span className="text-xs sm:text-sm text-foreground">This owner is a company</span>
                                     </label>
-                                    {localOwners.length > 1 && (
+                                    {localOwners.length > 1 && index !== 0 && (
                                         <button
                                             type="button"
                                             onClick={() => handleRemoveOwner(owner.id)}
-                                            className="text-sm text-red-500 hover:text-red-700 transition-colors"
+                                            className="text-sm text-red-500 hover:text-red-700 transition-colors flex items-center gap-1"
                                         >
-                                            Remove
+                                            <CiCircleMinus className="w-5 h-5" />
+                                            Delete this owner
                                         </button>
                                     )}
                                 </div>
-                                {/* Add Another Owner Button */}
-                                <button
-                                    type="button"
-                                    onClick={handleAddOwner}
-                                    className="flex items-center gap-2 text-primary transition-colors text-xs sm:text-sm "
-                                >
-                                    <IoIosAddCircleOutline className="w-5 h-5" />
-                                    Add another owner
-                                </button>
+                                {/* Add Another Owner Button - Only show for the first owner */}
+                                {index === 0 && (
+                                    <button
+                                        type="button"
+                                        onClick={handleAddOwner}
+                                        className="flex items-center gap-2 text-primary transition-colors text-xs sm:text-sm "
+                                    >
+                                        <IoIosAddCircleOutline className="w-5 h-5" />
+                                        Add another owner
+                                    </button>
+                                )}
                             </div>
                             {index < localOwners.length - 1 && (
                                 <div className="border-t border-border my-4" />
@@ -203,12 +181,6 @@ const Step3Owners = ({ onNext, onBack, companyName, owners, onOwnersChange }: St
                 </div>
             </div>
 
-            <NavigationButtons
-                onNext={onNext}
-                onBack={onBack}
-                showBack={true}
-                nextDisabled={!isValid}
-            />
         </div>
     );
 };
