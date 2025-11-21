@@ -8,6 +8,8 @@ export const ROUTES = {
     DASHBOARD: '/dashboard',
     ORDER_ADD: '/order/add',
     ORDER_PAYMENT: '/order/payment',
+    ORDER_PAYMENT_WITH_ID: '/order/payment/:id',
+    ORDER_UPGRADE_WITH_ID: '/order/upgrade/:id',
   } as const;
   
   export type Route = typeof ROUTES[keyof typeof ROUTES];

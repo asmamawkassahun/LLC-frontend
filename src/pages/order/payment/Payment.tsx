@@ -1,8 +1,12 @@
-import { HiCheck, HiArrowRight } from 'react-icons/hi';
-import ChatIcon from '@/components/order/ChatIcon';
+import { useParams, useNavigate } from 'react-router-dom';
+import { HiCheck } from 'react-icons/hi';
+import { BiSolidRightTopArrowCircle } from "react-icons/bi";
+// import ChatIcon from '@/components/order/ChatIcon';
 import { Button } from '@/components/ui/button';
 
-const PaymentPage = () => {
+const PaymentPage = ({ type }: { type: 'summary' | 'payment' }) => {
+    const { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
     const perks = [
         { text: 'Priority processing' },
         { text: 'Chat and phone support' },
@@ -22,12 +26,14 @@ const PaymentPage = () => {
     };
 
     const handleStayBasic = () => {
-        // Handle stay basic action
-        console.log('Staying with Basic plan');
+        // Navigate to payment summary page
+        if (id) {
+            navigate(`/order/payment/${id}`);
+        }
     };
 
     return (
-        <div className="min-h-screen w-full relative overflow-hidden">
+        <div className={` w-full relative overflow-hidden   ${type === 'summary' ? 'rounded-lg py-20' : 'py-28 sm:py-34 min-h-screen'}`}>
             {/* Dark Blue Background with Geometric Patterns */}
             <div className="absolute inset-0 bg-linear-to-br from-blue-900 via-blue-800 to-blue-900">
                 {/* Geometric Line Patterns - Abstract Cubes/Polygons */}
@@ -83,11 +89,11 @@ const PaymentPage = () => {
             </div>
 
             {/* Main Content - Centered */}
-            <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-12">
+            <div className="relative z-10 flex items-center justify-center px-4 ">
                 <div className="max-w-4xl w-full">
                     {/* Header Section */}
                     <div className="text-center mb-8">
-                        <h1 className="text-3xl  font-bold text-white mb-4">
+                        <h1 className="sm:text-3xl text-2xl  font-bold text-white mb-4">
                             Upgrade to Premium at 10% OFF
                         </h1>
                         <p className="text-lg  text-white/90">
@@ -96,26 +102,26 @@ const PaymentPage = () => {
                     </div>
 
                     {/* Premium Perks - Two Columns */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-10">
+                    <div className={` grid grid-cols-1 md:grid-cols-2  ${type === 'summary' ? 'gap-4' : 'gap-4 md:gap-6'} mb-10 px-10 sm:px-18 justify-start items-center justify-items-start`}>
                         {perks.map((perk, index) => (
-                            <div key={index} className="flex items-start gap-3">
+                            <div key={index} className="flex items-center justify-center gap-3 ">
                                 {/* Checkmark Icon in Light Blue Circle */}
                                 <div className="shrink-0 w-6 h-6 rounded-full bg-background flex items-center justify-center">
                                     <HiCheck className="w-4 h-4 text-accent" />
                                 </div>
-                                <span className="text-white text-base md:text-lg">{perk.text}</span>
+                                <span className={`text-white ${type === 'summary' ? 'text-sm' : 'text-base md:text-lg'}`}>{perk.text}</span>
                             </div>
                         ))}
                     </div>
 
                     {/* Call-to-Action Buttons */}
-                    <div className="flex flex-col gap-4 max-w-md mx-auto">
+                    <div className={`flex flex-col gap-4 ${type === 'summary' ? 'max-w-3xl' : 'md:max-w-2xl lg:max-w-3xl'} mx-auto`}>
                         {/* Upgrade Button - Coral/Orange-Red */}
                         <Button
                             onClick={handleUpgrade}
-                            className="w-full bg-orange hover:bg-orange-dark text-white font-bold py-6 px-6 rounded-sm text-base md:text-lg flex items-center justify-center gap-2 shadow-lg"
+                            className={`w-full bg-orange hover:bg-orange-dark text-white font-bold ${type === 'summary' ? 'py-6' : 'py-8'} px-6 rounded-sm text-base md:text-lg hover:scale-105 transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 shadow-lg`}
                         >
-                            <HiArrowRight className="w-5 h-5" />
+                            <BiSolidRightTopArrowCircle className="w-5 h-5" />
                             Upgrade now with $40 savings
                         </Button>
 
@@ -123,7 +129,7 @@ const PaymentPage = () => {
                         <Button
                             onClick={handleStayBasic}
                             variant="outline"
-                            className="w-full bg-white hover:bg-gray-50 text-gray-900 font-bold py-6 px-6 rounded-sm text-base md:text-lg border-2 border-white shadow-md"
+                            className={`w-full bg-white hover:bg-gray-50 text-gray-900 font-bold ${type === 'summary' ? 'py-4 text-sm text-accent hover:text-accent' : 'py-6 text-base md:text-lg hover:text-foreground'} px-6 rounded-sm   border-2  border-white shadow-md cursor-pointer`}
                         >
                             Stay basic with $0 savings
                         </Button>
@@ -132,7 +138,7 @@ const PaymentPage = () => {
             </div>
 
             {/* Chat Icon - Bottom Right */}
-            <ChatIcon />
+            {/* <ChatIcon /> */}
         </div>
     );
 };

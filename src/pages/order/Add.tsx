@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { gsap } from 'gsap';
-import { ROUTES } from '@/constants/routes';
 import { Button } from '@/components/ui/button';
 import { HiCheck,  HiDownload } from 'react-icons/hi';
 import { MdNavigateNext } from "react-icons/md";
@@ -171,8 +170,10 @@ const AddOrderPage = () => {
     const handleSubmit = () => {
         // Handle order submission
         console.log('Order submitted:', formData);
-        // Navigate to payment page
-        navigate(ROUTES.ORDER_PAYMENT);
+        // Generate order ID (in production, this would come from the API)
+        const orderId = Date.now().toString();
+        // Navigate to upgrade page first with order ID
+        navigate(`/order/upgrade/${orderId}`);
     };
 
     const handleEditStep = (step: number) => {
@@ -252,52 +253,52 @@ const AddOrderPage = () => {
                             {/* Render steps - show current and animating step during transition */}
                             {(currentStep === 1 || animatingStep === 1) && (
                                 <div data-step="1" className="relative">
-                                    <Step1CompanyName
-                                        formData={{
-                                            companyName: formData.companyName,
-                                            type: formData.type,
-                                            category: formData.category,
-                                        }}
-                                        onFormDataChange={handleFormDataChange}
-                                    />
+                    <Step1CompanyName
+                        formData={{
+                            companyName: formData.companyName,
+                            type: formData.type,
+                            category: formData.category,
+                        }}
+                        onFormDataChange={handleFormDataChange}
+                    />
                                 </div>
-                            )}
+                )}
                             {(currentStep === 2 || animatingStep === 2) && (
                                 <div data-step="2" className="relative">
-                                    <Step2StateSelection
-                                        selectedState={formData.state}
-                                        onStateChange={(state) => handleFormDataChange({ state })}
-                                        companyName={formData.companyName || 'your'}
-                                    />
+                    <Step2StateSelection
+                        selectedState={formData.state}
+                        onStateChange={(state) => handleFormDataChange({ state })}
+                        companyName={formData.companyName || 'your'}
+                    />
                                 </div>
-                            )}
+                )}
                             {(currentStep === 3 || animatingStep === 3) && (
                                 <div data-step="3" className="relative">
-                                    <Step3Owners
-                                        companyName={formData.companyName || 'your company'}
-                                        owners={formData.owners}
-                                        onOwnersChange={(owners) => handleFormDataChange({ owners })}
-                                    />
+                    <Step3Owners
+                        companyName={formData.companyName || 'your company'}
+                        owners={formData.owners}
+                        onOwnersChange={(owners) => handleFormDataChange({ owners })}
+                    />
                                 </div>
-                            )}
+                )}
                             {(currentStep === 4 || animatingStep === 4) && (
                                 <div data-step="4" className="relative">
-                                    <Step4Address
-                                        companyName={formData.companyName || 'your company'}
-                                        address={formData.address}
-                                        onAddressChange={(address) => handleFormDataChange({ address })}
-                                        selectedState={formData.state}
-                                    />
+                    <Step4Address
+                        companyName={formData.companyName || 'your company'}
+                        address={formData.address}
+                        onAddressChange={(address) => handleFormDataChange({ address })}
+                        selectedState={formData.state}
+                    />
                                 </div>
-                            )}
+                )}
                             {(currentStep === 5 || animatingStep === 5) && (
                                 <div data-step="5" className="relative">
-                                    <Step5OrderSummary
-                                        formData={formData}
+                    <Step5OrderSummary
+                        formData={formData}
                                         onEditStep={handleEditStep}
-                                    />
+                    />
                                 </div>
-                            )}
+                )}
                         </div>
                     </div>
 
@@ -320,7 +321,7 @@ const AddOrderPage = () => {
                                             // TODO: Implement download summary functionality
                                             console.log('Download summary');
                                         }}
-                                        className="px-6 py-2 text-sm font-medium border-border"
+                                        className="px-6 py-2 text-sm font-medium hover:bg-transparent hover:text-foreground cursor-pointer shadow-sm hover:shadow-md border-border"
                                     >
                                         <HiDownload className="w-4 h-4 mr-2" />
                                         Download Summary
@@ -341,7 +342,7 @@ const AddOrderPage = () => {
                                 {currentStep === 5 ? (
                                     <Button
                                         onClick={handleSubmit}
-                                        className="bg-purple hover:bg-purple-dark text-white px-6 py-2 text-sm font-medium"
+                                        className="bg-purple hover:bg-purple-dark text-white px-6 py-2 text-sm font-medium cursor-pointer"
                                     >
                                         <HiCheck className="w-4 h-4 mr-2" />
                                         Save & Confirm
@@ -350,7 +351,7 @@ const AddOrderPage = () => {
                                     <Button
                                         onClick={handleNext}
                                         disabled={!isCurrentStepValid()}
-                                        className="bg-purple hover:bg-purple-dark text-white px-6 py-2 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="bg-purple hover:bg-purple-dark text-white px-6 py-2 text-sm font-medium disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
                                     >
                                         Next
                                         <MdNavigateNext className="w-4 h-4" />
@@ -359,11 +360,11 @@ const AddOrderPage = () => {
                             </div>
                         </div>
                     </div>
-                </div>
+            </div>
 
-                {/* Progress Sidebar - Hidden on mobile */}
+            {/* Progress Sidebar - Hidden on mobile */}
                 <div className="hidden md:block border border-border rounded-lg overflow-y-hidden">
-                    <ProgressSidebar currentStep={currentStep} steps={steps} />
+                <ProgressSidebar currentStep={currentStep} steps={steps} />
                 </div>
             </div>
 

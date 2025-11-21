@@ -5,7 +5,8 @@ import MainLayout from '@/layouts/MainLayout';
 import AuthLayout from '@/layouts/AuthLayout';
 import DashboardLayout from '@/layouts/DashboardLayout';
 import AddOrderPage from './pages/order/Add';
-import PaymentPage from './pages/order/Payment';
+import PaymentSummary from './pages/order/payment/PaymentSummary';
+import PaymentPage from './pages/order/payment/Payment';
 
 function App() {
   return (
@@ -31,10 +32,10 @@ function App() {
           <Route path={ROUTES.DASHBOARD} element={<DashboardPage />} />
           <Route path="/order/:plan" element={<AddOrderPage />} />
           <Route path={ROUTES.ORDER_ADD} element={<AddOrderPage />} />
+          <Route path="/order/payment/:id" element={<PaymentSummary />} />
         </Route>
-        <Route>
-          <Route path={ROUTES.ORDER_PAYMENT} element={<PaymentPage />} />
-        </Route>
+        {/* Routes without sidebar - Payment upgrade page */}
+        <Route path="/order/upgrade/:id" element={<PaymentPage />} />
       </Routes>
     </BrowserRouter>
   );
