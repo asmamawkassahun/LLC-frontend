@@ -172,8 +172,16 @@ const AddOrderPage = () => {
         console.log('Order submitted:', formData);
         // Generate order ID (in production, this would come from the API)
         const orderId = Date.now().toString();
-        // Navigate to upgrade page first with order ID
+        
+        // Check if the plan is Premium - if so, go directly to payment summary
+        // Otherwise, go to upgrade page (for Basic plans)
+        if (plan && (plan.startsWith('Premium') || plan.startsWith('premium'))) {
+            // Pass plan via location state
+            navigate(`/order/payment/${orderId}`, { state: { plan } });
+        } else {
+            // Navigate to upgrade page first with order ID (for Basic plans)
         navigate(`/order/upgrade/${orderId}`);
+        }
     };
 
     const handleEditStep = (step: number) => {

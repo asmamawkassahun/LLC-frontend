@@ -1,12 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { ROUTES } from '@/constants/routes';
 import {
-    HiHome,
-    HiCube,
-    HiBriefcase,
-    HiUserAdd,
-    HiCog,
-    HiLogout,
     HiX
 } from 'react-icons/hi';
 
@@ -22,36 +16,36 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
 
     const navigationItems = [
         {
-            icon: HiHome,
+            imageUrl: 'https://app.privatily.com/assets/img/menu/home.svg',
             label: 'Dashboard',
             path: ROUTES.DASHBOARD,
             active: true
         },
         {
-            icon: HiCube,
+            imageUrl: 'https://app.privatily.com/assets/img/header-icons/PRODUCTS.svg', // Marketplace icon - using placeholder, update when URL is available
             label: 'Marketplace',
-            path: '#',
+            path: ROUTES.MARKETPLACE,
             badge: 'NEW'
         },
         {
-            icon: HiBriefcase,
+            imageUrl: 'https://app.privatily.com/assets/img/menu/business.svg', // Orders icon - using placeholder, update when URL is available
             label: 'Orders',
-            path: ROUTES.ORDER_ADD
+            path: ROUTES.ORDERS
         },
         {
-            icon: HiUserAdd,
+            imageUrl: 'https://app.privatily.com/assets/img/menu/refer-a-friend.svg', // Affiliate Program icon - using placeholder, update when URL is available
             label: 'Affiliate Program',
-            path: '#'
+            path: ROUTES.AFFILIATE_PROGRAM
         },
         {
-            icon: HiCog,
+            imageUrl: 'https://app.privatily.com/assets/img/menu/settings.svg', // Settings icon - using placeholder, update when URL is available
             label: 'Settings',
-            path: '#'
+            path: ROUTES.SETTINGS
         },
         {
-            icon: HiLogout,
+            imageUrl: 'https://app.privatily.com/assets/img/menu/logout.svg',
             label: 'Log Out',
-            path: '#'
+            path: ROUTES.LOGOUT
         },
     ];
 
@@ -98,10 +92,9 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
                 </div>
 
                 {/* Navigation Menu */}
-                <nav className="flex-1 px-4 py-6">
+                <nav className="flex-1 px-4 py-5">
                     <ul className="space-y-1">
                         {navigationItems.map((item) => {
-                            const Icon = item.icon;
                             const active = item.active || isActive(item.path);
 
                             return (
@@ -115,14 +108,22 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
                                             }
                                         }}
                                         className={`
-                                            flex items-center gap-3 px-4 py-5 rounded-lg transition-colors
+                                            flex items-center gap-3 px-4 py-4.5 rounded-lg transition-colors
                                             ${active
-                                                ? 'text-gray-900 font-medium bg-gray-50'
+                                                ? 'text-gray-900 font-medium bg-gray-50 shadow-sm'
                                                 : 'text-gray-600 hover:bg-gray-50'
                                             }
                                         `}
                                     >
-                                        <Icon className={`w-5 h-5 shrink-0 ${active ? 'text-gray-900' : 'text-gray-600'}`} />
+                                        {item.imageUrl ? (
+                                            <img 
+                                                src={item.imageUrl} 
+                                                alt={item.label} 
+                                                className={`w-5 h-5 shrink-0 ${active ? 'opacity-100' : 'opacity-60'}`}
+                                            />
+                                        ) : (
+                                            <div className={`w-5 h-5 shrink-0 ${active ? 'text-gray-900' : 'text-gray-600'}`} />
+                                        )}
                                         <span className="flex-1 text-sm font-bold">{item.label}</span>
                                         {item.badge && (
                                             <span className="px-2 py-0.5 text-xs font-semibold text-purple-700 border border-purple-700 bg-purple-100 rounded">

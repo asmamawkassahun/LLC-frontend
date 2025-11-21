@@ -1,22 +1,34 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import PaymentPage from "./Payment";
+import PremiumCard from '@/components/sections/payment/PremiumCard';
 import { Button } from '@/components/ui/button';
 import { MdNavigateNext } from 'react-icons/md';
 import { BiSolidRightTopArrowCircle } from "react-icons/bi";
 import { useState } from 'react';
 import FinanceSecurity from '@/assets/icons/finance-security';
 
+interface LocationState {
+    plan?: string;
+}
+
 const PaymentSummary = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
+    const location = useLocation();
     const [promoCode, setPromoCode] = useState('');
+    
+    // Get plan from location state (passed during navigation)
+    const selectedPlan = (location.state as LocationState)?.plan || null;
+
+    // Check if plan is Premium
+    const isPremium = selectedPlan && (selectedPlan.startsWith('Premium') || selectedPlan.startsWith('premium'));
 
     // These values would typically come from props or API
-    const packageName = 'Basic Package';
-    const packagePrice = 229;
+    const packageName = isPremium ? 'Premium Package' : 'Basic Package';
+    const packagePrice = isPremium ? 397 : 229;
     const StateName = 'State fees';
     const StateFee = 50;
-    const totalDue = packagePrice + StateFee; // 279
+    const totalDue = packagePrice + StateFee;
 
     const handleCheckout = () => {
         // Handle checkout action
@@ -49,9 +61,16 @@ const PaymentSummary = () => {
 
                 {/* Main Content - Two Column Layout */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {/* Left Column - Upgrade to Premium Card (2/3 width) - Hidden on mobile */}
+                    {/* Left Column - Upgrade to Premium Card or Premium Card (2/3 width) - Hidden on mobile */}
                     <div className="hidden md:block md:col-span-2 rounded-lg">
-                        <PaymentPage type="summary" />
+                        {isPremium ? (
+                            <div className='border border-border rounded-xl'>
+
+                                <PremiumCard />
+                            </div>
+                        ) : (
+                            <PaymentPage type="summary" />
+                        )}
                     </div>
 
                     {/* Right Column - Summary Card (1/3 width) */}
@@ -106,15 +125,17 @@ const PaymentSummary = () => {
                                 <MdNavigateNext className="w-5 h-5 ml-2" />
                             </Button>
 
-                            {/* Upgrade Button - Visible on mobile, hidden on desktop (since upgrade card is shown) */}
-                            <Button
-                                onClick={handleUpgrade}
-                                variant="outline"
-                                className="w-full md:hidden bg-muted hover:bg-muted/80 text-foreground px-6 py-3 text-sm font-medium my-6 cursor-pointer border-border"
-                            >
-                                <BiSolidRightTopArrowCircle className="w-5 h-5 mr-2 text-purple" />
-                                Upgrade now with $40 savings
-                            </Button>
+                            {/* Upgrade Button - Visible on mobile, hidden on desktop (since upgrade card is shown) - Hidden for Premium plans */}
+                            {!isPremium && (
+                                <Button
+                                    onClick={handleUpgrade}
+                                    variant="outline"
+                                    className="w-full md:hidden bg-muted hover:bg-muted/80 text-foreground px-6 py-3 text-sm font-medium my-6 cursor-pointer border-border"
+                                >
+                                    <BiSolidRightTopArrowCircle className="w-5 h-5 mr-2 text-purple" />
+                                    Upgrade now with $40 savings
+                                </Button>
+                            )}
 
                             {/* Payment Logos */}
                             <div className="flex items-center gap-4 mb-4 sm:mb-6 justify-center">

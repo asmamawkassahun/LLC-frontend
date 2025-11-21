@@ -7,6 +7,10 @@ import DashboardLayout from '@/layouts/DashboardLayout';
 import AddOrderPage from './pages/order/Add';
 import PaymentSummary from './pages/order/payment/PaymentSummary';
 import PaymentPage from './pages/order/payment/Payment';
+import Marketplace from './components/sections/dashboard/Marketplace';
+import Referrals from './components/sections/dashboard/Referrals';
+import Settings from './components/sections/dashboard/Settings';
+import Orders from './components/sections/dashboard/Orders';
 
 function App() {
   return (
@@ -30,7 +34,11 @@ function App() {
         {/* Routes with DashboardLayout (with Navbar) */}
         <Route element={<DashboardLayout />}>
           <Route path={ROUTES.DASHBOARD} element={<DashboardPage />} />
-          <Route path="/order/:plan" element={<AddOrderPage />} />
+          <Route path={ROUTES.MARKETPLACE} element={<Marketplace />} />
+          <Route path={ROUTES.AFFILIATE_PROGRAM} element={<Referrals />} />
+          <Route path={ROUTES.SETTINGS} element={<Settings />} />
+          <Route path={ROUTES.ORDERS} element={<Orders />} />
+          <Route path="/order/add/:plan" element={<AddOrderPage />} />
           <Route path={ROUTES.ORDER_ADD} element={<AddOrderPage />} />
           <Route path="/order/payment/:id" element={<PaymentSummary />} />
         </Route>

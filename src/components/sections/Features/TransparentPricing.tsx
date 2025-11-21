@@ -18,12 +18,12 @@ const TransparentPricing = ({ variant = 'features' }: TransparentPricingProps) =
 
     const handleGoBasic = () => {
         const plan = selectedCountry === 'US' ? 'Basic_us' : 'Basic_uk';
-        navigate(`/order/${plan}`);
+        navigate(`/order/add/${plan}`);
     };
 
     const handleGoPremium = () => {
-        // Will be implemented later
-        console.log('Premium plan selected');
+        const plan = selectedCountry === 'US' ? 'Premium_us' : 'Premium_uk';
+        navigate(`/order/add/${plan}`);
     };
 
     // Pricing data for US and UK
