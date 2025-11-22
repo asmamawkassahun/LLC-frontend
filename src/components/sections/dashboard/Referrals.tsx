@@ -1,6 +1,7 @@
-import { Button } from "@/components/ui";
+import { useState } from 'react';
 import { HiPlus, HiLink, HiShare, HiCurrencyDollar, HiChevronRight } from 'react-icons/hi';
 import { HiChatBubbleLeftRight } from 'react-icons/hi2';
+import ReferralsDetail from './ReferralsDetail';
 
 interface StepCard {
     number: string;
@@ -10,6 +11,8 @@ interface StepCard {
 }
 
 const Referrals = () => {
+    const [showDetail, setShowDetail] = useState(false);
+
     const steps: StepCard[] = [
         {
             number: '001',
@@ -36,6 +39,14 @@ const Referrals = () => {
             description: "For every purchase of a service, you'll earn a commission."
         }
     ];
+
+    if (showDetail) {
+        return (
+            <div>
+                <ReferralsDetail />
+            </div>
+        );
+    }
 
     return (
         <div className="relative bg-white">
@@ -68,15 +79,20 @@ const Referrals = () => {
                 {/* CTA Buttons */}
                 <div className="max-w-sm mx-auto flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 md:mb-16">
                     <div 
-                        className="relative w-full  bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-base font-medium rounded-md shadow-md transition-colors cursor-pointer"
+                        onClick={() => setShowDetail(true)}
+                        className="relative w-full bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-base font-medium rounded-md shadow-md transition-colors cursor-pointer flex items-center justify-center"
                     >
-                        Join and let's grow together!
-                    <Button 
-                        className="absolute right-1 top-1.5 bg-orange-500 hover:bg-orange-600 text-white px-4 py-3 rounded-md shadow-md transition-colors flex items-center gap-1 cursor-pointer"
-                    >
-                        <HiChevronRight className="w-5 h-5" />
-                        <HiChevronRight className="w-5 h-5" />
-                    </Button>
+                        <span>Join and let's grow together!</span>
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setShowDetail(true);
+                            }}
+                            className="absolute right-1 top-1.5 bg-orange-500 hover:bg-orange-600 text-white px-4 py-3 rounded-md shadow-md transition-colors flex items-center gap-1 cursor-pointer"
+                        >
+                            <HiChevronRight className="w-5 h-5" />
+                            <HiChevronRight className="w-5 h-5" />
+                        </button>
                     </div>
                 </div>
 

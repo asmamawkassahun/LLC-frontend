@@ -1,0 +1,36 @@
+{
+  "stats": {
+    "usersReferred": 12,
+    "paidUsers": 8,
+    "referralEarnings": 240.00
+  },
+  "wallet": {
+    "balance": 180,
+    "bankAccount": "Chase Bank •••• 4567"
+  },
+  "referralLink": "https://app.privatily.com/a/2966451588",
+  "payouts": [
+    {
+      "id": "1",
+      "date": "2024-01-15",
+      "amount": "$120.00",
+      "method": "Bank Transfer",
+      "status": "Completed"
+    },
+    {
+      "id": "2",
+      "date": "2024-01-01",
+      "amount": "$60.00",
+      "method": "Bank Transfer",
+      "status": "Completed"
+    },
+    {
+      "id": "3",
+      "date": "2023-12-15",
+      "amount": "$45.00",
+      "method": "PayPal",
+      "status": "Completed"
+    }
+  ]
+}
+
