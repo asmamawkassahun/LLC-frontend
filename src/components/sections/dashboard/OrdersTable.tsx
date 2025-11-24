@@ -9,7 +9,7 @@ import Tooltip from '@/components/order/Tooltip';
 import { HiInformationCircle } from 'react-icons/hi';
 import { HiHome } from 'react-icons/hi';
 import { FiMoreVertical, FiTrash2 } from 'react-icons/fi';
-import { IoMdAdd } from 'react-icons/io';
+import { IoMdAddCircleOutline } from 'react-icons/io';
 import { Edit as EditIcon, Download as DownloadIcon, Home as HomeIcon, ChevronLeft, ChevronRight } from '@mui/icons-material';
 
 export interface Order {
@@ -301,11 +301,11 @@ const OrdersTable = ({
             },
         },
         renderTopToolbarCustomActions: () => (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', width: '100%', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', width: '100%', marginBottom: '16px', paddingTop: '12px' }}>
                 {onNewOrder && (
                     <MuiButton
                         variant="contained"
-                        startIcon={<IoMdAdd style={{ width: '16px', height: '16px' }} />}
+                        startIcon={<IoMdAddCircleOutline style={{ width: '16px', height: '16px' }} />}
                         onClick={onNewOrder}
                         sx={{
                             backgroundColor: '#9333ea',

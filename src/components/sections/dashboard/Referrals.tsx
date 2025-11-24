@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { HiPlus, HiLink, HiShare, HiCurrencyDollar, HiChevronRight } from 'react-icons/hi';
+import { HiPlus, HiLink, HiShare, HiCurrencyDollar } from 'react-icons/hi';
 import { HiChatBubbleLeftRight } from 'react-icons/hi2';
 import ReferralsDetail from './ReferralsDetail';
+import { PiCaretDoubleRightBold } from 'react-icons/pi';
 
 interface StepCard {
     number: string;
@@ -49,14 +50,14 @@ const Referrals = () => {
     }
 
     return (
-        <div className="relative bg-white">
+        <div className="relative bg-white w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-1">
             {/* Background decorative elements */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-20 left-10 w-64 h-64 bg-purple-100/20 rounded-full blur-3xl"></div>
                 <div className="absolute top-40 right-20 w-96 h-96 bg-purple-200/10 rounded-full blur-3xl"></div>
             </div>
 
-            <div className="relative max-w-6xl mx-auto  border border-border rounded-lg px-4 sm:px-6 lg:px-8 py-12 md:py-16 lg:py-20 mb-6 shadow-sm">
+            <div className="relative max-w-7xl mx-auto  border border-border rounded-lg px-4 sm:px-6 lg:px-8 pb-12 md:pb-16 lg:pb-20 pt-4 md:pt-8 lg:pt-12 mb-6 shadow-sm">
                 {/* Top Icon */}
                 <div className="flex justify-center mb-8">
                     <img 
@@ -88,10 +89,9 @@ const Referrals = () => {
                                 e.stopPropagation();
                                 setShowDetail(true);
                             }}
-                            className="absolute right-1 top-1.5 bg-orange-500 hover:bg-orange-600 text-white px-4 py-3 rounded-md shadow-md transition-colors flex items-center gap-1 cursor-pointer"
+                            className="absolute right-1 top- bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md shadow-md transition-colors flex items-center gap-1 cursor-pointer"
                         >
-                            <HiChevronRight className="w-5 h-5" />
-                            <HiChevronRight className="w-5 h-5" />
+                            <PiCaretDoubleRightBold className="w-5 h-5" />
                         </button>
                     </div>
                 </div>

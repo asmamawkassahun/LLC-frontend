@@ -21,8 +21,10 @@ const PaymentPage = ({ type }: { type: 'summary' | 'payment' }) => {
     ];
 
     const handleUpgrade = () => {
-        // Handle upgrade action
-        console.log('Upgrading to Premium');
+        // Navigate to payment summary page with Premium plan
+        if (id) {
+            navigate(`/order/payment/${id}`, { state: { plan: 'Premium' } });
+        }
     };
 
     const handleStayBasic = () => {
@@ -115,7 +117,7 @@ const PaymentPage = ({ type }: { type: 'summary' | 'payment' }) => {
                     </div>
 
                     {/* Call-to-Action Buttons */}
-                    <div className={`flex flex-col gap-4 ${type === 'summary' ? 'max-w-3xl' : 'md:max-w-2xl lg:max-w-3xl'} mx-auto`}>
+                    <div className={`flex flex-col gap-4 ${type === 'summary' ? 'max-w-2xl' : 'md:max-w-2xl lg:max-w-3xl'} mx-auto`}>
                         {/* Upgrade Button - Coral/Orange-Red */}
                         <Button
                             onClick={handleUpgrade}

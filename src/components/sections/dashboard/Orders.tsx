@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '@/constants/routes';
 import DashboardHeader from "./DashboardHeader";
 import OrdersTable, { type Order } from './OrdersTable';
-import { HiChatBubbleLeftRight } from 'react-icons/hi2';
 import axios from 'axios';
 
 interface OrdersData {
@@ -10,6 +11,7 @@ interface OrdersData {
 
 const Orders = () => {
     const [orders, setOrders] = useState<Order[]>([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchOrders = async () => {
@@ -50,8 +52,7 @@ const Orders = () => {
     };
 
     const handleNewOrder = () => {
-        console.log('Create new order');
-        // Navigate to new order page
+        navigate(ROUTES.ORDER_COUNTRY_SELECTION);
     };
 
     return (

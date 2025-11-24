@@ -8,6 +8,7 @@ import {
 } from 'material-react-table';
 import { useMemo } from 'react';
 import axios from 'axios';
+import AddBankAccountModal from '@/components/modal/AddBankAccountModal';
 
 interface Payout {
     id: string;
@@ -36,6 +37,7 @@ const ReferralsDetail = () => {
     const [copied, setCopied] = useState(false);
     const [loading, setLoading] = useState(true);
     const [globalFilter, setGlobalFilter] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchReferralsData = async () => {
@@ -131,6 +133,20 @@ const ReferralsDetail = () => {
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
         }
+    };
+
+    const handleOpenModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    };
+
+    const handleSaveBankAccount = (data: any) => {
+        // Save bank account data
+        console.log('Saving bank account:', data);
+        // TODO: Implement actual save logic
     };
 
     const statsCards = useMemo(() => {
@@ -254,7 +270,7 @@ const ReferralsDetail = () => {
                                     {/* <span className="text-2xl font-bold text-foreground">${referralsData.wallet.balance}</span> */}
                                     <Button
                                         // disabled={referralsData.wallet.balance === 0}
-                                        className={`absolute right-1 top-1 text-xs! sm:text-sm bg-foreground/5 border border-foreground ${referralsData.wallet.balance === 0 ? " text-gray-500 cursor-not-allowed" : "bg-purple hover:bg-purple-dark text-white"}`}
+                                        className={`absolute right-1 top-1 text-xs! sm:text-sm rounded-sm bg-foreground/5 border border-foreground ${referralsData.wallet.balance === 0 ? " text-gray-500 cursor-not-allowed" : "bg-purple hover:bg-purple-dark text-white"}`}
                                     >
                                         Pay out
                                     </Button>
@@ -278,8 +294,11 @@ const ReferralsDetail = () => {
                                         readOnly
                                         className="w-full pl-10 pr-4 py-3 bg-foreground/5 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-purple focus:border-transparent"
                                     />
-                                    <Button className="absolute right-1 top-1 text-xs! sm:text-sm bg-purple hover:bg-purple-dark text-white">
-                                        {referralsData.wallet.bankAccount ? 'Edit' : 'Add'}
+                                    <Button 
+                                        onClick={handleOpenModal}
+                                        className="absolute right-1 top-1 text-xs! sm:text-sm px-6 rounded-sm bg-purple hover:bg-purple-dark text-white"
+                                    >
+                                        {!referralsData.wallet.bankAccount ? 'Edit' : 'Add'}
                                     </Button>
                                 </div>
                             </div>
@@ -300,6 +319,13 @@ const ReferralsDetail = () => {
                     <HiChatBubbleLeftRight className="w-6 h-6 text-white" />
                 </button>
             </div> */}
+
+            {/* Add Bank Account Modal */}
+            <AddBankAccountModal
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+                onSave={handleSaveBankAccount}
+            />
         </div>
     );
 };
