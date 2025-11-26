@@ -20,7 +20,7 @@ const DashboardLayout = () => {
                 <DashboardNavbar 
                     onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} 
                 />
-            <div className=" pt-20 md:pt-18">
+            <div className=" pt-20 md:pt-16">
                 <Outlet />
                 </div>
             </div>

@@ -4,6 +4,8 @@ import { HomePage, AboutPage, PricingPage, ContactPage, LoginPage, RegisterPage,
 import MainLayout from '@/layouts/MainLayout';
 import AuthLayout from '@/layouts/AuthLayout';
 import DashboardLayout from '@/layouts/DashboardLayout';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import PublicRoute from '@/components/auth/PublicRoute';
 import AddOrderPage from './pages/order/Add';
 import CountrySelectionPage from './pages/order/CountrySelection';
 import PaymentSummary from './pages/order/payment/PaymentSummary';
@@ -26,14 +28,26 @@ function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Route>
 
-        {/* Routes with AuthLayout (without Navbar) */}
-        <Route element={<AuthLayout />}>
+        {/* Routes with AuthLayout (without Navbar) - Public routes (redirect if authenticated) */}
+        <Route
+          element={
+            <PublicRoute>
+              <AuthLayout />
+            </PublicRoute>
+          }
+        >
           <Route path={ROUTES.LOGIN} element={<LoginPage />} />
           <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
         </Route>
 
-        {/* Routes with DashboardLayout (with Navbar) */}
-        <Route element={<DashboardLayout />}>
+        {/* Protected Routes with DashboardLayout (with Navbar) */}
+        <Route
+          element={
+            <ProtectedRoute>
+              <DashboardLayout />
+            </ProtectedRoute>
+          }
+        >
           <Route path={ROUTES.DASHBOARD} element={<DashboardPage />} />
           <Route path={`${ROUTES.MARKETPLACE}/:serviceCode?`} element={<Marketplace />} />
           <Route path={ROUTES.AFFILIATE_PROGRAM} element={<Referrals />} />
@@ -44,8 +58,15 @@ function App() {
           <Route path={ROUTES.ORDER_ADD} element={<AddOrderPage />} />
           <Route path="/order/payment/:id" element={<PaymentSummary />} />
         </Route>
-        {/* Routes without sidebar - Payment upgrade page */}
-        <Route path="/order/upgrade/:id" element={<PaymentPage type="payment" />} />
+        {/* Protected Routes without sidebar - Payment upgrade page */}
+        <Route
+          path="/order/upgrade/:id"
+          element={
+            <ProtectedRoute>
+              <PaymentPage type="payment" />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

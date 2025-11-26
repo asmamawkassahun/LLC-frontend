@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { HiChevronDown } from 'react-icons/hi';
 import { getUniqueCountries } from '@/constants/countries';
+import userService from '@/services/userService';
 
 interface PhoneInputProps {
     onNext?: () => void;
@@ -12,6 +13,8 @@ const PhoneInput = ({ onNext }: PhoneInputProps) => {
     const [countryCode, setCountryCode] = useState('+251');
     const [showCountryDropdown, setShowCountryDropdown] = useState(false);
     const [countrySearchQuery, setCountrySearchQuery] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -45,17 +48,42 @@ const PhoneInput = ({ onNext }: PhoneInputProps) => {
         country.code.includes(countrySearchQuery)
     );
 
-    const handleNext = () => {
+    const handleNext = async () => {
         // Validate phone number
         if (!phoneNumber.trim()) {
-            return; // Don't proceed if phone number is empty
+            setError('Please enter a phone number');
+            return;
         }
-        
-        console.log('Phone number:', countryCode + phoneNumber);
-        
-        // Call the onNext callback to proceed to next step
-        if (onNext) {
-            onNext();
+
+        setIsSubmitting(true);
+        setError(null);
+
+        try {
+            // Combine country code and phone number
+            const fullPhoneNumber = `${countryCode}${phoneNumber}`;
+            
+            // Save phone number to backend
+            await userService.updatePhone(fullPhoneNumber);
+            
+            // Call the onNext callback to proceed to next step
+            if (onNext) {
+                onNext();
+            }
+        } catch (err: any) {
+            console.error('Error saving phone number:', err);
+            
+            // Handle error response
+            if (err.response?.data?.message) {
+                setError(err.response.data.message);
+            } else if (err.response?.data?.errors) {
+                const errors = err.response.data.errors;
+                const firstError = Object.values(errors)[0];
+                setError(Array.isArray(firstError) ? firstError[0] : String(firstError));
+            } else {
+                setError('Failed to save phone number. Please try again.');
+            }
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -178,13 +206,20 @@ const PhoneInput = ({ onNext }: PhoneInputProps) => {
                         </div>
                     </div>
 
+                    {/* Error Message */}
+                    {error && (
+                        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm text-center max-w-md">
+                            {error}
+                        </div>
+                    )}
+
                     {/* Next Button */}
                     <Button
                         onClick={handleNext}
-                        disabled={!phoneNumber.trim()}
+                        disabled={!phoneNumber.trim() || isSubmitting}
                         className=" bg-purple hover:bg-purple-dark text-white font-bold py-3 px-12 rounded-sm text-base disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        Next
+                        {isSubmitting ? 'Saving...' : 'Next'}
                     </Button>
                 </div>
             </div>

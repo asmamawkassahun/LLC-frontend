@@ -36,24 +36,24 @@ const CountryInput = ({ onCountrySelect }: CountryInputProps) => {
     ];
 
     return (
-        <div className=" bg-background py-12 md:py-16 lg:py-20">
+        <div className=" bg-background py-12 px-4 md:py-16 lg:py-20">
             <div className="max-w-2xl lg:max-w-3xl mx-auto ">
                 {/* Header Section */}
                 <div className="text-center mb-12 md:mb-4 lg:mb-8">
                     {/* 3D Globe Icon */}
                     <div className="flex justify-center ">
-                        <img 
-                            src="https://app.privatily.com/assets/img/header-icones/incorporate.png" 
-                            alt="Globe icon" 
+                        <img
+                            src="https://app.privatily.com/assets/img/header-icones/incorporate.png"
+                            alt="Globe icon"
                             className="w-20 h-24 md:w-28 md:h-32"
                         />
                     </div>
-                    
+
                     {/* Main Heading */}
-                    <h1 className="text-[1.3rem] md:text-2xl  font-extrabold text-foreground">
+                    <h1 className="text-lg sm:text-[1.3rem] md:text-2xl  font-extrabold text-foreground">
                         Where do you want to Incorporate?
                     </h1>
-                    
+
                     {/* Subtitle */}
                     <p className="text-xs lg:text-sm text-foreground  max-w-sm md:max-w-md lg:max-w-3xl mx-auto leading-relaxed">
                         Privatily is the only service that enables non-residents to easily form their company in their chosen country
@@ -70,29 +70,31 @@ const CountryInput = ({ onCountrySelect }: CountryInputProps) => {
                                     onCountrySelect();
                                 }
                             }}
-                            className="bg-card rounded-lg shadow-sm border border-border hover:border-accent transition-all duration-300 hover:scale-102 px-4 md:px-6 py-4 flex items-center gap-4 cursor-pointer"
+                            className="bg-card rounded-lg shadow-sm border border-border hover:border-accent transition-all duration-300 hover:scale-102 px-4 md:px-6 py-4 flex flex-col md:flex-row items-end md:items-center justify-between gap-4 cursor-pointer"
                         >
-                            {/* Flag Icon */}
-                            <div className="shrink-0">
-                                <div className="w-12 h-12  rounded-full flex items-center justify-center text-2xl md:text-3xl ">
-                                    {country.flag}
+                            <div className="flex items-center gap-4">
+                                {/* Flag Icon */}
+                                <div className="shrink-0">
+                                    <div className="w-12 h-12  rounded-full flex items-center justify-center text-2xl md:text-3xl ">
+                                        {country.flag}
+                                    </div>
                                 </div>
-                            </div>
 
-                            {/* Country Info */}
-                            <div className="flex-1 min-w-0">
-                                <h3 className="text-sm font-medium text-foreground  ">
-                                    {country.name}
-                                </h3>
-                                <p className="text-xs text-muted-foreground">
-                                    {country.description}
-                                </p>
+                                {/* Country Info */}
+                                <div className="flex-1 min-w-0">
+                                    <h3 className="text-sm font-medium text-foreground  ">
+                                        {country.name}
+                                    </h3>
+                                    <p className="text-xs text-muted-foreground">
+                                        {country.description}
+                                    </p>
+                                </div>
                             </div>
 
                             {/* Button (if applicable) */}
                             {country.hasButton && (
                                 <div className="shrink-0" onClick={(e) => e.stopPropagation()}>
-                                    <Button 
+                                    <Button
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             if (onCountrySelect) {
