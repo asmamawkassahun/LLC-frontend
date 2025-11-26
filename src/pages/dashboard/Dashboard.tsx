@@ -7,6 +7,7 @@ import userService from "@/services/userService";
 const DashboardPage = () => {
     const [phoneSubmitted, setPhoneSubmitted] = useState(false);
     const [countrySelected, setCountrySelected] = useState(false);
+    const [selectedCountry, setSelectedCountry] = useState<'US' | 'UK'>('US');
     const [hasPhoneNumber, setHasPhoneNumber] = useState<boolean | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -39,7 +40,8 @@ const DashboardPage = () => {
         setPhoneSubmitted(true);
     };
 
-    const handleCountrySelect = () => {
+    const handleCountrySelect = (country: 'US' | 'UK') => {
+        setSelectedCountry(country);
         setCountrySelected(true);
     };
 
@@ -63,7 +65,7 @@ const DashboardPage = () => {
             ) : (
                 /* After country is selected, show pricing */
                 <>
-                    <TransparentPricing variant="dashboard" />
+                    <TransparentPricing variant="dashboard" defaultCountry={selectedCountry} />
                 </>
             )}
         </div>

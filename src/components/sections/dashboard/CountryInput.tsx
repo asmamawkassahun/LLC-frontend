@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { HiChat } from 'react-icons/hi';
 
 interface CountryInputProps {
-    onCountrySelect?: () => void;
+    onCountrySelect?: (country: 'US' | 'UK') => void;
 }
 
 const CountryInput = ({ onCountrySelect }: CountryInputProps) => {
@@ -62,15 +62,26 @@ const CountryInput = ({ onCountrySelect }: CountryInputProps) => {
 
                 {/* Country Selection Cards */}
                 <div className="space-y-2 px-4 sm:px-6 md:px-24 lg:px-10">
-                    {countries.map((country, index) => (
+                    {countries.map((country, index) => {
+                        // Map country names to US/UK codes (ignore others for now)
+                        const getCountryCode = (countryName: string): 'US' | 'UK' | null => {
+                            if (countryName === 'United States') return 'US';
+                            if (countryName === 'United Kingdom') return 'UK';
+                            return null;
+                        };
+
+                        const countryCode = getCountryCode(country.name);
+                        const isSelectable = countryCode !== null;
+
+                        return (
                         <div
                             key={index}
                             onClick={() => {
-                                if (onCountrySelect) {
-                                    onCountrySelect();
+                                if (onCountrySelect && countryCode) {
+                                    onCountrySelect(countryCode);
                                 }
                             }}
-                            className="bg-card rounded-lg shadow-sm border border-border hover:border-accent transition-all duration-300 hover:scale-102 px-4 md:px-6 py-4 flex flex-col md:flex-row items-end md:items-center justify-between gap-4 cursor-pointer"
+                            className={`bg-card rounded-lg shadow-sm border border-border hover:border-accent transition-all duration-300 hover:scale-102 px-4 md:px-6 py-4 flex flex-col md:flex-row items-end md:items-center justify-between gap-4 ${isSelectable ? 'cursor-pointer' : 'cursor-default'}`}
                         >
                             <div className="flex items-center gap-4">
                                 {/* Flag Icon */}
@@ -97,9 +108,7 @@ const CountryInput = ({ onCountrySelect }: CountryInputProps) => {
                                     <Button
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            if (onCountrySelect) {
-                                                onCountrySelect();
-                                            }
+                                            // For waitlist countries, don't trigger country selection
                                         }}
                                         className="bg-purple hover:bg-purple-dark text-white px-4 rounded-sm font-medium text-xs whitespace-nowrap"
                                     >
@@ -108,7 +117,8 @@ const CountryInput = ({ onCountrySelect }: CountryInputProps) => {
                                 </div>
                             )}
                         </div>
-                    ))}
+                        );
+                    })}
                 </div>
             </div>
 

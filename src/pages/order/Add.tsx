@@ -74,7 +74,9 @@ const AddOrderPage = () => {
         companyName: '',
         type: 'LLC',
         category: [] as string[],
+
         state: '',
+        
         owners: [] as Array<{ id: string; fullName: string; ownershipPercentage: number; isCompany: boolean }>,
         address: {
             streetAddress: '',

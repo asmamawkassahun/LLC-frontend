@@ -9,10 +9,11 @@ import { HiChat } from 'react-icons/hi';
 
 interface TransparentPricingProps {
     variant?: 'features' | 'dashboard';
+    defaultCountry?: 'US' | 'UK';
 }
 
-const TransparentPricing = ({ variant = 'features' }: TransparentPricingProps) => {
-    const [selectedCountry, setSelectedCountry] = useState<'US' | 'UK'>('US');
+const TransparentPricing = ({ variant = 'features', defaultCountry = 'US' }: TransparentPricingProps) => {
+    const [selectedCountry, setSelectedCountry] = useState<'US' | 'UK'>(defaultCountry);
     const headingRef = useRef<HTMLHeadingElement>(null);
     const navigate = useNavigate();
 
@@ -97,6 +98,13 @@ const TransparentPricing = ({ variant = 'features' }: TransparentPricingProps) =
 
     const currentPricing = pricingData[selectedCountry];
 
+    // Update selectedCountry when defaultCountry prop changes
+    useEffect(() => {
+        if (defaultCountry) {
+            setSelectedCountry(defaultCountry);
+        }
+    }, [defaultCountry]);
+
     // Animate heading from bottom to top on mount (only for features variant)
     useEffect(() => {
         if (variant === 'features' && headingRef.current) {
@@ -144,7 +152,7 @@ const TransparentPricing = ({ variant = 'features' }: TransparentPricingProps) =
                             <div className="inline-flex w-full bg-accent/10 rounded-full p-1">
                                 <button
                                     onClick={() => setSelectedCountry('US')}
-                                    className={`flex w-full items-center justify-center gap-2 px-4 md:px-6 py-2 md:py-3 rounded-full text-sm md:text-base font-medium transition-all ${selectedCountry === 'US'
+                                    className={`flex w-full items-center justify-center gap-2 px-4 md:px-6 py-2 md:py-3 rounded-full text-sm md:text-base font-medium transition-all cursor-pointer ${selectedCountry === 'US'
                                             ? 'bg-background text-foreground'
                                             : ' hover:text-foreground'
                                         }`}
@@ -154,7 +162,7 @@ const TransparentPricing = ({ variant = 'features' }: TransparentPricingProps) =
                                 </button>
                                 <button
                                     onClick={() => setSelectedCountry('UK')}
-                                    className={`flex w-full items-center justify-center gap-2 px-4 md:px-6 py-2 md:py-3 rounded-full text-sm md:text-base font-medium transition-all ${selectedCountry === 'UK'
+                                    className={`flex w-full items-center justify-center gap-2 px-4 md:px-6 py-2 md:py-3 rounded-full text-sm md:text-base font-medium transition-all cursor-pointer ${selectedCountry === 'UK'
                                             ? 'bg-background text-foreground'
                                             : ' hover:text-foreground'
                                         }`}
@@ -212,7 +220,7 @@ const TransparentPricing = ({ variant = 'features' }: TransparentPricingProps) =
                         <p className="text-base md:text-base lg:text-lg text-muted-foreground mb-12">If you're operating with a low budget.</p>
                         <Button 
                             onClick={handleGoBasic}
-                            className="w-full bg-primary mb-6 text-primary-foreground hover:bg-primary/90 py-6 text-lg font-medium"
+                            className="w-full bg-primary mb-6 text-primary-foreground hover:bg-primary/90 py-6 text-lg font-medium cursor-pointer"
                         >
                             Go Basic
                         </Button>
@@ -240,7 +248,7 @@ const TransparentPricing = ({ variant = 'features' }: TransparentPricingProps) =
                         <p className="text-base text-primary-foreground/90 mb-12">Enhanced, fast, and exclusive service.</p>
                         <Button 
                             onClick={handleGoPremium}
-                            className="w-full bg-orange-dark mb-6 hover:bg-orange text-primary-foreground py-6 text-lg font-medium"
+                            className="w-full bg-orange-dark mb-6 hover:bg-orange text-primary-foreground py-6 text-lg font-medium cursor-pointer"
                         >
                             Go Premium
                         </Button>

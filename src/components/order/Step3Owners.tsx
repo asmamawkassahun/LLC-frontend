@@ -4,6 +4,7 @@ import StepHeader from './StepHeader';
 import Tooltip from './Tooltip';
 import { IoIosAddCircleOutline } from 'react-icons/io';
 import { CiCircleMinus } from "react-icons/ci";
+import userService from '@/services/userService';
 interface Owner {
     id: string;
     fullName: string;
@@ -27,6 +28,32 @@ const Step3Owners = ({ companyName, owners, onOwnersChange }: Step3OwnersProps) 
             setLocalOwners(owners);
         }
     }, [owners]);
+
+    // Fetch current user and prefill first owner's name if empty
+    useEffect(() => {
+        const fetchUserAndPrefill = async () => {
+            try {
+                const user = await userService.getCurrentUser();
+                if (user.name) {
+                    setLocalOwners(prevOwners => {
+                        // Only prefill if first owner exists and has empty name
+                        if (prevOwners.length > 0 && !prevOwners[0].fullName.trim()) {
+                            const updatedOwners = prevOwners.map((owner, index) =>
+                                index === 0 ? { ...owner, fullName: user.name } : owner
+                            );
+                            onOwnersChange(updatedOwners);
+                            return updatedOwners;
+                        }
+                        return prevOwners;
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        };
+
+        fetchUserAndPrefill();
+    }, []); // Only run once on mount
 
     const handleOwnerChange = (id: string, field: keyof Owner, value: string | number | boolean) => {
         const updatedOwners = localOwners.map(owner =>
