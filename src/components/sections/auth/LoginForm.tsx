@@ -1,16 +1,69 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/constants/routes';
 import { Button } from '@/components/ui/button';
 import { FcGoogle } from 'react-icons/fc';
 import { HiEye, HiEyeOff } from 'react-icons/hi';
 import { FaAngleRight } from 'react-icons/fa';
+import authService from '@/services/authService';
 
 const LoginForm = () => {
+    const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError(null);
+
+        // Validation
+        if (!email || !password) {
+            setError('Please fill in all required fields');
+            return;
+        }
+
+        setIsLoading(true);
+
+        try {
+            const response = await authService.login({
+                email: email.trim(),
+                password,
+            });
+
+            // Store tokens
+            if (response.access_token) {
+                localStorage.setItem('access_token', response.access_token);
+            }
+            if (response.refresh_token) {
+                localStorage.setItem('refresh_token', response.refresh_token);
+            }
+
+            // Redirect to dashboard
+            navigate(ROUTES.DASHBOARD);
+        } catch (err: any) {
+            console.error('Login error:', err);
+            
+            // Handle error response
+            if (err.response?.data?.message) {
+                setError(err.response.data.message);
+            } else if (err.response?.data?.errors) {
+                // Handle Laravel validation errors
+                const errors = err.response.data.errors;
+                const firstError = Object.values(errors)[0];
+                setError(Array.isArray(firstError) ? firstError[0] : String(firstError));
+            } else if (err.message) {
+                setError(err.message);
+            } else {
+                setError('Login failed. Please check your credentials and try again.');
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <div className="w-full max-w-md mx-auto min-h-screen">
@@ -24,13 +77,17 @@ const LoginForm = () => {
                 </p>
             </div>
 
+            {/* Error Message */}
+            {error && (
+                <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                    {error}
+                </div>
+            )}
+
             {/* Login Form */}
             <form 
                 className="space-y-5" 
-                onSubmit={(e) => {
-                    e.preventDefault();
-                    // Handle login logic here
-                }}
+                onSubmit={handleSubmit}
             >
                 {/* Email Field */}
                 <div>
@@ -39,7 +96,9 @@ const LoginForm = () => {
                         placeholder="Email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-4 py-3 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent text-foreground bg-background placeholder:text-muted-foreground"
+                        required
+                        disabled={isLoading}
+                        className="w-full px-4 py-3 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent text-foreground bg-background placeholder:text-muted-foreground disabled:opacity-50"
                     />
                 </div>
 
@@ -50,12 +109,15 @@ const LoginForm = () => {
                         placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="w-full px-4 py-3 pr-12 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent text-foreground bg-background placeholder:text-muted-foreground"
+                        required
+                        disabled={isLoading}
+                        className="w-full px-4 py-3 pr-12 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent text-foreground bg-background placeholder:text-muted-foreground disabled:opacity-50"
                     />
                     <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                        disabled={isLoading}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer disabled:opacity-50"
                     >
                         {showPassword ? (
                             <HiEyeOff className="w-5 h-5" />
@@ -71,7 +133,8 @@ const LoginForm = () => {
                         <button
                             type="button"
                             onClick={() => setRememberMe(!rememberMe)}
-                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 ${
+                            disabled={isLoading}
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 disabled:opacity-50 ${
                                 rememberMe ? 'bg-purple' : 'bg-muted'
                             }`}
                         >
@@ -94,10 +157,11 @@ const LoginForm = () => {
                 {/* Sign In Button */}
                 <Button
                     type="submit"
-                    className="w-full bg-purple hover:bg-purple-dark text-white py-8 text-base font-medium rounded-sm flex items-center justify-center gap-2 cursor-pointer"
+                    disabled={isLoading}
+                    className="w-full bg-purple hover:bg-purple-dark text-white py-8 text-base font-medium rounded-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    Sign in
-                    <FaAngleRight className="w-5 h-5 ml-2 shrink-0" />
+                    {isLoading ? 'Signing in...' : 'Sign in'}
+                    {!isLoading && <FaAngleRight className="w-5 h-5 ml-2 shrink-0" />}
                 </Button>
             </form>
 
@@ -122,7 +186,8 @@ const LoginForm = () => {
             <Button
                 type="button"
                 variant="outline"
-                className="w-full border border-input bg-background hover:bg-background hover:text-foreground text-foreground py-8 text-base font-medium rounded-sm flex items-center justify-center gap-3 shadow-xs hover:shadow-md cursor-pointer"
+                disabled={isLoading}
+                className="w-full border border-input bg-background hover:bg-background hover:text-foreground text-foreground py-8 text-base font-medium rounded-sm flex items-center justify-center gap-3 shadow-xs hover:shadow-md cursor-pointer disabled:opacity-50"
             >
                 <FcGoogle className="w-5 h-5" />
                 Sign In with Google

@@ -6,6 +6,7 @@ import {
     HiChevronDown
 } from 'react-icons/hi';
 import { Button } from '../ui';
+import authService from '@/services/authService';
 
 interface DashboardSidebarProps {
     isOpen: boolean;
@@ -63,6 +64,20 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
         setIsCompanyDropdownOpen(false);
         onClose(); // Close sidebar on mobile
         navigate(ROUTES.ORDER_COUNTRY_SELECTION);
+    };
+
+    const handleLogout = async () => {
+        try {
+            await authService.logout();
+            // Navigate to login page after logout
+            navigate(ROUTES.LOGIN);
+        } catch (error) {
+            console.error('Logout error:', error);
+            // Even if logout fails, clear tokens and redirect
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            navigate(ROUTES.LOGIN);
+        }
     };
 
     const getCountryFlag = (country: 'US' | 'UK') => {
@@ -150,6 +165,35 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
                             const active = item.path === ROUTES.DASHBOARD 
                                 ? (location.pathname === ROUTES.DASHBOARD || !navigationItems.some(navItem => navItem.path !== ROUTES.DASHBOARD && isActive(navItem.path)))
                                 : isActive(item.path);
+
+                            // Handle logout separately
+                            if (item.path === ROUTES.LOGOUT) {
+                                return (
+                                    <li key={item.label}>
+                                        <button
+                                            onClick={() => {
+                                                handleLogout();
+                                                // Close sidebar on mobile/tablet when clicking logout
+                                                if (window.innerWidth < 1024) {
+                                                    onClose();
+                                                }
+                                            }}
+                                            className="w-full flex items-center gap-3 px-4 py-4.5 rounded-lg transition-colors text-gray-600 hover:bg-gray-50 text-left"
+                                        >
+                                            {item.imageUrl ? (
+                                                <img 
+                                                    src={item.imageUrl} 
+                                                    alt={item.label} 
+                                                    className="w-5 h-5 shrink-0 opacity-60"
+                                                />
+                                            ) : (
+                                                <div className="w-5 h-5 shrink-0 text-gray-600" />
+                                            )}
+                                            <span className="flex-1 text-sm font-bold">{item.label}</span>
+                                        </button>
+                                    </li>
+                                );
+                            }
 
                             return (
                                 <li key={item.label}>
