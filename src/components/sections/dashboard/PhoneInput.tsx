@@ -62,15 +62,21 @@ const PhoneInput = ({ onNext }: PhoneInputProps) => {
             // Combine country code and phone number
             const fullPhoneNumber = `${countryCode}${phoneNumber}`;
             
-            // Save phone number to backend
-            await userService.updatePhone(fullPhoneNumber);
+            // Get country name from selected country
+            const countryName = selectedCountry.name;
+            
+            // Save phone number and country to backend
+            await userService.updateUser({
+                phone: fullPhoneNumber,
+                country: countryName,
+            });
             
             // Call the onNext callback to proceed to next step
             if (onNext) {
                 onNext();
             }
         } catch (err: any) {
-            console.error('Error saving phone number:', err);
+            console.error('Error saving phone number and country:', err);
             
             // Handle error response
             if (err.response?.data?.message) {
@@ -80,7 +86,7 @@ const PhoneInput = ({ onNext }: PhoneInputProps) => {
                 const firstError = Object.values(errors)[0];
                 setError(Array.isArray(firstError) ? firstError[0] : String(firstError));
             } else {
-                setError('Failed to save phone number. Please try again.');
+                setError('Failed to save phone number and country. Please try again.');
             }
         } finally {
             setIsSubmitting(false);
