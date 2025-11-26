@@ -32,6 +32,8 @@ const Orders = () => {
 
     const handleUpdateOrder = (orderId: string) => {
         console.log('Update order:', orderId);
+        // Navigate to step one of LLC creation
+        navigate(ROUTES.ORDER_ADD);
     };
 
     const handleDownloadSummary = (orderId: string) => {
