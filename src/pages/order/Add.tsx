@@ -79,7 +79,7 @@ const AddOrderPage = () => {
         type: 'LLC',
         category: [] as string[],
 
-        state: '',
+        state: { name: '', cost: 0 },
 
         owners: [] as Array<{ id: string; fullName: string; ownershipPercentage: number; isCompany: boolean }>,
         address: {
@@ -219,7 +219,7 @@ const AddOrderPage = () => {
     const isStep2Valid = () => {
         // Valid if state is selected (either predefined state or "other" state name)
         // "other" alone is not valid - user must select an actual state
-        return !!(formData.state && formData.state.trim() !== '' && formData.state !== 'other');
+        return !!(formData.state.name && formData.state.name.trim() !== '' && formData.state.name !== 'other');
     };
 
     const isStep3Valid = () => {
@@ -300,8 +300,8 @@ const AddOrderPage = () => {
                             {(currentStep === 2 || animatingStep === 2) && !isUKPlan && (
                                 <div data-step="2" className="relative">
                                     <Step2StateSelection
-                                        selectedState={formData.state}
-                                        onStateChange={(state) => handleFormDataChange({ state })}
+                                        selectedState={formData.state.name}
+                                        onStateChange={(stateName, stateCost) => handleFormDataChange({ state: { name: stateName, cost: stateCost } })}
                                         companyName={formData.companyName || 'your'}
                                     />
                                 </div>
@@ -321,7 +321,7 @@ const AddOrderPage = () => {
                                         companyName={formData.companyName || 'your company'}
                                         address={formData.address}
                                         onAddressChange={(address) => handleFormDataChange({ address })}
-                                        selectedState={formData.state}
+                                        selectedState={formData.state.name}
                                     />
                                 </div>
                             )}

@@ -4,9 +4,26 @@ import StateCard from './StateCard';
 
 interface Step2StateSelectionProps {
     selectedState: string;
-    onStateChange: (state: string) => void;
+    onStateChange: (stateName: string, stateCost: number) => void;
     companyName?: string;
 }
+
+// Helper function to get state cost
+const getStateCost = (stateId: string): number => {
+    switch (stateId) {
+        case 'new-mexico':
+            return 0;
+        case 'wyoming':
+            return 50;
+        case 'delaware':
+            return 100;
+        case 'other':
+            return 0; // For "other" states, fee will be 0
+        default:
+            // If it's an "other" state name, return 0
+            return 0;
+    }
+};
 
 const US_STATES = [
     'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware',
@@ -102,7 +119,7 @@ const Step2StateSelection = ({ selectedState, onStateChange, companyName = 'your
 
     const handleOtherCardClick = () => {
         if (selectedState !== 'other') {
-            onStateChange('other');
+            onStateChange('other', 0);
         }
         setIsOtherDropdownOpen(true);
         setTimeout(() => {
@@ -111,7 +128,7 @@ const Step2StateSelection = ({ selectedState, onStateChange, companyName = 'your
     };
 
     const handleStateSelect = (stateName: string) => {
-        onStateChange(stateName);
+        onStateChange(stateName, 0); // "Other" states have 0 cost
         setSelectedOtherState(stateName);
         setIsOtherDropdownOpen(false);
         setSearchTerm('');
@@ -142,7 +159,8 @@ const Step2StateSelection = ({ selectedState, onStateChange, companyName = 'your
                             if (state.id === 'other') {
                                 handleOtherCardClick();
                             } else {
-                                onStateChange(state.id);
+                                const cost = getStateCost(state.id);
+                                onStateChange(state.id, cost);
                                 setIsOtherDropdownOpen(false);
                             }
                         }}

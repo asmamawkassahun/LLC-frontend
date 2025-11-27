@@ -8,7 +8,7 @@ interface OrderSummaryData {
     companyName: string;
     type: string;
     category: string[];
-    state: string;
+    state: { name: string; cost: number };
     owners: Array<{ id: string; fullName: string; ownershipPercentage: number; isCompany: boolean }>;
     address: {
         streetAddress: string;
@@ -85,9 +85,11 @@ const Step5OrderSummary = ({ formData, onEditStep }: Step5OrderSummaryProps) => 
     const categoryLabels = formData.category
         .map(catId => categories.find(cat => cat.id === catId)?.label || catId)
         .filter(Boolean);
-    const stateFee = getStateFee(formData.state);
-    const stateName = getStateName(formData.state);
-    
+
+    // Get state name and fee from formData.state object
+    const stateName = formData.state.name ? getStateName(formData.state.name) : 'N/A';
+    const stateFee = formData.state.name ? (formData.state.cost > 0 ? `$${formData.state.cost}.00` : '$0.00') : '$0.00';
+
     // Check if plan is for UK (hide state card for UK plans)
     const isUKPlan = formData.plan?.includes('_uk') || false;
 
@@ -135,7 +137,7 @@ const Step5OrderSummary = ({ formData, onEditStep }: Step5OrderSummaryProps) => 
                                 {categoryLabels.length > 0 ? (
                                     <div className="flex flex-wrap gap-2 mt-1">
                                         {categoryLabels.map((label, index) => (
-                                            <span 
+                                            <span
                                                 key={index}
                                                 className="inline-block px-3 py-1 bg-accent/15 text-blue-900 border border-accent text-xs font-medium rounded-sm"
                                             >
