@@ -11,6 +11,7 @@ import Step2StateSelection from '@/components/order/Step2StateSelection';
 import Step3Owners from '@/components/order/Step3Owners';
 import Step4Address from '@/components/order/Step4Address';
 import Step5OrderSummary from '@/components/order/Step5OrderSummary';
+import apiClient from '@/utils/api-helpers/apiClient';
 
 const steps = [
     { number: 1, label: 'The company' },
@@ -206,25 +207,52 @@ const AddOrderPage = () => {
     };
 
 
-    const handleSubmit = () => {
-        // Handle order submission
-        console.log('Order submitted:', formData);
-        // Generate order ID (in production, this would come from the API)
-        const orderId = Date.now().toString();
+    const handleSubmit = async () => {
+        try {
+            // Prepare the order data
+            const orderData = {
+                type: 'company_formation',
+                plan: formData.plan,
+                state: formData.state,
+                company_name: formData.companyName,
+                company_type: formData.type,
+                owners: formData.owners.map(owner => ({
+                    full_name: owner.fullName,
+                    ownership_percentage: owner.ownershipPercentage,
+                    is_company: owner.isCompany,
+                })),
+                addresses: [{
+                    type: 'registered',
+                    street_address: formData.address.streetAddress,
+                    city: formData.address.city,
+                    state: formData.address.state,
+                    zip_code: formData.address.zipCode,
+                    country: formData.address.country,
+                }],
+            };
 
-        // Get pricing plan from formData.plan array
-        const currentPlan = formData.plan && formData.plan.length > 0 
-            ? formData.plan[0].pricingPlan 
-            : plan || '';
+            // Make API call to create order
+            const response = await apiClient.post('/orders', orderData);
+            const order = response.data.data || response.data;
 
-        // Check if the plan is Premium - if so, go directly to payment summary
-        // Otherwise, go to upgrade page (for Basic plans)
-        if (currentPlan && (currentPlan.startsWith('Premium') || currentPlan.startsWith('premium'))) {
-            // Pass plan via location state
-            navigate(`/order/payment/${orderId}`, { state: { plan: currentPlan } });
-        } else {
-            // Navigate to upgrade page first with order ID (for Basic plans)
-            navigate(`/order/upgrade/${orderId}`);
+            // Get pricing plan from formData.plan array
+            const currentPlan = formData.plan && formData.plan.length > 0 
+                ? formData.plan[0].pricingPlan 
+                : plan || '';
+
+            // Check if the plan is Premium - if so, go directly to payment summary
+            // Otherwise, go to upgrade page (for Basic plans)
+            if (currentPlan && (currentPlan.startsWith('Premium') || currentPlan.startsWith('premium'))) {
+                // Pass plan via location state
+                navigate(`/order/payment/${order.id}`, { state: { plan: currentPlan } });
+            } else {
+                // Navigate to upgrade page first with order ID (for Basic plans)
+                navigate(`/order/upgrade/${order.id}`);
+            }
+        } catch (error: any) {
+            console.error('Error creating order:', error);
+            // TODO: Show error message to user
+            alert(error.response?.data?.message || 'Failed to create order. Please try again.');
         }
     };
 
