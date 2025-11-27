@@ -28,13 +28,60 @@ interface LocationState {
     yearlyPrice?: number;
 }
 
+interface ApiOrderResponse {
+    data: {
+        id: number;
+        order_number: string;
+        country?: {
+            id: number;
+            name: string;
+        };
+        pricing_plan?: {
+            id: number;
+            name: string;
+            base_price: number;
+            yearly_price: number;
+        };
+        company?: {
+            id: number;
+            name: string;
+            type: string;
+            category?: string[];
+            owners?: Array<{
+                id: number;
+                full_name: string;
+                ownership_percentage: number;
+                is_company: boolean;
+            }>;
+            addresses?: Array<{
+                id: number;
+                street_address: string;
+                city: string;
+                state: string;
+                zip_code: string;
+                country: string;
+            }>;
+        };
+        state?: {
+            id: number;
+            name: string;
+            formation_fee: number;
+        };
+        metadata?: {
+            category?: string[];
+        };
+    };
+}
+
 const AddOrderPage = () => {
-    const { plan } = useParams<{ plan?: string }>();
+    const { plan, orderId } = useParams<{ plan?: string; orderId?: string }>();
     const navigate = useNavigate();
     const location = useLocation();
     const stepContainerRef = useRef<HTMLDivElement>(null);
     const isAnimatingRef = useRef<boolean>(false);
     const [lastSaved, setLastSaved] = useState<Date>(new Date());
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [isLoadingOrder, setIsLoadingOrder] = useState(false);
 
     // Get country name, pricing plan, and pricing data from location state or derive from plan
     const locationState = location.state as LocationState | null;
@@ -46,9 +93,76 @@ const AddOrderPage = () => {
     // Check if plan is for UK (skip step 2 for UK plans)
     const isUKPlan = plan?.includes('_uk') || false;
 
-    // Initialize plan in formData from URL params and location state
+    // Detect edit mode
     useEffect(() => {
-        if (countryName && pricingPlan) {
+        if (orderId) {
+            setIsEditMode(true);
+        }
+    }, [orderId]);
+
+    // Fetch order data if in edit mode
+    useEffect(() => {
+        const fetchOrderData = async () => {
+            if (!orderId) return;
+
+            try {
+                setIsLoadingOrder(true);
+                const response = await apiClient.get<ApiOrderResponse>(`/orders/${orderId}`);
+                const order = response.data.data || response.data;
+
+                if (!order) {
+                    console.error('Order not found');
+                    return;
+                }
+
+                // Map API response to formData structure
+                const mappedFormData = {
+                    plan: order.country && order.pricing_plan ? [{
+                        countryName: order.country.name,
+                        pricingPlan: order.pricing_plan.name,
+                        basePrice: order.pricing_plan.base_price,
+                        yearlyPrice: order.pricing_plan.yearly_price,
+                    }] : [],
+                    companyName: order.company?.name || '',
+                    type: order.company?.type || 'LLC',
+                    category: order.company?.category || [],
+                    state: {
+                        name: order.state?.name || '',
+                        cost: order.state?.formation_fee || 0,
+                    },
+                    owners: order.company?.owners?.map((owner, index) => ({
+                        id: owner.id?.toString() || `temp-${index}`,
+                        fullName: owner.full_name,
+                        ownershipPercentage: typeof owner.ownership_percentage === 'string' 
+                            ? parseFloat(owner.ownership_percentage) 
+                            : Number(owner.ownership_percentage) || 0,
+                        isCompany: owner.is_company,
+                    })) || [],
+                    address: {
+                        streetAddress: order.company?.addresses?.[0]?.street_address || '',
+                        city: order.company?.addresses?.[0]?.city || '',
+                        state: order.company?.addresses?.[0]?.state || '',
+                        zipCode: order.company?.addresses?.[0]?.zip_code || '',
+                        country: order.company?.addresses?.[0]?.country || 'United States',
+                        hasSSNOrITIN: false,
+                        ssnOrITIN: '',
+                    },
+                };
+
+                setFormData(mappedFormData);
+            } catch (error) {
+                console.error('Error fetching order data:', error);
+            } finally {
+                setIsLoadingOrder(false);
+            }
+        };
+
+        fetchOrderData();
+    }, [orderId]);
+
+    // Initialize plan in formData from URL params and location state (only if not in edit mode)
+    useEffect(() => {
+        if (!isEditMode && countryName && pricingPlan) {
             setFormData((prev) => ({ 
                 ...prev, 
                 plan: [{ 
@@ -59,7 +173,7 @@ const AddOrderPage = () => {
                 }] 
             }));
         }
-    }, [countryName, pricingPlan, basePrice, yearlyPrice]);
+    }, [countryName, pricingPlan, basePrice, yearlyPrice, isEditMode]);
 
     // Initial animation on mount
     useEffect(() => {
@@ -216,6 +330,7 @@ const AddOrderPage = () => {
                 state: formData.state,
                 company_name: formData.companyName,
                 company_type: formData.type,
+                category: formData.category || [],
                 owners: formData.owners.map(owner => ({
                     full_name: owner.fullName,
                     ownership_percentage: owner.ownershipPercentage,
@@ -231,9 +346,16 @@ const AddOrderPage = () => {
                 }],
             };
 
-            // Make API call to create order
-            const response = await apiClient.post('/orders', orderData);
-            const order = response.data.data || response.data;
+            let order;
+            if (isEditMode && orderId) {
+                // Update existing order
+                const response = await apiClient.put(`/orders/${orderId}`, orderData);
+                order = response.data.data || response.data;
+            } else {
+                // Create new order
+                const response = await apiClient.post('/orders', orderData);
+                order = response.data.data || response.data;
+            }
 
             // Get pricing plan from formData.plan array
             const currentPlan = formData.plan && formData.plan.length > 0 
@@ -250,9 +372,9 @@ const AddOrderPage = () => {
                 navigate(`/order/upgrade/${order.id}`);
             }
         } catch (error: any) {
-            console.error('Error creating order:', error);
+            console.error(`Error ${isEditMode ? 'updating' : 'creating'} order:`, error);
             // TODO: Show error message to user
-            alert(error.response?.data?.message || 'Failed to create order. Please try again.');
+            alert(error.response?.data?.message || `Failed to ${isEditMode ? 'update' : 'create'} order. Please try again.`);
         }
     };
 
@@ -318,6 +440,15 @@ const AddOrderPage = () => {
 
     // Filter steps to exclude step 2 for UK plans
     const displaySteps = isUKPlan ? steps.filter(step => step.number !== 2) : steps;
+
+    // Show loading state while fetching order data
+    if (isLoadingOrder) {
+        return (
+            <div className="h-[calc(100vh-96px)] w-full max-w-[1920px] mx-auto flex items-center justify-center">
+                <div className="text-muted-foreground">Loading order data...</div>
+            </div>
+        );
+    }
 
     console.log('Here is the formData: ', formData);
     return (

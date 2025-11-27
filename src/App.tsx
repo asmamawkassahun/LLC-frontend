@@ -54,6 +54,7 @@ function App() {
           <Route path={ROUTES.SETTINGS} element={<Settings />} />
           <Route path={ROUTES.ORDERS} element={<Orders />} />
           <Route path={ROUTES.ORDER_COUNTRY_SELECTION} element={<CountrySelectionPage />} />
+          <Route path="/orders/:orderId" element={<AddOrderPage />} />
           <Route path="/order/add/:plan" element={<AddOrderPage />} />
           <Route path={ROUTES.ORDER_ADD} element={<AddOrderPage />} />
           <Route path="/order/payment/:id" element={<PaymentSummary />} />

@@ -83,7 +83,16 @@ const Step3Owners = ({ companyName, owners, onOwnersChange }: Step3OwnersProps) 
         }
     };
 
-    const totalPercentage = localOwners.reduce((sum, owner) => sum + owner.ownershipPercentage, 0);
+    // Calculate total percentage with proper number conversion and floating point tolerance
+    const totalPercentage = localOwners.reduce((sum, owner) => {
+        const percentage = typeof owner.ownershipPercentage === 'string' 
+            ? parseFloat(owner.ownershipPercentage) 
+            : Number(owner.ownershipPercentage);
+        return sum + (isNaN(percentage) ? 0 : percentage);
+    }, 0);
+
+    // Use a small tolerance for floating point comparison (0.01)
+    const isTotalValid = Math.abs(totalPercentage - 100) < 0.01;
 
     return (
         <div className="max-w-4xl mx-auto px-4! md:px-0 pb-6 md:pb-8 space-y-24">
@@ -122,11 +131,12 @@ const Step3Owners = ({ companyName, owners, onOwnersChange }: Step3OwnersProps) 
                                             type="number"
                                             value={owner.ownershipPercentage}
                                             onChange={(e) => {
-                                                const value = Math.max(0, Math.min(100, parseInt(e.target.value) || 0));
+                                                const value = Math.max(0, Math.min(100, parseFloat(e.target.value) || 0));
                                                 handleOwnerChange(owner.id, 'ownershipPercentage', value);
                                             }}
                                             min="0"
                                             max="100"
+                                            step="0.01"
                                             className="w-full pl-1 pr-8 py-1  border border-input rounded-sm focus:outline-none focus:ring-2 focus:ring-purple focus:border-transparent text-foreground bg-background"
                                         />
                                         <div className="absolute right-[0.5px] top-1/2 border border-border rounded-r-sm h-full w-8 bg-accent-foreground -translate-y-1/2 flex items-center gap-0.5 text-center">
@@ -183,9 +193,9 @@ const Step3Owners = ({ companyName, owners, onOwnersChange }: Step3OwnersProps) 
 
 
                     {/* Total Percentage Validation */}
-                    {totalPercentage !== 100 && (
+                    {!isTotalValid && (
                         <div className="text-sm text-red-500">
-                            Total ownership percentage must equal 100%. Current total: {totalPercentage}%
+                            Total ownership percentage must equal 100%. Current total: {totalPercentage.toFixed(2)}%
                         </div>
                     )}
 

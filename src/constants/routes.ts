@@ -7,6 +7,7 @@ export const ROUTES = {
     REGISTER: '/register',
     DASHBOARD: '/dashboard',
     ORDER_ADD: '/order/add',
+    ORDER_EDIT: '/orders/:orderId',
     ORDER_COUNTRY_SELECTION: '/order/package',
     ORDER_PAYMENT: '/order/payment',
     ORDER_PAYMENT_WITH_ID: '/order/payment/:id',
