@@ -44,41 +44,42 @@ const Orders = () => {
     const [pageSize, setPageSize] = useState(10);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchOrders = async () => {
-            try {
-                setLoading(true);
-                const response = await apiClient.get('/orders', {
-                    params: {
-                        per_page: pageSize,
-                    },
-                });
+    const fetchOrders = async () => {
+        try {
+            setLoading(true);
+            const response = await apiClient.get('/orders', {
+                params: {
+                    per_page: pageSize,
+                },
+            });
 
-                console.log("Orders response: ", response.data);
-                
-                // The API now returns: { data: [...], current_page: 1, ... }
-                const ordersData: ApiOrder[] = response.data.data || [];
-                
-                // Map API response to Order interface
-                const mappedOrders: Order[] = ordersData.map((apiOrder) => ({
-                    id: apiOrder.id.toString(),
-                    item: apiOrder.company?.name || 'N/A',
-                    orderNumber: apiOrder.order_number,
-                    planType: apiOrder.pricing_plan?.name || 'N/A',
-                    price: apiOrder.total_amount,
-                    status: apiOrder.payment_status_label || apiOrder.payment_status || '',
-                    updatedAt: formatDate(apiOrder.updated_at),
-                    isPrimary: apiOrder.company?.is_primary || false,
-                }));
-                
-                setOrders(mappedOrders);
-            } catch (error) {
-                console.error('Error fetching orders:', error);
-                setOrders([]);
-            } finally {
-                setLoading(false);
-            }
-        };
+            console.log("Orders response: ", response.data);
+            
+            // The API now returns: { data: [...], current_page: 1, ... }
+            const ordersData: ApiOrder[] = response.data.data || [];
+            
+            // Map API response to Order interface
+            const mappedOrders: Order[] = ordersData.map((apiOrder) => ({
+                id: apiOrder.id.toString(),
+                item: apiOrder.company?.name || 'N/A',
+                orderNumber: apiOrder.order_number,
+                planType: apiOrder.pricing_plan?.name || 'N/A',
+                price: apiOrder.total_amount,
+                status: apiOrder.payment_status_label || apiOrder.payment_status || '',
+                updatedAt: formatDate(apiOrder.updated_at),
+                isPrimary: apiOrder.company?.is_primary || false,
+            }));
+            
+            setOrders(mappedOrders);
+        } catch (error) {
+            console.error('Error fetching orders:', error);
+            setOrders([]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchOrders();
     }, [pageSize]);
 
@@ -113,13 +114,26 @@ const Orders = () => {
         console.log('Download summary for order:', orderId);
     };
 
-    const handleSetAsPrimary = (orderId: string) => {
-        setOrders(prevOrders =>
-            prevOrders.map(order => ({
-                ...order,
-                isPrimary: order.id === orderId
-            }))
-        );
+    const handleSetAsPrimary = async (orderId: string) => {
+        try {
+            // Get the order details to find company ID
+            const response = await apiClient.get(`/orders/${orderId}`);
+            const orderData = response.data.data || response.data;
+            
+            if (!orderData.company?.id) {
+                console.error('Company not found for this order');
+                return;
+            }
+
+            // Call API to set company as primary
+            await apiClient.post(`/companies/${orderData.company.id}/set-primary`);
+
+            // Refetch orders to get updated data
+            await fetchOrders();
+        } catch (error) {
+            console.error('Error setting company as primary:', error);
+            // Optionally show error message to user
+        }
     };
 
     const handleDelete = (orderId: string) => {
