@@ -39,9 +39,10 @@ interface Step4AddressProps {
     address: AddressData;
     onAddressChange: (address: AddressData) => void;
     selectedState?: string; // State selected in step 2
+    isUSPlan?: boolean; // Whether the plan is for US
 }
 
-const Step4Address = ({ companyName, address, onAddressChange, selectedState }: Step4AddressProps) => {
+const Step4Address = ({ companyName, address, onAddressChange, selectedState, isUSPlan = false }: Step4AddressProps) => {
     const [localAddress, setLocalAddress] = useState<AddressData>(address || {
         streetAddress: '',
         city: '',
@@ -165,56 +166,60 @@ const Step4Address = ({ companyName, address, onAddressChange, selectedState }: 
                         </div>
                     </div>
 
-                    {/* SSN/ITIN Question */}
-                    <div className="flex  items-center justify-center sm:items-center gap-4 pt-20">
-                        <label className="text-sm font-medium text-foreground whitespace-nowrap">
-                            Do you have SSN or ITIN ?
-                        </label>
-                        <div className="flex gap-2">
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    const updated = { ...localAddress, hasSSNOrITIN: true };
-                                    setLocalAddress(updated);
-                                    onAddressChange(updated);
-                                }}
-                                className={`px-4 py-2 rounded-sm border text-xs lg:text-sm font-medium transition-colors ${
-                                    localAddress.hasSSNOrITIN === true
-                                        ? 'bg-accent/15 border-purple text-blue-900'
-                                        : 'bg-white border-gray-300 text-foreground hover:bg-gray-50'
-                                }`}
-                            >
-                                Yes
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    const updated = { ...localAddress, hasSSNOrITIN: false, ssnOrITIN: '' };
-                                    setLocalAddress(updated);
-                                    onAddressChange(updated);
-                                }}
-                                className={`px-4 py-2 rounded-sm border text-xs lg:text-sm font-medium transition-colors ${
-                                    localAddress.hasSSNOrITIN === false
-                                        ? 'bg-accent/15 border-purple text-blue-900'
-                                        : 'bg-white border-gray-300 text-foreground hover:bg-gray-50'
-                                }`}
-                            >
-                                No
-                            </button>
-                        </div>
-                    </div>
+                    {/* SSN/ITIN Question - Only show for US plans */}
+                    {isUSPlan && (
+                        <>
+                            <div className="flex  items-center justify-center sm:items-center gap-4 pt-20">
+                                <label className="text-sm font-medium text-foreground whitespace-nowrap">
+                                    Do you have SSN or ITIN ?
+                                </label>
+                                <div className="flex gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            const updated = { ...localAddress, hasSSNOrITIN: true };
+                                            setLocalAddress(updated);
+                                            onAddressChange(updated);
+                                        }}
+                                        className={`px-4 py-2 rounded-sm border text-xs lg:text-sm font-medium transition-colors ${
+                                            localAddress.hasSSNOrITIN === true
+                                                ? 'bg-accent/15 border-purple text-blue-900'
+                                                : 'bg-white border-gray-300 text-foreground hover:bg-gray-50'
+                                        }`}
+                                    >
+                                        Yes
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            const updated = { ...localAddress, hasSSNOrITIN: false, ssnOrITIN: '' };
+                                            setLocalAddress(updated);
+                                            onAddressChange(updated);
+                                        }}
+                                        className={`px-4 py-2 rounded-sm border text-xs lg:text-sm font-medium transition-colors ${
+                                            localAddress.hasSSNOrITIN === false
+                                                ? 'bg-accent/15 border-purple text-blue-900'
+                                                : 'bg-white border-gray-300 text-foreground hover:bg-gray-50'
+                                        }`}
+                                    >
+                                        No
+                                    </button>
+                                </div>
+                            </div>
 
-                    {/* SSN/ITIN Input (shown when Yes is selected) */}
-                    {localAddress.hasSSNOrITIN === true && (
-                        <div className='max-w-xs md:max-w-2xs lg:max-w-lg mx-auto'>
-                            <input
-                                type="text"
-                                value={localAddress.ssnOrITIN}
-                                onChange={(e) => handleChange('ssnOrITIN', e.target.value)}
-                                placeholder="Enter SSN or ITIN number"
-                                className="w-full text-xs lg:text-sm px-4 py-2 sm:py-1 border border-input rounded-sm focus:outline-none focus:ring-2 focus:ring-purple focus:border-transparent text-foreground bg-background"
-                            />
-                        </div>
+                            {/* SSN/ITIN Input (shown when Yes is selected) */}
+                            {localAddress.hasSSNOrITIN === true && (
+                                <div className='max-w-xs md:max-w-2xs lg:max-w-lg mx-auto'>
+                                    <input
+                                        type="text"
+                                        value={localAddress.ssnOrITIN}
+                                        onChange={(e) => handleChange('ssnOrITIN', e.target.value)}
+                                        placeholder="Enter SSN or ITIN number"
+                                        className="w-full text-xs lg:text-sm px-4 py-2 sm:py-1 border border-input rounded-sm focus:outline-none focus:ring-2 focus:ring-purple focus:border-transparent text-foreground bg-background"
+                                    />
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
             </div>

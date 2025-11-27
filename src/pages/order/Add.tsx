@@ -12,6 +12,7 @@ import Step3Owners from '@/components/order/Step3Owners';
 import Step4Address from '@/components/order/Step4Address';
 import Step5OrderSummary from '@/components/order/Step5OrderSummary';
 import apiClient from '@/utils/api-helpers/apiClient';
+import userService from '@/services/userService';
 
 const steps = [
     { number: 1, label: 'The company' },
@@ -323,6 +324,33 @@ const AddOrderPage = () => {
 
     const handleSubmit = async () => {
         try {
+            // Get current user to match with owner
+            let currentUserName = '';
+            try {
+                const user = await userService.getCurrentUser();
+                currentUserName = user.name || '';
+            } catch (error) {
+                console.error('Error fetching current user:', error);
+            }
+
+            // Prepare owners data - add SSN/ITIN to the owner matching current user
+            const ownersData = formData.owners.map(owner => {
+                const ownerData: any = {
+                    full_name: owner.fullName,
+                    ownership_percentage: owner.ownershipPercentage,
+                    is_company: owner.isCompany,
+                };
+
+                // If SSN/ITIN is provided and this owner matches the current user, add it
+                if (formData.address.hasSSNOrITIN && 
+                    formData.address.ssnOrITIN && 
+                    owner.fullName.trim().toLowerCase() === currentUserName.trim().toLowerCase()) {
+                    ownerData.ssn_or_itin = formData.address.ssnOrITIN;
+                }
+
+                return ownerData;
+            });
+
             // Prepare the order data
             const orderData = {
                 type: 'company_formation',
@@ -331,11 +359,7 @@ const AddOrderPage = () => {
                 company_name: formData.companyName,
                 company_type: formData.type,
                 category: formData.category || [],
-                owners: formData.owners.map(owner => ({
-                    full_name: owner.fullName,
-                    ownership_percentage: owner.ownershipPercentage,
-                    is_company: owner.isCompany,
-                })),
+                owners: ownersData,
                 addresses: [{
                     type: 'registered',
                     street_address: formData.address.streetAddress,
@@ -509,6 +533,7 @@ const AddOrderPage = () => {
                                         address={formData.address}
                                         onAddressChange={(address) => handleFormDataChange({ address })}
                                         selectedState={formData.state.name}
+                                        isUSPlan={formData.plan.length > 0 && formData.plan[0].countryName === 'United States'}
                                     />
                                 </div>
                             )}

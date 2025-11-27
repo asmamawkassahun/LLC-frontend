@@ -1,5 +1,4 @@
 import { Button } from '@/components/ui/button';
-import { HiChat } from 'react-icons/hi';
 
 interface CountryInputProps {
     onCountrySelect?: (country: 'US' | 'UK') => void;
@@ -123,11 +122,11 @@ const CountryInput = ({ onCountrySelect }: CountryInputProps) => {
             </div>
 
             {/* Fixed Chat Icon */}
-            <div className="fixed bottom-6 right-6 z-50">
+            {/* <div className="fixed bottom-6 right-6 z-50">
                 <button className="w-12 h-12 md:w-14 md:h-14 bg-purple hover:bg-purple-dark rounded-full flex items-center justify-center shadow-lg transition-colors">
                     <HiChat className="w-6 h-6 md:w-7 md:h-7 text-white" />
                 </button>
-            </div>
+            </div> */}
         </div>
     );
 };

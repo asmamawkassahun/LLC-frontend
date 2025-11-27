@@ -1,16 +1,25 @@
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import CountryInput from '@/components/sections/dashboard/CountryInput';
-import { ROUTES } from '@/constants/routes';
+import TransparentPricing from '@/components/sections/Features/TransparentPricing';
 
 const CountrySelectionPage = () => {
-    const navigate = useNavigate();
+    const [countrySelected, setCountrySelected] = useState(false);
+    const [selectedCountry, setSelectedCountry] = useState<'US' | 'UK'>('US');
 
-    const handleCountrySelect = () => {
-        // Navigate to order creation page after country selection
-        navigate(ROUTES.ORDER_ADD);
+    const handleCountrySelect = (country: 'US' | 'UK') => {
+        setSelectedCountry(country);
+        setCountrySelected(true);
     };
 
-    return <CountryInput onCountrySelect={handleCountrySelect} />;
+    return (
+        <div>
+            {!countrySelected ? (
+                <CountryInput onCountrySelect={handleCountrySelect} />
+            ) : (
+                <TransparentPricing variant="dashboard" defaultCountry={selectedCountry} />
+            )}
+        </div>
+    );
 };
 
 export default CountrySelectionPage;

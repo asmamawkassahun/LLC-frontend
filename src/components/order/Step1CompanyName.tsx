@@ -33,7 +33,7 @@ const categories = [
     { id: 'other', label: 'Other', icon: 'https://app.privatily.com/assets/img/icone-categorie/other.png' },
 ];
 
-const types = ['LLC', 'L.L.C.', 'LIMITED LIABILITY COMPANY'];
+const types = ['LLC', 'LTD', 'CORP'];
 
 const Step1CompanyName = ({ formData, onFormDataChange }: Step1CompanyNameProps) => {
     const [currentPage, setCurrentPage] = useState(0);
