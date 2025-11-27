@@ -31,6 +31,8 @@ interface OrdersTableProps {
     onSetPrimary: (id: string) => void;
     onDelete: (id: string) => void;
     onNewOrder?: () => void;
+    onPageSizeChange?: (pageSize: number) => void;
+    pageSize?: number;
 }
 
 interface ActionCellProps {
@@ -156,7 +158,9 @@ const OrdersTable = ({
     onDownload, 
     onSetPrimary, 
     onDelete,
-    onNewOrder 
+    onNewOrder,
+    onPageSizeChange,
+    pageSize: externalPageSize
 }: OrdersTableProps) => {
     const [globalFilter, setGlobalFilter] = useState('');
     const theme = useTheme();
@@ -258,7 +262,7 @@ const OrdersTable = ({
         },
         initialState: {
             pagination: {
-                pageSize: 10,
+                pageSize: externalPageSize || 10,
                 pageIndex: 0,
             },
             showColumnFilters: false,
@@ -351,7 +355,9 @@ const OrdersTable = ({
                                     size="small"
                                     value={table.getState().pagination.pageSize}
                                     onChange={(e) => {
-                                        table.setPageSize(Number(e.target.value));
+                                        const newPageSize = Number(e.target.value);
+                                        table.setPageSize(newPageSize);
+                                        onPageSizeChange?.(newPageSize);
                                     }}
                                     sx={{
                                         minWidth: '80px',
@@ -426,7 +432,9 @@ const OrdersTable = ({
                                     size="small"
                                     value={table.getState().pagination.pageSize}
                                     onChange={(e) => {
-                                        table.setPageSize(Number(e.target.value));
+                                        const newPageSize = Number(e.target.value);
+                                        table.setPageSize(newPageSize);
+                                        onPageSizeChange?.(newPageSize);
                                     }}
                                     sx={{
                                         minWidth: '80px',
