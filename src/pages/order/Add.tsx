@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { Button } from '@/components/ui/button';
-import { HiCheck,  HiDownload } from 'react-icons/hi';
+import { HiCheck, HiDownload } from 'react-icons/hi';
 import { MdNavigateNext } from "react-icons/md";
 import ProgressSidebar from '@/components/order/ProgressSidebar';
 import ProgressBar from '@/components/order/ProgressBar';
@@ -27,10 +27,13 @@ const AddOrderPage = () => {
     const isAnimatingRef = useRef<boolean>(false);
     const [lastSaved, setLastSaved] = useState<Date>(new Date());
 
-    // Log the plan for debugging (can be used later for premium implementation)
+    // Check if plan is for UK (skip step 2 for UK plans)
+    const isUKPlan = plan?.includes('_uk') || false;
+
+    // Initialize plan in formData from URL params
     useEffect(() => {
         if (plan) {
-            console.log('Selected plan:', plan);
+            setFormData((prev) => ({ ...prev, plan }));
         }
     }, [plan]);
 
@@ -71,12 +74,13 @@ const AddOrderPage = () => {
     const [currentStep, setCurrentStep] = useState(1);
     const [animatingStep, setAnimatingStep] = useState<number | null>(null);
     const [formData, setFormData] = useState({
+        plan: '',
         companyName: '',
         type: 'LLC',
         category: [] as string[],
 
         state: '',
-        
+
         owners: [] as Array<{ id: string; fullName: string; ownershipPercentage: number; isCompany: boolean }>,
         address: {
             streetAddress: '',
@@ -158,13 +162,23 @@ const AddOrderPage = () => {
 
     const handleNext = () => {
         if (currentStep < steps.length && !isAnimatingRef.current) {
-            animateStepTransition(currentStep + 1, 'next', currentStep);
+            let nextStep = currentStep + 1;
+            // Skip step 2 for UK plans
+            if (isUKPlan && nextStep === 2) {
+                nextStep = 3;
+            }
+            animateStepTransition(nextStep, 'next', currentStep);
         }
     };
 
     const handleBack = () => {
         if (currentStep > 1 && !isAnimatingRef.current) {
-            animateStepTransition(currentStep - 1, 'back', currentStep);
+            let prevStep = currentStep - 1;
+            // Skip step 2 for UK plans
+            if (isUKPlan && prevStep === 2) {
+                prevStep = 1;
+            }
+            animateStepTransition(prevStep, 'back', currentStep);
         }
     };
 
@@ -174,7 +188,7 @@ const AddOrderPage = () => {
         console.log('Order submitted:', formData);
         // Generate order ID (in production, this would come from the API)
         const orderId = Date.now().toString();
-        
+
         // Check if the plan is Premium - if so, go directly to payment summary
         // Otherwise, go to upgrade page (for Basic plans)
         if (plan && (plan.startsWith('Premium') || plan.startsWith('premium'))) {
@@ -182,12 +196,16 @@ const AddOrderPage = () => {
             navigate(`/order/payment/${orderId}`, { state: { plan } });
         } else {
             // Navigate to upgrade page first with order ID (for Basic plans)
-        navigate(`/order/upgrade/${orderId}`);
+            navigate(`/order/upgrade/${orderId}`);
         }
     };
 
     const handleEditStep = (step: number) => {
         if (!isAnimatingRef.current) {
+            // Skip step 2 for UK plans - if trying to edit step 2, go to step 1 instead
+            if (isUKPlan && step === 2) {
+                return; // Don't allow editing step 2 for UK plans
+            }
             const direction = step > currentStep ? 'next' : 'back';
             animateStepTransition(step, direction, currentStep);
         }
@@ -228,7 +246,8 @@ const AddOrderPage = () => {
             case 1:
                 return isStep1Valid();
             case 2:
-                return isStep2Valid();
+                // Skip validation for step 2 if UK plan
+                return isUKPlan ? true : isStep2Valid();
             case 3:
                 return isStep3Valid();
             case 4:
@@ -240,14 +259,19 @@ const AddOrderPage = () => {
         }
     };
 
+
+    // Filter steps to exclude step 2 for UK plans
+    const displaySteps = isUKPlan ? steps.filter(step => step.number !== 2) : steps;
+
+    console.log('Here is the formData: ', formData);
     return (
         <div className="h-[calc(100vh-96px)] w-full max-w-[1920px] mx-auto flex flex-col md:flex-row gap-2 bg-background px-2 sm:px-4 md:px-6 mb-6 overflow-hidden">
             {/* Mobile Progress Bar */}
             <div className="md:hidden pt-4">
                 <ProgressBar
                     currentStep={currentStep}
-                    totalSteps={steps.length}
-                    stepLabel={currentStep === 1 ? 'About company' : steps.find(s => s.number === currentStep)?.label || 'Step'}
+                    totalSteps={displaySteps.length}
+                    stepLabel={currentStep === 1 ? 'About company' : displaySteps.find(s => s.number === currentStep)?.label || steps.find(s => s.number === currentStep)?.label || 'Step'}
                 />
             </div>
 
@@ -263,52 +287,52 @@ const AddOrderPage = () => {
                             {/* Render steps - show current and animating step during transition */}
                             {(currentStep === 1 || animatingStep === 1) && (
                                 <div data-step="1" className="relative">
-                    <Step1CompanyName
-                        formData={{
-                            companyName: formData.companyName,
-                            type: formData.type,
-                            category: formData.category,
-                        }}
-                        onFormDataChange={handleFormDataChange}
-                    />
+                                    <Step1CompanyName
+                                        formData={{
+                                            companyName: formData.companyName,
+                                            type: formData.type,
+                                            category: formData.category,
+                                        }}
+                                        onFormDataChange={handleFormDataChange}
+                                    />
                                 </div>
-                )}
-                            {(currentStep === 2 || animatingStep === 2) && (
+                            )}
+                            {(currentStep === 2 || animatingStep === 2) && !isUKPlan && (
                                 <div data-step="2" className="relative">
-                    <Step2StateSelection
-                        selectedState={formData.state}
-                        onStateChange={(state) => handleFormDataChange({ state })}
-                        companyName={formData.companyName || 'your'}
-                    />
+                                    <Step2StateSelection
+                                        selectedState={formData.state}
+                                        onStateChange={(state) => handleFormDataChange({ state })}
+                                        companyName={formData.companyName || 'your'}
+                                    />
                                 </div>
-                )}
+                            )}
                             {(currentStep === 3 || animatingStep === 3) && (
                                 <div data-step="3" className="relative">
-                    <Step3Owners
-                        companyName={formData.companyName || 'your company'}
-                        owners={formData.owners}
-                        onOwnersChange={(owners) => handleFormDataChange({ owners })}
-                    />
+                                    <Step3Owners
+                                        companyName={formData.companyName || 'your company'}
+                                        owners={formData.owners}
+                                        onOwnersChange={(owners) => handleFormDataChange({ owners })}
+                                    />
                                 </div>
-                )}
+                            )}
                             {(currentStep === 4 || animatingStep === 4) && (
                                 <div data-step="4" className="relative">
-                    <Step4Address
-                        companyName={formData.companyName || 'your company'}
-                        address={formData.address}
-                        onAddressChange={(address) => handleFormDataChange({ address })}
-                        selectedState={formData.state}
-                    />
+                                    <Step4Address
+                                        companyName={formData.companyName || 'your company'}
+                                        address={formData.address}
+                                        onAddressChange={(address) => handleFormDataChange({ address })}
+                                        selectedState={formData.state}
+                                    />
                                 </div>
-                )}
+                            )}
                             {(currentStep === 5 || animatingStep === 5) && (
                                 <div data-step="5" className="relative">
-                    <Step5OrderSummary
-                        formData={formData}
+                                    <Step5OrderSummary
+                                        formData={formData}
                                         onEditStep={handleEditStep}
-                    />
+                                    />
                                 </div>
-                )}
+                            )}
                         </div>
                     </div>
 
@@ -370,11 +394,11 @@ const AddOrderPage = () => {
                             </div>
                         </div>
                     </div>
-            </div>
+                </div>
 
-            {/* Progress Sidebar - Hidden on mobile */}
+                {/* Progress Sidebar - Hidden on mobile */}
                 <div className="hidden md:block border border-border rounded-lg overflow-y-hidden">
-                <ProgressSidebar currentStep={currentStep} steps={steps} />
+                    <ProgressSidebar currentStep={currentStep} steps={displaySteps} />
                 </div>
             </div>
 

@@ -4,6 +4,7 @@ import OwnersChart from './OwnersChart';
 import { FaPencil } from 'react-icons/fa6';
 
 interface OrderSummaryData {
+    plan?: string;
     companyName: string;
     type: string;
     category: string[];
@@ -86,6 +87,9 @@ const Step5OrderSummary = ({ formData, onEditStep }: Step5OrderSummaryProps) => 
         .filter(Boolean);
     const stateFee = getStateFee(formData.state);
     const stateName = getStateName(formData.state);
+    
+    // Check if plan is for UK (hide state card for UK plans)
+    const isUKPlan = formData.plan?.includes('_uk') || false;
 
     const formatAddress = (): string => {
         const parts = [
@@ -155,29 +159,31 @@ const Step5OrderSummary = ({ formData, onEditStep }: Step5OrderSummaryProps) => 
                         </Button>
                     </div>
 
-                    {/* State Card */}
-                    <div className="border border-border rounded-lg p-6 bg-background flex flex-col">
-                        <h3 className="text-base font-bold text-purple mb-4">State</h3>
-                        <div className="flex-1 space-y-3">
-                            <div>
-                                <span className="text-sm text-muted-foreground">Selection: </span>
-                                <span className="text-sm font-semibold text-foreground">{stateName}</span>
+                    {/* State Card - Hidden for UK plans */}
+                    {!isUKPlan && (
+                        <div className="border border-border rounded-lg p-6 bg-background flex flex-col">
+                            <h3 className="text-base font-bold text-purple mb-4">State</h3>
+                            <div className="flex-1 space-y-3">
+                                <div>
+                                    <span className="text-sm text-muted-foreground">Selection: </span>
+                                    <span className="text-sm font-semibold text-foreground">{stateName}</span>
+                                </div>
+                                <div>
+                                    <span className="text-sm text-muted-foreground">One-time state fees: </span>
+                                    <span className="text-sm font-semibold text-foreground">{stateFee}</span>
+                                </div>
                             </div>
-                            <div>
-                                <span className="text-sm text-muted-foreground">One-time state fees: </span>
-                                <span className="text-sm font-semibold text-foreground">{stateFee}</span>
-                            </div>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleEdit(2)}
+                                className="mt-4 w-full border hover:bg-transparent hover:text-purple border-border text-purple shadow-xs hover:shadow-md cursor-pointer"
+                            >
+                                <FaPencil className="w-4 h-4 mr-2" />
+                                Edit
+                            </Button>
                         </div>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleEdit(2)}
-                            className="mt-4 w-full border hover:bg-transparent hover:text-purple border-border text-purple shadow-xs hover:shadow-md cursor-pointer"
-                        >
-                            <FaPencil className="w-4 h-4 mr-2" />
-                            Edit
-                        </Button>
-                    </div>
+                    )}
 
                     {/* Owners Card */}
                     <div className="border border-border rounded-lg p-6 bg-background flex flex-col">
