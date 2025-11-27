@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { Button } from '@/components/ui/button';
 import { HiCheck, HiDownload } from 'react-icons/hi';
@@ -20,22 +20,45 @@ const steps = [
     { number: 5, label: 'Order summary' },
 ];
 
+interface LocationState {
+    countryName?: string;
+    pricingPlan?: string;
+    basePrice?: number;
+    yearlyPrice?: number;
+}
+
 const AddOrderPage = () => {
     const { plan } = useParams<{ plan?: string }>();
     const navigate = useNavigate();
+    const location = useLocation();
     const stepContainerRef = useRef<HTMLDivElement>(null);
     const isAnimatingRef = useRef<boolean>(false);
     const [lastSaved, setLastSaved] = useState<Date>(new Date());
 
+    // Get country name, pricing plan, and pricing data from location state or derive from plan
+    const locationState = location.state as LocationState | null;
+    const countryName = locationState?.countryName || (plan?.includes('_us') ? 'United States' : plan?.includes('_uk') ? 'United Kingdom' : '');
+    const pricingPlan = locationState?.pricingPlan || plan || '';
+    const basePrice = locationState?.basePrice || 0;
+    const yearlyPrice = locationState?.yearlyPrice || 0;
+
     // Check if plan is for UK (skip step 2 for UK plans)
     const isUKPlan = plan?.includes('_uk') || false;
 
-    // Initialize plan in formData from URL params
+    // Initialize plan in formData from URL params and location state
     useEffect(() => {
-        if (plan) {
-            setFormData((prev) => ({ ...prev, plan }));
+        if (countryName && pricingPlan) {
+            setFormData((prev) => ({ 
+                ...prev, 
+                plan: [{ 
+                    countryName, 
+                    pricingPlan,
+                    basePrice,
+                    yearlyPrice
+                }] 
+            }));
         }
-    }, [plan]);
+    }, [countryName, pricingPlan, basePrice, yearlyPrice]);
 
     // Initial animation on mount
     useEffect(() => {
@@ -74,7 +97,7 @@ const AddOrderPage = () => {
     const [currentStep, setCurrentStep] = useState(1);
     const [animatingStep, setAnimatingStep] = useState<number | null>(null);
     const [formData, setFormData] = useState({
-        plan: '',
+        plan: [] as Array<{ countryName: string; pricingPlan: string; basePrice: number; yearlyPrice: number }>,
         companyName: '',
         type: 'LLC',
         category: [] as string[],
@@ -189,11 +212,16 @@ const AddOrderPage = () => {
         // Generate order ID (in production, this would come from the API)
         const orderId = Date.now().toString();
 
+        // Get pricing plan from formData.plan array
+        const currentPlan = formData.plan && formData.plan.length > 0 
+            ? formData.plan[0].pricingPlan 
+            : plan || '';
+
         // Check if the plan is Premium - if so, go directly to payment summary
         // Otherwise, go to upgrade page (for Basic plans)
-        if (plan && (plan.startsWith('Premium') || plan.startsWith('premium'))) {
+        if (currentPlan && (currentPlan.startsWith('Premium') || currentPlan.startsWith('premium'))) {
             // Pass plan via location state
-            navigate(`/order/payment/${orderId}`, { state: { plan } });
+            navigate(`/order/payment/${orderId}`, { state: { plan: currentPlan } });
         } else {
             // Navigate to upgrade page first with order ID (for Basic plans)
             navigate(`/order/upgrade/${orderId}`);

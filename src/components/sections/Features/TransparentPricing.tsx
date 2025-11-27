@@ -17,14 +17,45 @@ const TransparentPricing = ({ variant = 'features', defaultCountry = 'US' }: Tra
     const headingRef = useRef<HTMLHeadingElement>(null);
     const navigate = useNavigate();
 
+    // Helper function to extract numeric price from string (e.g., "$229" -> 229)
+    const extractPrice = (priceString: string): number => {
+        return parseFloat(priceString.replace(/[^0-9.]/g, '')) || 0;
+    };
+
     const handleGoBasic = () => {
         const plan = selectedCountry === 'US' ? 'Basic_us' : 'Basic_uk';
-        navigate(`/order/add/${plan}`);
+        const countryName = selectedCountry === 'US' ? 'United States' : 'United Kingdom';
+        const planType = 'basic';
+        const pricingInfo = pricingData[selectedCountry][planType];
+        const basePrice = extractPrice(pricingInfo.price);
+        const yearlyPrice = extractPrice(pricingInfo.yearly);
+        
+        navigate(`/order/add/${plan}`, { 
+            state: { 
+                countryName, 
+                pricingPlan: plan,
+                basePrice,
+                yearlyPrice
+            } 
+        });
     };
 
     const handleGoPremium = () => {
         const plan = selectedCountry === 'US' ? 'Premium_us' : 'Premium_uk';
-        navigate(`/order/add/${plan}`);
+        const countryName = selectedCountry === 'US' ? 'United States' : 'United Kingdom';
+        const planType = 'premium';
+        const pricingInfo = pricingData[selectedCountry][planType];
+        const basePrice = extractPrice(pricingInfo.price);
+        const yearlyPrice = extractPrice(pricingInfo.yearly);
+        
+        navigate(`/order/add/${plan}`, { 
+            state: { 
+                countryName, 
+                pricingPlan: plan,
+                basePrice,
+                yearlyPrice
+            } 
+        });
     };
 
     // Pricing data for US and UK

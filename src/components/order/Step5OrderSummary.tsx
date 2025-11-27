@@ -4,7 +4,7 @@ import OwnersChart from './OwnersChart';
 import { FaPencil } from 'react-icons/fa6';
 
 interface OrderSummaryData {
-    plan?: string;
+    plan?: Array<{ countryName: string; pricingPlan: string; basePrice: number; yearlyPrice: number }>;
     companyName: string;
     type: string;
     category: string[];
@@ -47,13 +47,6 @@ const categories = [
     { id: 'other', label: 'Other' },
 ] as const;
 
-const stateFees: Record<string, string> = {
-    'new-mexico': '$0.00',
-    'wyoming': '$50.00',
-    'delaware': '$100.00',
-    'other': '$0.00',
-};
-
 const stateNames: Record<string, string> = {
     'new-mexico': 'New Mexico',
     'wyoming': 'Wyoming',
@@ -71,16 +64,6 @@ const getStateName = (stateId: string): string => {
     return stateId;
 };
 
-// Helper function to get state fee
-const getStateFee = (stateId: string): string => {
-    // If it's a predefined state, return the mapped fee
-    if (stateFees[stateId]) {
-        return stateFees[stateId];
-    }
-    // For "other" states, return $0.00
-    return '$0.00';
-};
-
 const Step5OrderSummary = ({ formData, onEditStep }: Step5OrderSummaryProps) => {
     const categoryLabels = formData.category
         .map(catId => categories.find(cat => cat.id === catId)?.label || catId)
@@ -91,7 +74,9 @@ const Step5OrderSummary = ({ formData, onEditStep }: Step5OrderSummaryProps) => 
     const stateFee = formData.state.name ? (formData.state.cost > 0 ? `$${formData.state.cost}.00` : '$0.00') : '$0.00';
 
     // Check if plan is for UK (hide state card for UK plans)
-    const isUKPlan = formData.plan?.includes('_uk') || false;
+    const isUKPlan = formData.plan && formData.plan.length > 0 
+        ? formData.plan[0].pricingPlan?.includes('_uk') || false 
+        : false;
 
     const formatAddress = (): string => {
         const parts = [
