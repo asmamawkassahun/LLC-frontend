@@ -125,15 +125,15 @@ const ActionCell = ({ row, onPay, onUpdate, onDownload, onSetPrimary, onDelete }
                     Download summary
                 </MenuItem>
                 {!row.original.isPrimary && (
-                    <MenuItem
-                        onClick={() => {
-                            onSetPrimary(row.original.id);
-                            handleClose();
-                        }}
-                    >
-                        <HomeIcon sx={{ fontSize: '16px', mr: 1 }} />
-                        Set as primary
-                    </MenuItem>
+                <MenuItem
+                    onClick={() => {
+                        onSetPrimary(row.original.id);
+                        handleClose();
+                    }}
+                >
+                    <HomeIcon sx={{ fontSize: '16px', mr: 1 }} />
+                    Set as primary
+                </MenuItem>
                 )}
             </Menu>
             <IconButton

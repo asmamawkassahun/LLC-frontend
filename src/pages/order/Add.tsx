@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { Button } from '@/components/ui/button';
@@ -83,6 +83,7 @@ const AddOrderPage = () => {
     const [lastSaved, setLastSaved] = useState<Date>(new Date());
     const [isEditMode, setIsEditMode] = useState(false);
     const [isLoadingOrder, setIsLoadingOrder] = useState(false);
+    const [orderCountryName, setOrderCountryName] = useState<string>('');
 
     // Get country name, pricing plan, and pricing data from location state or derive from plan
     const locationState = location.state as LocationState | null;
@@ -92,7 +93,7 @@ const AddOrderPage = () => {
     const yearlyPrice = locationState?.yearlyPrice || 0;
 
     // Check if plan is for UK (skip step 2 for UK plans)
-    const isUKPlan = plan?.includes('_uk') || false;
+    // Will be calculated after formData is declared using useMemo
 
     // Detect edit mode
     useEffect(() => {
@@ -114,6 +115,11 @@ const AddOrderPage = () => {
                 if (!order) {
                     console.error('Order not found');
                     return;
+                }
+
+                // Store country name from order for UK plan detection
+                if (order.country?.name) {
+                    setOrderCountryName(order.country.name);
                 }
 
                 // Map API response to formData structure
@@ -235,6 +241,16 @@ const AddOrderPage = () => {
     const handleFormDataChange = (data: Partial<typeof formData>) => {
         setFormData((prev) => ({ ...prev, ...data }));
     };
+
+    // Check if plan is for UK (skip step 2 for UK plans)
+    // In edit mode, check the country from the fetched order data or formData
+    // In create mode, check the URL plan parameter
+    const isUKPlan = useMemo(() => {
+        if (isEditMode) {
+            return orderCountryName === 'United Kingdom' || formData.plan[0]?.countryName === 'United Kingdom';
+        }
+        return plan?.includes('_uk') || false;
+    }, [isEditMode, orderCountryName, formData.plan, plan]);
 
     const animateStepTransition = (newStep: number, direction: 'next' | 'back', currentStepValue: number) => {
         if (isAnimatingRef.current || !stepContainerRef.current) return;
@@ -381,18 +397,18 @@ const AddOrderPage = () => {
                 order = response.data.data || response.data;
             }
 
-            // Get pricing plan from formData.plan array
-            const currentPlan = formData.plan && formData.plan.length > 0 
-                ? formData.plan[0].pricingPlan 
-                : plan || '';
+        // Get pricing plan from formData.plan array
+        const currentPlan = formData.plan && formData.plan.length > 0 
+            ? formData.plan[0].pricingPlan 
+            : plan || '';
 
-            // Check if the plan is Premium - if so, go directly to payment summary
-            // Otherwise, go to upgrade page (for Basic plans)
-            if (currentPlan && (currentPlan.startsWith('Premium') || currentPlan.startsWith('premium'))) {
-                // Pass plan via location state
+        // Check if the plan is Premium - if so, go directly to payment summary
+        // Otherwise, go to upgrade page (for Basic plans)
+        if (currentPlan && (currentPlan.startsWith('Premium') || currentPlan.startsWith('premium'))) {
+            // Pass plan via location state
                 navigate(`/order/payment/${order.id}`, { state: { plan: currentPlan } });
-            } else {
-                // Navigate to upgrade page first with order ID (for Basic plans)
+        } else {
+            // Navigate to upgrade page first with order ID (for Basic plans)
                 navigate(`/order/upgrade/${order.id}`);
             }
         } catch (error: any) {

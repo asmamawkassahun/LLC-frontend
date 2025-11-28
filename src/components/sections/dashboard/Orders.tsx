@@ -44,8 +44,8 @@ const Orders = () => {
     const [pageSize, setPageSize] = useState(10);
     const navigate = useNavigate();
 
-    const fetchOrders = async () => {
-        try {
+        const fetchOrders = async () => {
+            try {
             setLoading(true);
             const response = await apiClient.get('/orders', {
                 params: {
@@ -71,13 +71,13 @@ const Orders = () => {
             }));
             
             setOrders(mappedOrders);
-        } catch (error) {
-            console.error('Error fetching orders:', error);
+            } catch (error) {
+                console.error('Error fetching orders:', error);
             setOrders([]);
         } finally {
             setLoading(false);
-        }
-    };
+            }
+        };
 
     useEffect(() => {
         fetchOrders();
