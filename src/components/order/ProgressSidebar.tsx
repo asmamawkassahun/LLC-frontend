@@ -17,7 +17,6 @@ const ProgressSidebar = ({ currentStep, steps }: ProgressSidebarProps) => {
                 {steps.map((step, index) => {
                     const isCompleted = step.number < currentStep;
                     const isActive = step.number === currentStep;
-                    const isFuture = step.number > currentStep;
 
                     return (
                         <div key={step.number} className="relative flex items-start h-28 gap-4">

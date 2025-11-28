@@ -1,4 +1,3 @@
-import { HiMail, HiPhone, HiBookOpen, HiChat } from 'react-icons/hi';
 import { IoIosInformationCircleOutline } from "react-icons/io";
 import { FaFacebook, FaTwitter, FaInstagram } from 'react-icons/fa';
 import { Link } from 'react-router-dom';

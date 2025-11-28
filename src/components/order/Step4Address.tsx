@@ -42,7 +42,7 @@ interface Step4AddressProps {
     isUSPlan?: boolean; // Whether the plan is for US
 }
 
-const Step4Address = ({ companyName, address, onAddressChange, selectedState, isUSPlan = false }: Step4AddressProps) => {
+const Step4Address = ({ address, onAddressChange, selectedState, isUSPlan = false }: Step4AddressProps) => {
     const [localAddress, setLocalAddress] = useState<AddressData>(address || {
         streetAddress: '',
         city: '',
@@ -66,14 +66,6 @@ const Step4Address = ({ companyName, address, onAddressChange, selectedState, is
         setLocalAddress(updated);
         onAddressChange(updated);
     };
-
-    const isValid = 
-        localAddress.streetAddress.trim() !== '' &&
-        localAddress.city.trim() !== '' &&
-        localAddress.state.trim() !== '' &&
-        localAddress.zipCode.trim() !== '' &&
-        localAddress.country.trim() !== '' &&
-        (localAddress.hasSSNOrITIN === false || localAddress.ssnOrITIN.trim() !== '');
 
     return (
         <div className="max-w-sm lg:max-w-2xl mx-auto px-4 md:px-0 pb-6 md:pb-8 space-y-24">

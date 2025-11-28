@@ -1,4 +1,3 @@
-import {  HiGlobeAlt, HiPhone, HiCurrencyDollar } from 'react-icons/hi';
 import { CiClock2 } from "react-icons/ci";
 import { TfiHeadphoneAlt, TfiWorld } from 'react-icons/tfi';
 import { PiCurrencyDollarLight } from 'react-icons/pi';

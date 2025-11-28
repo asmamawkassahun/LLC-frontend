@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import { HiPlus, HiMinus } from 'react-icons/hi';
 import { LiaMinusSolid, LiaPlusSolid } from "react-icons/lia";
 import { gsap } from 'gsap';
 

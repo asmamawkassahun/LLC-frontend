@@ -64,7 +64,6 @@ const FinanceSecurity = () => {
   x="0px"
   y="0px"
   viewBox="0 0 458 458"
-  style={{ enableBackground: "new 0 0 458 458" }}
   xmlSpace="preserve"
   width="120px"
   className="me-2"

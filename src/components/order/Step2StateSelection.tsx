@@ -83,8 +83,8 @@ const Step2StateSelection = ({ selectedState, onStateChange, companyName = 'your
     const inputRef = useRef<HTMLInputElement>(null);
 
     // Check if selected state is an "other" state (not one of the predefined states)
-    const isOtherStateSelected = selectedState === 'other' || 
-        (selectedState && !['new-mexico', 'wyoming', 'delaware'].includes(selectedState));
+    const isOtherStateSelected = Boolean(selectedState === 'other' || 
+        (selectedState && !['new-mexico', 'wyoming', 'delaware'].includes(selectedState)));
     
     // Get the selected state name if it's an "other" state
     const getSelectedOtherState = () => {
@@ -154,7 +154,7 @@ const Step2StateSelection = ({ selectedState, onStateChange, companyName = 'your
                         cost={state.cost}
                         description={state.description}
                         tags={state.tags}
-                        isSelected={state.id === 'other' ? isOtherStateSelected : selectedState === state.id}
+                        isSelected={state.id === 'other' ? isOtherStateSelected : Boolean(selectedState === state.id)}
                         onClick={() => {
                             if (state.id === 'other') {
                                 handleOtherCardClick();
@@ -165,10 +165,10 @@ const Step2StateSelection = ({ selectedState, onStateChange, companyName = 'your
                             }
                         }}
                         isOther={state.id === 'other'}
-                        showDropdown={state.id === 'other' && isOtherStateSelected}
+                        showDropdown={state.id === 'other' ? isOtherStateSelected : false}
                         isDropdownOpen={isOtherDropdownOpen}
-                        dropdownRef={dropdownRef}
-                        inputRef={inputRef}
+                        dropdownRef={dropdownRef as React.RefObject<HTMLDivElement>}
+                        inputRef={inputRef as React.RefObject<HTMLInputElement>}
                         searchTerm={searchTerm}
                         onSearchChange={setSearchTerm}
                         filteredStates={filteredStates}
