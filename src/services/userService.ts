@@ -1,5 +1,19 @@
 import apiClient from '@/utils/api-helpers/apiClient';
 
+export interface UserProfile {
+  id?: number;
+  user_id: number;
+  first_name: string;
+  last_name: string;
+  date_of_birth?: string | null;
+  email: string | null;
+  phone?: string | null;
+  Country: string | null;
+  password: string | null;
+  old_password: string | null;
+  confirm_password: string | null;
+}
+
 export interface User {
   id: number;
   name: string;
@@ -53,6 +67,15 @@ const userService = {
 
   async updatePhone(phone: string): Promise<User> {
     return this.updateUser({ phone });
+  },
+
+  async changePassword(data: { 
+    current_password: string; 
+    password: string; 
+    password_confirmation: string;
+  }): Promise<{ message: string }> {
+    const response = await apiClient.put<{ message: string }>('/user/change-password', data);
+    return response.data;
   },
 };
 

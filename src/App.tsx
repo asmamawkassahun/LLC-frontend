@@ -14,10 +14,12 @@ import Marketplace from './components/sections/dashboard/marketplace/Marketplace
 import Referrals from './components/sections/dashboard/Referrals';
 import Settings from './components/sections/dashboard/Settings';
 import Orders from './components/sections/dashboard/Orders';
+import { Toaster } from './components/ui/sonner';
 
 function App() {
   return (
     <BrowserRouter>
+    <Toaster richColors position="top-right" />
       <Routes>
         {/* Routes with MainLayout (with Navbar) */}
         <Route element={<MainLayout />}>
