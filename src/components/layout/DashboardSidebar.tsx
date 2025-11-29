@@ -124,7 +124,7 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
                                                     onClose();
                                                 }
                                             }}
-                                            className="w-full flex items-center gap-3 px-4 py-4.5 rounded-lg transition-colors text-gray-600 hover:bg-gray-50 text-left"
+                                            className="w-full flex items-center gap-3 px-4 py-4.5 rounded-lg transition-colors text-gray-600 hover:bg-gray-50 text-left cursor-pointer"
                                         >
                                             {item.imageUrl ? (
                                                 <img 

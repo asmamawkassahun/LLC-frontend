@@ -20,7 +20,7 @@ const DashboardNavbar = ({ onMenuClick }: DashboardNavbarProps) => {
                     {/* Hamburger Menu - visible on medium screens, hidden on large */}
                     <button
                         onClick={onMenuClick}
-                        className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                        className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
                         aria-label="Toggle sidebar"
                     >
                         <HiOutlineMenuAlt1 className="w-6 h-6 text-gray-600" />

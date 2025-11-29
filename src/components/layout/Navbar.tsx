@@ -284,7 +284,7 @@ function Navbar() {
           <div className="px-4 py-8  flex flex-col items-center gap-4">
             <Link
               to={ROUTES.LOGIN}
-              className='cursor-pointer font-medium w-full hover:text-accent transition-colors text-lg'
+              className='cursor-pointer font-medium w-full text-center hover:text-accent transition-colors text-lg'
               onClick={closeMenu}
             >
               Sign In

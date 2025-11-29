@@ -20,6 +20,7 @@ interface ApiOrder {
         id: number;
         name: string;
         is_primary?: boolean;
+        updated_at: string;
     };
     pricing_plan?: {
         id: number;
@@ -66,7 +67,7 @@ const Orders = () => {
                 planType: apiOrder.pricing_plan?.name || 'N/A',
                 price: apiOrder.total_amount,
                 status: apiOrder.payment_status_label || apiOrder.payment_status || '',
-                updatedAt: formatDate(apiOrder.updated_at),
+                updatedAt: formatDate(apiOrder.company?.updated_at || ''),
                 isPrimary: apiOrder.company?.is_primary || false,
             }));
             
