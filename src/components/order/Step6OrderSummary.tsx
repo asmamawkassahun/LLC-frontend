@@ -16,12 +16,10 @@ interface OrderSummaryData {
         state: string;
         zipCode: string;
         country: string;
-        hasSSNOrITIN: boolean | null;
-        ssnOrITIN: string;
     };
 }
 
-interface Step5OrderSummaryProps {
+interface Step6OrderSummaryProps {
     onBack?: () => void;
     onSubmit?: () => void;
     formData: OrderSummaryData;
@@ -64,7 +62,7 @@ const getStateName = (stateId: string): string => {
     return stateId;
 };
 
-const Step5OrderSummary = ({ formData, onEditStep }: Step5OrderSummaryProps) => {
+const Step6OrderSummary = ({ formData, onEditStep }: Step6OrderSummaryProps) => {
     const categoryLabels = formData.category
         .map(catId => categories.find(cat => cat.id === catId)?.label || catId)
         .filter(Boolean);
@@ -211,4 +209,4 @@ const Step5OrderSummary = ({ formData, onEditStep }: Step5OrderSummaryProps) => 
     );
 };
 
-export default Step5OrderSummary;
+export default Step6OrderSummary;

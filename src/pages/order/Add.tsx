@@ -10,16 +10,17 @@ import Step1CompanyName from '@/components/order/Step1CompanyName';
 import Step2StateSelection from '@/components/order/Step2StateSelection';
 import Step3Owners from '@/components/order/Step3Owners';
 import Step4Address from '@/components/order/Step4Address';
-import Step5OrderSummary from '@/components/order/Step5OrderSummary';
+import Step5Services from '@/components/order/Step5Services';
+import Step6OrderSummary from '@/components/order/Step6OrderSummary';
 import apiClient from '@/utils/api-helpers/apiClient';
-import userService from '@/services/userService';
 
 const steps = [
     { number: 1, label: 'The company' },
     { number: 2, label: 'State' },
     { number: 3, label: 'Owners' },
     { number: 4, label: 'Address' },
-    { number: 5, label: 'Order summary' },
+    { number: 5, label: 'Services' },
+    { number: 6, label: 'Order summary' },
 ];
 
 interface LocationState {
@@ -62,6 +63,13 @@ interface ApiOrderResponse {
                 zip_code: string;
                 country: string;
             }>;
+            service?: {
+                ein?: string | null;
+                itin?: string | null;
+                website?: string | null;
+                domain_hosting?: string | null;
+                business_email?: string | null;
+            } | null;
         };
         state?: {
             id: number;
@@ -151,8 +159,14 @@ const AddOrderPage = () => {
                         state: order.company?.addresses?.[0]?.state || '',
                         zipCode: order.company?.addresses?.[0]?.zip_code || '',
                         country: order.company?.addresses?.[0]?.country || 'United States',
-                        hasSSNOrITIN: false,
-                        ssnOrITIN: '',
+                    },
+                    services: {
+                        // Prefill services: if the service field is not null, set to true
+                        ein: order.company?.service?.ein !== null && order.company?.service?.ein !== undefined,
+                        itin: order.company?.service?.itin !== null && order.company?.service?.itin !== undefined,
+                        website: order.company?.service?.website !== null && order.company?.service?.website !== undefined,
+                        domainHosting: order.company?.service?.domain_hosting !== null && order.company?.service?.domain_hosting !== undefined,
+                        businessEmail: order.company?.service?.business_email !== null && order.company?.service?.business_email !== undefined,
                     },
                 };
 
@@ -233,8 +247,13 @@ const AddOrderPage = () => {
             state: '',
             zipCode: '',
             country: 'United States',
-            hasSSNOrITIN: false,
-            ssnOrITIN: '',
+        },
+        services: {
+            ein: false,
+            itin: false,
+            website: false,
+            domainHosting: false,
+            businessEmail: false,
         },
     });
 
@@ -340,31 +359,13 @@ const AddOrderPage = () => {
 
     const handleSubmit = async () => {
         try {
-            // Get current user to match with owner
-            let currentUserName = '';
-            try {
-                const user = await userService.getCurrentUser();
-                currentUserName = user.name || '';
-            } catch (error) {
-                console.error('Error fetching current user:', error);
-            }
-
-            // Prepare owners data - add SSN/ITIN to the owner matching current user
+            // Prepare owners data
             const ownersData = formData.owners.map(owner => {
-                const ownerData: any = {
+                return {
                     full_name: owner.fullName,
                     ownership_percentage: owner.ownershipPercentage,
                     is_company: owner.isCompany,
                 };
-
-                // If SSN/ITIN is provided and this owner matches the current user, add it
-                if (formData.address.hasSSNOrITIN && 
-                    formData.address.ssnOrITIN && 
-                    owner.fullName.trim().toLowerCase() === currentUserName.trim().toLowerCase()) {
-                    ownerData.ssn_or_itin = formData.address.ssnOrITIN;
-                }
-
-                return ownerData;
             });
 
             // Prepare the order data
@@ -384,6 +385,7 @@ const AddOrderPage = () => {
                     zip_code: formData.address.zipCode,
                     country: formData.address.country,
                 }],
+                services: formData.services,
             };
 
             let order;
@@ -454,9 +456,13 @@ const AddOrderPage = () => {
             address.city.trim() !== '' &&
             address.state.trim() !== '' &&
             address.zipCode.trim() !== '' &&
-            address.country.trim() !== '' &&
-            (address.hasSSNOrITIN === false || address.ssnOrITIN.trim() !== '')
+            address.country.trim() !== ''
         );
+    };
+
+    const isStep5Valid = () => {
+        // Step 5 (Services) validation - can be optional, so always return true for now
+        return true;
     };
 
     const isCurrentStepValid = () => {
@@ -471,7 +477,9 @@ const AddOrderPage = () => {
             case 4:
                 return isStep4Valid();
             case 5:
-                return true; // Step 5 doesn't need validation
+                return isStep5Valid();
+            case 6:
+                return true; // Step 6 (Order summary) doesn't need validation
             default:
                 return false;
         }
@@ -549,13 +557,20 @@ const AddOrderPage = () => {
                                         address={formData.address}
                                         onAddressChange={(address) => handleFormDataChange({ address })}
                                         selectedState={formData.state.name}
-                                        isUSPlan={formData.plan.length > 0 && formData.plan[0].countryName === 'United States'}
                                     />
                                 </div>
                             )}
                             {(currentStep === 5 || animatingStep === 5) && (
                                 <div data-step="5" className="relative">
-                                    <Step5OrderSummary
+                                    <Step5Services
+                                        services={formData.services}
+                                        onServicesChange={(services) => handleFormDataChange({ services })}
+                                    />
+                                </div>
+                            )}
+                            {(currentStep === 6 || animatingStep === 6) && (
+                                <div data-step="6" className="relative">
+                                    <Step6OrderSummary
                                         formData={formData}
                                         onEditStep={handleEditStep}
                                     />
@@ -576,7 +591,7 @@ const AddOrderPage = () => {
                             {/* Right: Navigation Buttons */}
                             <div className="flex gap-3 sm:gap-8 items-center">
                                 {/* Download Summary Button - Only for Step 5 */}
-                                {currentStep === 5 && (
+                                {currentStep === 6 && (
                                     <Button
                                         variant="outline"
                                         onClick={() => {
@@ -590,7 +605,7 @@ const AddOrderPage = () => {
                                     </Button>
                                 )}
 
-                                {/* Back Button - Show for steps 2-5 */}
+                                {/* Back Button - Show for steps 2-6 */}
                                 {currentStep > 1 && (
                                     <button
                                         onClick={handleBack}
@@ -601,7 +616,7 @@ const AddOrderPage = () => {
                                 )}
 
                                 {/* Next/Save & Confirm Button */}
-                                {currentStep === 5 ? (
+                                {currentStep === 6 ? (
                                     <Button
                                         onClick={handleSubmit}
                                         className="bg-purple hover:bg-purple-dark text-white px-6 py-2 text-sm font-medium cursor-pointer"
@@ -625,7 +640,7 @@ const AddOrderPage = () => {
                 </div>
 
                 {/* Progress Sidebar - Hidden on mobile */}
-                <div className="hidden md:block border border-border rounded-lg overflow-y-hidden">
+                <div className="hidden md:block border border-border rounded-lg overflow-y-auto">
                     <ProgressSidebar currentStep={currentStep} steps={displaySteps} />
                 </div>
             </div>

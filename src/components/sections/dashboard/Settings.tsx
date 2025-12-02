@@ -328,7 +328,7 @@ const Settings = () => {
                                     <Button
                                         type="button"
                                         onClick={handleUpdateEmail}
-                                        className="bg-purple hover:bg-purple-dark h-full rounded-r-lg rounded-l-none text-white px-6 py-3 absolute right-0 top-0"
+                                        className="bg-purple hover:bg-purple-dark h-full rounded-r-sm rounded-l-none text-white px-6 py-3 absolute right-0 top-0"
                                     >
                                         Update
                                     </Button>
