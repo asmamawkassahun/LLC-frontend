@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { MdNavigateNext } from 'react-icons/md';
 import { BiSolidRightTopArrowCircle } from "react-icons/bi";
 import FinanceSecurity from '@/assets/icons/finance-security';
+import { Loader2 } from 'lucide-react';
 
 interface PaymentSummaryCardProps {
     packageName: string;
@@ -16,6 +17,7 @@ interface PaymentSummaryCardProps {
     onUpgrade?: () => void;
     isPremium?: boolean;
     showUpgradeButton?: boolean;
+    isLoading?: boolean;
 }
 
 const PaymentSummaryCard = ({
@@ -31,6 +33,7 @@ const PaymentSummaryCard = ({
     onUpgrade,
     isPremium = false,
     showUpgradeButton = true,
+    isLoading = false,
 }: PaymentSummaryCardProps) => {
     return (
         <div className="lg:col-span-1">
@@ -81,10 +84,15 @@ const PaymentSummaryCard = ({
                 {/* Checkout Button */}
                 <Button
                     onClick={onCheckout}
-                    className="w-full bg-purple hover:bg-purple-dark text-white px-6 py-3 text-base font-medium mb-3 sm:mb-4 cursor-pointer"
+                    disabled={isLoading}
+                    className="w-full bg-purple hover:bg-purple-dark text-white px-6 py-3 text-base font-medium mb-3 sm:mb-4 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    Checkout
-                    <MdNavigateNext className="w-5 h-5 ml-2" />
+                    {isLoading ? 'Processing...' : 'Checkout'}
+                    {isLoading ? (
+                        <Loader2 className="w-5 h-5 ml-2 animate-spin" />
+                    ) : (
+                        <MdNavigateNext className="w-5 h-5 ml-2" />
+                    )}
                 </Button>
 
                 {/* Upgrade Button - Visible on mobile, hidden on desktop (since upgrade card is shown) - Hidden for Premium plans */}

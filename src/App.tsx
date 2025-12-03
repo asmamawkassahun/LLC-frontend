@@ -15,6 +15,8 @@ import Referrals from './components/sections/dashboard/Referrals';
 import Settings from './components/sections/dashboard/Settings';
 import Orders from './components/sections/dashboard/Orders';
 import { Toaster } from './components/ui/sonner';
+import PaymentSuccess from './pages/order/payment/Success';
+
 
 function App() {
   return (
@@ -70,6 +72,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/payment/success" element={<PaymentSuccess />} />
       </Routes>
     </BrowserRouter>
   );
