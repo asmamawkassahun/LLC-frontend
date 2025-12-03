@@ -584,8 +584,8 @@ const AddOrderPage = () => {
                         <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
                             {/* Left: Saved Status */}
                             <div className="flex items-center gap-2 text-sm text-green-600">
-                                <HiCheck className="w-5 h-5" />
-                                <span className='text-xs lg:text-sm'>Saved {getTimeAgo(lastSaved)}</span>
+                                {/* <HiCheck className="w-5 h-5" />
+                                <span className='text-xs lg:text-sm'>Saved {getTimeAgo(lastSaved)}</span> */}
                             </div>
 
                             {/* Right: Navigation Buttons */}

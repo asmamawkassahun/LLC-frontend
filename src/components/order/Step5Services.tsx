@@ -140,8 +140,8 @@ const Step5Services = ({  services, onServicesChange }: Step5ServicesProps) => {
             name: 'EIN',
             key: 'ein',
             description: 'Get your EIN in just 2-5 business days as a non-US resident. Read more',
-            price: '$60 Total amount',
-            priceNumber: 60,
+            price: '$349.00 Total amount',
+            priceNumber: 349.00,
             fullDescription: [
                 { type: 'paragraph', text: 'An EIN (Employer Identification Number) is required for opening a US business bank account, applying for Stripe or PayPal, filing taxes, and more. If you\'re a non-US resident, getting your EIN can often be a slow process — most providers take 10 to 30 days.' },
             ],
@@ -150,8 +150,8 @@ const Step5Services = ({  services, onServicesChange }: Step5ServicesProps) => {
             name: 'ITIN',
             key: 'itin',
             description: 'Get your ITIN in just 2-5 business days as a non-US resident. Read more',
-            price: '$297 Total amount',
-            priceNumber: 297,
+            price: '$299.00 Total amount',
+            priceNumber: 299.00,
             fullDescription: [
                 { type: 'paragraph', text: 'An ITIN (Individual Taxpayer Identification Number) is required for opening a US business bank account, applying for Stripe or PayPal, filing taxes, and more. If you\'re a non-US resident, getting your ITIN can often be a slow process — most providers take 10 to 30 days.' },
             ],
@@ -160,8 +160,8 @@ const Step5Services = ({  services, onServicesChange }: Step5ServicesProps) => {
             name: 'Website',
             key: 'website',
             description: 'Get your website in just 2-5 business days as a non-US resident. Read more',
-            price: '$297 Total amount',
-            priceNumber: 297,
+            price: '$999.00 Total amount',
+            priceNumber: 999.00,
             fullDescription: [
                 { type: 'paragraph', text: 'A website is required for opening a US business bank account, applying for Stripe or PayPal, filing taxes, and more. If you\'re a non-US resident, getting your website can often be a slow process — most providers take 10 to 30 days.' },
             ],
@@ -170,8 +170,8 @@ const Step5Services = ({  services, onServicesChange }: Step5ServicesProps) => {
             name: 'Domain Hosting',
             key: 'domainHosting',
             description: 'Get your domain hosting in just 2-5 business days as a non-US resident. Read more',
-            price: '$297 Total amount',
-            priceNumber: 297,
+            price: '$499.00 Total amount',
+            priceNumber: 499.00,
             fullDescription: [
                 { type: 'paragraph', text: 'A domain hosting is required for opening a US business bank account, applying for Stripe or PayPal, filing taxes, and more. If you\'re a non-US resident, getting your domain hosting can often be a slow process — most providers take 10 to 30 days.' },
             ],
@@ -180,8 +180,8 @@ const Step5Services = ({  services, onServicesChange }: Step5ServicesProps) => {
             name: 'Business Email',
             key: 'businessEmail',
             description: 'Get your business email in just 2-5 business days as a non-US resident. Read more',
-            price: '$297 Total amount',
-            priceNumber: 297,
+            price: '$297.00 Total amount',
+            priceNumber: 297.00,
             fullDescription: [
                 { type: 'paragraph', text: 'A business email is required for opening a US business bank account, applying for Stripe or PayPal, filing taxes, and more. If you\'re a non-US resident, getting your business email can often be a slow process — most providers take 10 to 30 days.' },
             ],
@@ -217,7 +217,7 @@ const Step5Services = ({  services, onServicesChange }: Step5ServicesProps) => {
 
                 <div className="space-y-6">
                     {servicesData.map((service) => (
-                        <div key={service.key} className="flex items-start gap-4 p-4 border border-border rounded-lg hover:border-purple transition-colors">
+                        <div key={service.key} onClick={() => handleServiceToggle(service.key, service.name, service.priceNumber)} className="flex items-start gap-4 p-4 border border-border rounded-lg hover:border-purple transition-colors cursor-pointer">
                             <div className="shrink-0 pt-1">
                                 <input 
                                     type="checkbox" 
