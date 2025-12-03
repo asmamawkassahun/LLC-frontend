@@ -4,6 +4,18 @@ import { ROUTES } from '@/constants/routes';
 import DashboardHeader from "./DashboardHeader";
 import OrdersTable, { type Order } from './OrdersTable';
 import apiClient from '@/utils/api-helpers/apiClient';
+import { toast } from 'sonner';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { HiExclamationTriangle } from 'react-icons/hi2';
 
 interface ApiOrder {
     id: number;
@@ -43,6 +55,10 @@ const Orders = () => {
     const [orders, setOrders] = useState<Order[]>([]);
     const [loading, setLoading] = useState(true);
     const [pageSize, setPageSize] = useState(10);
+    const [processingPayment, setProcessingPayment] = useState<string | null>(null); // Track which order is processing
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [orderToDelete, setOrderToDelete] = useState<Order | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
     const navigate = useNavigate();
 
         const fetchOrders = async () => {
@@ -54,21 +70,22 @@ const Orders = () => {
                 },
             });
 
-            console.log("Orders response: ", response.data);
             
             // The API now returns: { data: [...], current_page: 1, ... }
             const ordersData: ApiOrder[] = response.data.data || [];
             
+            console.log("New Orders response: ", ordersData);
             // Map API response to Order interface
             const mappedOrders: Order[] = ordersData.map((apiOrder) => ({
                 id: apiOrder.id.toString(),
                 item: apiOrder.company?.name || 'N/A',
                 orderNumber: apiOrder.order_number,
                 planType: apiOrder.pricing_plan?.name || 'N/A',
-                price: apiOrder.total_amount,
+                price: Number(apiOrder.total_amount) || 0, // Ensure it's always a number
                 status: apiOrder.payment_status_label || apiOrder.payment_status || '',
-                updatedAt: formatDate(apiOrder.company?.updated_at || ''),
+                updatedAt: formatDate(apiOrder.updated_at || ''),
                 isPrimary: apiOrder.company?.is_primary || false,
+                paymentStatus: apiOrder.payment_status || 'unpaid',
             }));
             
             setOrders(mappedOrders);
@@ -85,6 +102,8 @@ const Orders = () => {
     }, [pageSize]);
 
     const formatDate = (dateString: string): string => {
+
+        console.log("Date string: ", dateString);
         const date = new Date(dateString);
         const now = new Date();
         const diffInMs = now.getTime() - date.getTime();
@@ -100,9 +119,29 @@ const Orders = () => {
         return date.toLocaleDateString();
     };
 
-    const handlePay = (orderId: string) => {
-        console.log('Pay for order:', orderId);
-        // Navigate to payment page
+    const handlePay = async (orderId: string) => {
+        try {
+            setProcessingPayment(orderId);
+            
+            // Initialize Chapa payment (same as checkout button)
+            const response = await apiClient.post('/payments/chapa/initialize', {
+                order_id: parseInt(orderId),
+            });
+
+            const { checkout_url } = response.data;
+
+            if (checkout_url) {
+                // Redirect to Chapa checkout page
+                window.location.href = checkout_url;
+            } else {
+                throw new Error('No checkout URL received from payment gateway');
+            }
+        } catch (error: any) {
+            console.error('Chapa payment initialization error:', error);
+            const errorMessage = error.response?.data?.message || 'Failed to initialize payment. Please try again.';
+            toast.error(errorMessage);
+            setProcessingPayment(null);
+        }
     };
 
     const handleUpdateOrder = (orderId: string) => {
@@ -138,7 +177,41 @@ const Orders = () => {
     };
 
     const handleDelete = (orderId: string) => {
-        setOrders(prevOrders => prevOrders.filter(order => order.id !== orderId));
+        const order = orders.find(o => o.id === orderId);
+        
+        if (!order) {
+            toast.error('Order not found');
+            return;
+        }
+        
+        // Prevent deletion of paid orders
+        if (order.paymentStatus === 'paid' || order.paymentStatus === 'Paid') {
+            toast.error('Cannot delete paid orders. Please cancel the order instead.');
+            return;
+        }
+        
+        // Set the order to delete and open dialog
+        setOrderToDelete(order);
+        setDeleteDialogOpen(true);
+    };
+
+    const confirmDelete = async () => {
+        if (!orderToDelete) return;
+        
+        try {
+            setIsDeleting(true);
+            await apiClient.delete(`/orders/${orderToDelete.id}`);
+            toast.success('Order deleted successfully');
+            setDeleteDialogOpen(false);
+            setOrderToDelete(null);
+            await fetchOrders(); // Refetch to update the list
+        } catch (error: any) {
+            console.error('Error deleting order:', error);
+            const errorMessage = error.response?.data?.message || 'Failed to delete order. Please try again.';
+            toast.error(errorMessage);
+        } finally {
+            setIsDeleting(false);
+        }
     };
 
     const handleNewOrder = () => {
@@ -164,6 +237,8 @@ const Orders = () => {
         );
     }
 
+
+    console.log("Orders data passed to the orders table: ", orders);
     return (
         <div className="max-w-7xl mx-auto space-y-6 py-6 px-8">
             <DashboardHeader
@@ -182,13 +257,71 @@ const Orders = () => {
                     onNewOrder={handleNewOrder}
                     onPageSizeChange={handlePageSizeChange}
                     pageSize={pageSize}
+                    processingPaymentId={processingPayment} // Pass processing state
                 />
             </div>
-            {/* <div className="fixed bottom-6 right-6 z-50">
-                <button className="w-14 h-14 bg-purple hover:bg-purple-dark rounded-full flex items-center justify-center shadow-lg transition-colors">
-                    <HiChatBubbleLeftRight className="w-6 h-6 text-white" />
-                </button>
-            </div> */}
+
+            {/* Delete Confirmation Dialog */}
+            <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                <AlertDialogContent className="sm:max-w-[425px]">
+                    <AlertDialogHeader>
+                        <div className="flex items-center gap-3 mb-2">
+                            <div className="shrink-0 w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center">
+                                <HiExclamationTriangle className="w-5 h-5 text-red-600 dark:text-red-400" />
+                            </div>
+                            <AlertDialogTitle className="text-xl">
+                                Delete Order?
+                            </AlertDialogTitle>
+                        </div>
+                        <AlertDialogDescription className="text-left space-y-3 pt-2">
+                            <p className="text-base">
+                                Are you sure you want to delete this order? This action cannot be undone.
+                            </p>
+                            {orderToDelete && (
+                                <div className="bg-muted/50 rounded-lg p-4 space-y-2 border border-border">
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-sm font-medium text-muted-foreground">Order Number:</span>
+                                        <span className="text-sm font-semibold text-foreground">{orderToDelete.orderNumber}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-sm font-medium text-muted-foreground">Item:</span>
+                                        <span className="text-sm font-semibold text-foreground">{orderToDelete.item}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-sm font-medium text-muted-foreground">Amount:</span>
+                                        <span className="text-sm font-semibold text-foreground">
+                                            ${(Number(orderToDelete.price) || 0).toFixed(2)}
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-sm font-medium text-muted-foreground">Plan:</span>
+                                        <span className="text-sm font-semibold text-foreground">{orderToDelete.planType}</span>
+                                    </div>
+                                </div>
+                            )}
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel disabled={isDeleting}>
+                            Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={confirmDelete}
+                            disabled={isDeleting}
+                            className="bg-red-600 hover:bg-red-700 focus:ring-red-600 text-white"
+                        >
+                            {isDeleting ? (
+                                <>
+                                    <span className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
+                                    Deleting...
+                                </>
+                            ) : (
+                                'Delete Order'
+                            )}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 };

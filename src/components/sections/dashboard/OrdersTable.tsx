@@ -11,6 +11,7 @@ import { HiHome } from 'react-icons/hi';
 import { FiMoreVertical, FiTrash2 } from 'react-icons/fi';
 import { IoMdAddCircleOutline } from 'react-icons/io';
 import { Edit as EditIcon, Download as DownloadIcon, Home as HomeIcon, ChevronLeft, ChevronRight } from '@mui/icons-material';
+import { HiCheckCircle } from 'react-icons/hi';
 
 export interface Order {
     id: string;
@@ -21,6 +22,7 @@ export interface Order {
     status: string;
     updatedAt: string;
     isPrimary: boolean;
+    paymentStatus?: string; // Add payment status
 }
 
 interface OrdersTableProps {
@@ -33,6 +35,7 @@ interface OrdersTableProps {
     onNewOrder?: () => void;
     onPageSizeChange?: (pageSize: number) => void;
     pageSize?: number;
+    processingPaymentId?: string | null; // Add processing state
 }
 
 interface ActionCellProps {
@@ -42,11 +45,15 @@ interface ActionCellProps {
     onDownload: (id: string) => void;
     onSetPrimary: (id: string) => void;
     onDelete: (id: string) => void;
+    isProcessing?: boolean; // Add loading state
 }
 
-const ActionCell = ({ row, onPay, onUpdate, onDownload, onSetPrimary, onDelete }: ActionCellProps) => {
+const ActionCell = ({ row, onPay, onUpdate, onDownload, onSetPrimary, onDelete, isProcessing }: ActionCellProps) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
+    
+    // Check if payment is already paid
+    const isPaid = row.original.paymentStatus === 'paid' || row.original.paymentStatus === 'Paid';
 
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -58,23 +65,31 @@ const ActionCell = ({ row, onPay, onUpdate, onDownload, onSetPrimary, onDelete }
 
     return (
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <MuiButton
-                variant="contained"
-                size="small"
-                onClick={() => onPay(row.original.id)}
-                sx={{
-                    backgroundColor: '#9333ea',
-                    color: 'white',
-                    fontSize: '0.75rem',
-                    padding: '4px 12px',
-                    textTransform: 'none',
-                    '&:hover': {
-                        backgroundColor: '#7e22ce',
-                    },
-                }}
-            >
-                Pay
-            </MuiButton>
+            {/* Only show Pay button if not paid */}
+            {!isPaid && (
+                <MuiButton
+                    variant="contained"
+                    size="small"
+                    onClick={() => onPay(row.original.id)}
+                    disabled={isProcessing}
+                    sx={{
+                        backgroundColor: '#9333ea',
+                        color: 'white',
+                        fontSize: '0.75rem',
+                        padding: '4px 12px',
+                        textTransform: 'none',
+                        '&:hover': {
+                            backgroundColor: '#7e22ce',
+                        },
+                        '&:disabled': {
+                            backgroundColor: '#a78bfa',
+                            opacity: 0.6,
+                        },
+                    }}
+                >
+                    {isProcessing ? 'Processing...' : 'Pay'}
+                </MuiButton>
+            )}
             <MuiButton
                 variant="contained"
                 size="small"
@@ -162,7 +177,8 @@ const OrdersTable = ({
     onDelete,
     onNewOrder,
     onPageSizeChange,
-    pageSize: externalPageSize
+    pageSize: externalPageSize,
+    processingPaymentId
 }: OrdersTableProps) => {
     const [globalFilter, setGlobalFilter] = useState('');
     const theme = useTheme();
@@ -203,21 +219,68 @@ const OrdersTable = ({
                 accessorKey: 'status',
                 header: 'Status',
                 size: 120,
-                Cell: ({ row }) => (
-                    <Chip
-                        label={row.original.status}
-                        size="small"
-                        sx={{
-                            backgroundColor: '#fee2e2',
-                            color: '#991b1b',
-                            fontWeight: 500,
-                            fontSize: '0.75rem',
-                            height: '24px',
-                            borderRadius: '4px',
-                            border: '1px solid red',
-                        }}
-                    />
-                ),
+                Cell: ({ row }) => {
+                    const paymentStatus = row.original.paymentStatus?.toLowerCase() || '';
+                    const isPaid = paymentStatus === 'paid';
+                    const isPending = paymentStatus === 'pending';
+                    const isFailed = paymentStatus === 'failed';
+                    const isRefunded = paymentStatus === 'refunded';
+
+                    // Determine chip styling based on payment status
+                    let chipStyle = {
+                        backgroundColor: '#fee2e2', // Default red for unpaid
+                        color: '#991b1b',
+                        border: '1px solid #dc2626',
+                    };
+
+                    if (isPaid) {
+                        chipStyle = {
+                            backgroundColor: '#628141', // Green background
+                            color: '#ffffff', // Dark green text
+                            border: '1px solid #22c55e',
+                        };
+                    } else if (isPending) {
+                        chipStyle = {
+                            backgroundColor: '#fef3c7', // Yellow/amber background
+                            color: '#92400e', // Dark amber text
+                            border: '1px solid #f59e0b',
+                        };
+                    } else if (isFailed) {
+                        chipStyle = {
+                            backgroundColor: '#fee2e2', // Red background
+                            color: '#991b1b', // Dark red text
+                            border: '1px solid #dc2626',
+                        };
+                    } else if (isRefunded) {
+                        chipStyle = {
+                            backgroundColor: '#f3f4f6', // Gray background
+                            color: '#374151', // Dark gray text
+                            border: '1px solid #9ca3af',
+                        };
+                    }
+
+                    return (
+                        <Chip
+                            icon={isPaid ? <HiCheckCircle style={{ color: '#ffffff', fontSize: '16px' }} /> : undefined}
+                            label={row.original.status}
+                            size="small"
+                            sx={{
+                                ...chipStyle,
+                                fontWeight: 500,
+                                fontSize: '0.75rem',
+                                height: '24px',
+                                borderRadius: '4px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                '& .MuiChip-icon': {
+                                    marginLeft: '4px',
+                                    marginRight: '-4px',
+                                },
+                            }}
+                        />
+                    );
+                },
             },
             {
                 accessorKey: 'updatedAt',
@@ -239,11 +302,12 @@ const OrdersTable = ({
                         onDownload={onDownload}
                         onSetPrimary={onSetPrimary}
                         onDelete={onDelete}
+                        isProcessing={processingPaymentId === row.original.id} // Pass processing state
                     />
                 ),
             },
         ],
-        [onPay, onUpdate, onDownload, onSetPrimary, onDelete]
+        [onPay, onUpdate, onDownload, onSetPrimary, onDelete, processingPaymentId]
     );
 
     const table = useMaterialReactTable({
