@@ -13,7 +13,7 @@ interface DashboardNavbarProps {
 const DashboardNavbar = ({ onMenuClick }: DashboardNavbarProps) => {
 
     return (
-        <div className="pr-4 sm:pr-12 py-3 fixed top-0 left-0 lg:left-66 right-0 z-50 bg-background">
+        <div className="pr-4 sm:pr-12 py-3 fixed top-0 left-0 lg:left-60 right-0 z-50 bg-background">
             <div className="flex items-center justify-between">
                 {/* Left side - Hamburger menu, logo, and company selector */}
                 <div className="flex items-center gap-4 md:pl-4 lg:pl-0">

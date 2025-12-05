@@ -3,6 +3,8 @@ import { ROUTES } from '@/constants/routes';
 import { HiX } from 'react-icons/hi';
 import authService from '@/services/authService';
 import CompanySelector from '@/components/company/CompanySelector';
+import apiClient from '@/utils/api-helpers/apiClient';
+import { useQuery } from '@tanstack/react-query';
 
 interface DashboardSidebarProps {
     isOpen: boolean;
@@ -34,6 +36,14 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
         navigate(ROUTES.ORDER_COUNTRY_SELECTION);
     };
 
+    const { data: orders } = useQuery({
+        queryKey: ['orders'],
+        queryFn: () => apiClient.get('/orders'),
+    });
+
+    console.log("Orders data: ", orders?.data.total);
+    const ordersCount = orders?.data.total;
+
     const navigationItems = [
         {
             imageUrl: 'https://app.privatily.com/assets/img/menu/home.svg',
@@ -49,7 +59,8 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
         {
             imageUrl: 'https://app.privatily.com/assets/img/menu/business.svg',
             label: 'Orders',
-            path: ROUTES.ORDERS
+            path: ROUTES.ORDERS,
+            badge: ordersCount
         },
         {
             imageUrl: 'https://app.privatily.com/assets/img/menu/refer-a-friend.svg',
@@ -72,7 +83,7 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
     return (
         <>
             <div className={`
-                fixed left-0 top-0 h-full w-66 bg-muted flex flex-col z-50
+                fixed left-0 top-0 h-full w-60 bg-muted flex flex-col z-50
                 transform transition-transform duration-300 ease-in-out
                 ${isOpen ? 'translate-x-0' : '-translate-x-full'}
                 lg:translate-x-0 z-70 lg:z-40

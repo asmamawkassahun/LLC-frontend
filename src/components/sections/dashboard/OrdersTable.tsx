@@ -155,14 +155,18 @@ const ActionCell = ({ row, onPay, onUpdate, onDownload, onSetPrimary, onDelete, 
                 size="small"
                 onClick={() => onDelete(row.original.id)}
                 sx={{
-                    padding: '6px',
+                    padding: '7px',
                     color: '#dc2626',
+                    borderRadius: '4px',
+                    boxShadow: 'rgba(0, 0, 0, 0.4) -0.5px 1.5px 3px 0px',
+                    backgroundColor: '#FF3838',
                     '&:hover': {
-                        backgroundColor: '#fee2e2',
+                        backgroundColor: '#FF3838',
+                        boxShadow: 'rgba(0, 0, 0, 0.3) -0.5px 2px 3px 0px',
                     },
                 }}
             >
-                <FiTrash2 style={{ width: '16px', height: '16px' }} />
+                <FiTrash2 style={{ width: '16px', height: '16px', color: '#ffffff' }} />
             </IconButton>
         </div>
     );

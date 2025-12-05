@@ -50,7 +50,7 @@ const Referrals = () => {
     }
 
     return (
-        <div className="relative bg-white w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-0">
+        <div className="relative bg-white w-full max-w-7xl mx-auto px-2  py-6 md:py-0">
             {/* Background decorative elements */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-20 left-10 w-64 h-64 bg-purple-100/20 rounded-full blur-3xl"></div>

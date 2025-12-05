@@ -298,7 +298,7 @@ const Orders = () => {
 
     console.log("Orders data passed to the orders table: ", orders);
     return (
-        <div className="max-w-7xl mx-auto space-y-6 py-6 px-8">
+        <div className="max-w-7xl mx-auto space-y-6 py-6 px-2">
             <DashboardHeader
                 imageUrl="https://app.privatily.com/assets/img/header-icons/icone-mybisiness.png"
                 title="Orders list"

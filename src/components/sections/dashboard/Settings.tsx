@@ -234,7 +234,7 @@ const Settings = () => {
     }
 
     return (
-        <div className="max-w-7xl mx-auto space-y-2 pb-6 px-6 sm:px-8">
+        <div className="max-w-7xl mx-auto space-y-2 pb-6 px-2">
             <DashboardHeader
                 imageUrl="https://app.privatily.com/assets/img/header-icones/settings.png"
                 title="Settings"

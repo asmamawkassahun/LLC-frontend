@@ -235,7 +235,7 @@ const ReferralsDetail = () => {
                                 />
                                 <button
                                     onClick={handleCopyLink}
-                                    className="absolute right-1 top-1 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                                    className="absolute right-1 top-1 p-2 hover:bg-gray-200 rounded-lg transition-colors cursor-pointer"
                                     title="Copy link"
                                 >
                                     <img src='https://app.privatily.com/assets/img/affiliate/copy.svg' className={`w-5 h-5 ${copied ? 'text-green-600' : 'text-foreground'}`} />
