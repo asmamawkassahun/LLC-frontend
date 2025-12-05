@@ -62,7 +62,7 @@ const OwnersChart = ({ owners }: OwnersChartProps) => {
         plugins: {
             legend: {
                 display: true,
-                position: 'right' as const,
+                position: 'bottom' as const,
                 labels: {
                     usePointStyle: true,
                     padding: 12,
@@ -86,7 +86,7 @@ const OwnersChart = ({ owners }: OwnersChartProps) => {
     }
 
     return (
-        <div className="w-full max-w-[300px] h-[200px]">
+        <div className="w-full max-w-full h-[200px]">
             <Doughnut data={chartData} options={chartOptions} />
         </div>
     );

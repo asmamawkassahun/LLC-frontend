@@ -511,13 +511,13 @@ const AddOrderPage = () => {
             </div>
 
             {/* Main Content */}
-            <div className="flex-1 flex flex-col md:flex-row gap-2 min-w-0">
+            <div className="flex-1 flex flex-col md:flex-row gap-2 min-w-0 overflow-y-scroll">
                 <div
                     ref={stepContainerRef}
                     className="flex-1 md:flex-2 lg:flex-3 min-w-0 sm:border border-border rounded-lg flex flex-col h-full"
                 >
                     {/* Scrollable Content Area */}
-                    <div className="flex-1 overflow-y-auto relative  sm:px-6 md:px-8 lg:px-12 pt-4 sm:pt-6 md:pt-8 min-w-0">
+                    <div className="flex-1 overflow-y-auto relative pt-4 sm:pt-6 md:pt-8 min-w-0">
                         <div className="relative">
                             {/* Render steps - show current and animating step during transition */}
                             {(currentStep === 1 || animatingStep === 1) && (
@@ -590,15 +590,87 @@ const AddOrderPage = () => {
 
                             {/* Right: Navigation Buttons */}
                             <div className="flex gap-3 sm:gap-8 items-center">
-                                {/* Download Summary Button - Only for Step 5 */}
+                                {/* Download Summary Button - Only for Step 6 */}
                                 {currentStep === 6 && (
                                     <Button
                                         variant="outline"
-                                        onClick={() => {
-                                            // TODO: Implement download summary functionality
-                                            console.log('Download summary');
+                                        onClick={async () => {
+                                            try {
+                                                let response;
+                                                
+                                                if (orderId) {
+                                                    // If order exists, download from saved order
+                                                    response = await apiClient.get(`/orders/${orderId}/download-summary`, {
+                                                        responseType: 'blob',
+                                                        headers: {
+                                                            'Accept': 'application/pdf',
+                                                        },
+                                                    });
+                                                } else {
+                                                    // If order doesn't exist yet, generate PDF from form data
+                                                    // Prepare form data in the format expected by the backend
+                                                    const pdfFormData = {
+                                                        plan: formData.plan,
+                                                        companyName: formData.companyName,
+                                                        type: formData.type,
+                                                        category: formData.category,
+                                                        state: formData.state,
+                                                        owners: formData.owners.map(owner => ({
+                                                            fullName: owner.fullName,
+                                                            ownershipPercentage: owner.ownershipPercentage,
+                                                            isCompany: owner.isCompany,
+                                                        })),
+                                                        address: {
+                                                            streetAddress: formData.address.streetAddress,
+                                                            city: formData.address.city,
+                                                            state: formData.address.state,
+                                                            zipCode: formData.address.zipCode,
+                                                            country: formData.address.country,
+                                                        },
+                                                    };
+                                                    
+                                                    response = await apiClient.post('/orders/generate-pdf-from-form-data', pdfFormData, {
+                                                        responseType: 'blob',
+                                                        headers: {
+                                                            'Accept': 'application/pdf',
+                                                        },
+                                                    });
+                                                }
+
+                                                // Create a blob URL and trigger download
+                                                const blob = new Blob([response.data], { type: 'application/pdf' });
+                                                const url = window.URL.createObjectURL(blob);
+                                                const a = document.createElement('a');
+                                                a.href = url;
+                                                a.download = orderId ? `order-summary-${orderId}.pdf` : 'order-summary-preview.pdf';
+                                                document.body.appendChild(a);
+                                                a.click();
+                                                window.URL.revokeObjectURL(url);
+                                                document.body.removeChild(a);
+                                            } catch (error: any) {
+                                                console.error('Error downloading order summary:', error);
+                                                let errorMessage = 'Failed to download order summary. Please try again.';
+                                                
+                                                // Handle error response (when responseType is 'blob', errors are also blobs)
+                                                if (error.response?.data instanceof Blob) {
+                                                    try {
+                                                        const text = await error.response.data.text();
+                                                        const errorData = JSON.parse(text);
+                                                        errorMessage = errorData.message || errorMessage;
+                                                    } catch (parseError) {
+                                                        // If parsing fails, use default message
+                                                    }
+                                                } else if (error.response?.data?.message) {
+                                                    errorMessage = error.response.data.message;
+                                                } else if (error.message) {
+                                                    errorMessage = error.message;
+                                                }
+                                                
+                                                alert(errorMessage);
+                                            }
                                         }}
                                         className="px-6 py-2 text-sm font-medium hover:bg-transparent hover:text-foreground cursor-pointer shadow-sm hover:shadow-md border-border"
+                                        title="Download order summary as PDF"
                                     >
                                         <HiDownload className="w-4 h-4 mr-2" />
                                         Download Summary

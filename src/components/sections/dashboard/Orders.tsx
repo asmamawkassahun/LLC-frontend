@@ -150,8 +150,66 @@ const Orders = () => {
         navigate(`/orders/${orderId}`);
     };
 
-    const handleDownloadSummary = (orderId: string) => {
-        console.log('Download summary for order:', orderId);
+    const handleDownloadSummary = async (orderId: string) => {
+        try {
+            const response = await apiClient.get(`/orders/${orderId}/download-summary`, {
+                responseType: 'blob', // Important: tell axios to expect binary data
+                headers: {
+                    'Accept': 'application/pdf',
+                },
+            });
+
+            // Check if response is successful (status 200-299)
+            if (response.status >= 200 && response.status < 300) {
+                // Check content type to ensure it's a PDF
+                const contentType = response.headers['content-type'] || '';
+                if (!contentType.includes('application/pdf')) {
+                    // Might be an error JSON, try to parse it
+                    const text = await response.data.text();
+                    try {
+                        const errorData = JSON.parse(text);
+                        throw new Error(errorData.message || 'Failed to download order summary');
+                    } catch (parseError) {
+                        throw new Error('Invalid response from server');
+                    }
+                }
+
+                // Create a blob URL and trigger download
+                const blob = new Blob([response.data], { type: 'application/pdf' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `order-summary-${orderId}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+                toast.success('Order summary downloaded successfully');
+            } else {
+                throw new Error('Failed to download order summary');
+            }
+        } catch (error: any) {
+            console.error('Error downloading order summary:', error);
+            let errorMessage = 'Failed to download order summary. Please try again.';
+            
+            // Handle error response (when responseType is 'blob', errors are also blobs)
+            if (error.response?.data instanceof Blob) {
+                try {
+                    const text = await error.response.data.text();
+                    const errorData = JSON.parse(text);
+                    errorMessage = errorData.message || errorMessage;
+                } catch (parseError) {
+                    // If parsing fails, use default message
+                }
+            } else if (error.response?.data?.message) {
+                errorMessage = error.response.data.message;
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+            
+            toast.error(errorMessage);
+        }
     };
 
     const handleSetAsPrimary = async (orderId: string) => {

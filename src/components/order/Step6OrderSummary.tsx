@@ -115,7 +115,7 @@ const Step6OrderSummary = ({ formData, onEditStep }: Step6OrderSummaryProps) => 
                                 <span className="text-sm text-muted-foreground">Company Name: </span>
                                 <span className="text-sm font-semibold text-foreground">{formData.companyName || 'N/A'}</span>
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex flex-wrap items-start gap-2">
                                 <span className="text-sm text-muted-foreground">Category: </span>
                                 {categoryLabels.length > 0 ? (
                                     <div className="flex flex-wrap gap-2 mt-1">
