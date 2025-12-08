@@ -6,22 +6,25 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatCurrency, formatDate } from '@/lib/formatters';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, MoreVertical, CheckCircle2, XCircle, Download } from 'lucide-react';
 
 const AdminOrdersPage = () => {
-  const [statusFilter, setStatusFilter] = useState<string>('all');
   const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(20);
+  const [perPage, setPerPage] = useState(10);
 
   const { data, isLoading, refetch, error } = useQuery({
-    queryKey: ['admin-orders', statusFilter, page, perPage],
+    queryKey: ['admin-orders', page, perPage],
     queryFn: async () => {
       const params: any = { per_page: perPage, page };
-      if (statusFilter !== 'all') {
-        params.status = statusFilter;
-      }
       const response = await adminApiClient.get('/admin/orders', { params });
       return response.data;
     },
@@ -37,14 +40,49 @@ const AdminOrdersPage = () => {
     }
   };
 
-  const handleStatusFilterChange = (value: string) => {
-    setStatusFilter(value);
-    setPage(1); // Reset to first page when filter changes
+  const handleDownloadSummary = async (orderId: string) => {
+    try {
+      const response = await adminApiClient.get(`/admin/orders/${orderId}/download-summary`, {
+        responseType: 'blob',
+        headers: {
+          'Accept': 'application/pdf',
+        },
+      });
+
+      if (response.status >= 200 && response.status < 300) {
+        const contentType = response.headers['content-type'] || '';
+        if (!contentType.includes('application/pdf')) {
+          const text = await response.data.text();
+          try {
+            const errorData = JSON.parse(text);
+            throw new Error(errorData.message || 'Failed to download order summary');
+          } catch (parseError) {
+            throw new Error('Invalid response from server');
+          }
+        }
+
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `order-summary-${orderId}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        
+        toast.success('Order summary downloaded successfully');
+      } else {
+        throw new Error('Failed to download order summary');
+      }
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || error.message || 'Failed to download order summary');
+    }
   };
 
   const handlePerPageChange = (value: string) => {
     setPerPage(Number(value));
-    setPage(1); // Reset to first page when per_page changes
+    setPage(1);
   };
 
   const currentPage = data?.current_page || 1;
@@ -62,25 +100,7 @@ const AdminOrdersPage = () => {
 
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between gap-4">
-            <CardTitle>All Orders</CardTitle>
-            <div className="flex items-center gap-2">
-              <Select value={statusFilter} onValueChange={handleStatusFilterChange}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="draft">Draft</SelectItem>
-                  <SelectItem value="pending_payment">Pending Payment</SelectItem>
-                  <SelectItem value="paid">Paid</SelectItem>
-                  <SelectItem value="processing">Processing</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                  <SelectItem value="cancelled">Cancelled</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+          <CardTitle>All Orders</CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -104,7 +124,6 @@ const AdminOrdersPage = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Order Number</TableHead>
-                    <TableHead>User</TableHead>
                     <TableHead>Company</TableHead>
                     <TableHead>Amount</TableHead>
                     <TableHead>Status</TableHead>
@@ -117,36 +136,54 @@ const AdminOrdersPage = () => {
                   {data.data.map((order: any) => (
                     <TableRow key={order.id}>
                       <TableCell className="font-medium">{order.order_number}</TableCell>
-                      <TableCell>{order.user?.name || 'N/A'}</TableCell>
                       <TableCell>{order.company?.name || 'N/A'}</TableCell>
                       <TableCell>{formatCurrency(order.total_amount)}</TableCell>
                       <TableCell>{order.status_label || order.status}</TableCell>
                       <TableCell>{order.payment_status_label || order.payment_status}</TableCell>
                       <TableCell>{formatDate(order.created_at)}</TableCell>
                       <TableCell>
-                        <Select
-                          value={order.status}
-                          onValueChange={(value) => handleStatusUpdate(order.id, value)}
-                        >
-                          <SelectTrigger className="w-[150px]">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="draft">Draft</SelectItem>
-                            <SelectItem value="pending_payment">Pending Payment</SelectItem>
-                            <SelectItem value="paid">Paid</SelectItem>
-                            <SelectItem value="processing">Processing</SelectItem>
-                            <SelectItem value="completed">Completed</SelectItem>
-                            <SelectItem value="cancelled">Cancelled</SelectItem>
-                          </SelectContent>
-                        </Select>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 bg-accent hover:bg-accent/90 border-none cursor-pointer">
+                              <MoreVertical className="h-4 w-4 text-white" />
+                              <span className="sr-only">Open menu</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            {order.status !== 'formed' && (
+                              <DropdownMenuItem
+                                onClick={() => handleStatusUpdate(order.id, 'formed')}
+                              >
+                                <CheckCircle2 className="mr-2 h-4 w-4 hover:text-white" />
+                                Mark as Formed
+                              </DropdownMenuItem>
+                            )}
+                            {order.status !== 'cancelled' && (
+                              <DropdownMenuItem
+                                onClick={() => handleStatusUpdate(order.id, 'cancelled')}
+                                variant="destructive"
+                              >
+                                <XCircle className="mr-2 h-4 w-4 hover:text-white" />
+                                Cancel Order
+                              </DropdownMenuItem>
+                            )}
+                            {(order.status !== 'formed' || order.status !== 'cancelled') && (
+                              <DropdownMenuSeparator />
+                            )}
+                            <DropdownMenuItem
+                              onClick={() => handleDownloadSummary(order.id)}
+                            >
+                              <Download className="mr-2 h-4 w-4 hover:text-white" />
+                              Download Summary
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
               
-              {/* Pagination Controls */}
               <div className="flex items-center justify-between mt-4">
                 <div className="text-sm text-muted-foreground">
                   Showing {from} to {to} of {total} orders

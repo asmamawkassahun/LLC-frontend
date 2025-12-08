@@ -7,14 +7,44 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { formatDate } from '@/lib/formatters';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useState } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Edit, MoreVertical, Trash2, UserMinus, UserPlus, Eye, EyeOff } from 'lucide-react';
+import { getUniqueCountries } from '@/constants/countries';
 
 const AdminUsersPage = () => {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(20);
+  const [perPage, setPerPage] = useState(10);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phoneNumber: '',
+    countryCode: '+1',
+    password: '',
+    passwordConfirmation: '',
+  });
+  const [originalPassword, setOriginalPassword] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { data, isLoading, refetch, error } = useQuery({
     queryKey: ['admin-users', search, page, perPage],
@@ -28,6 +58,166 @@ const AdminUsersPage = () => {
     },
   });
 
+  const { data: userData, isLoading: isLoadingUser } = useQuery({
+    queryKey: ['admin-user', selectedUserId],
+    queryFn: async () => {
+      if (!selectedUserId) return null;
+      const response = await adminApiClient.get(`/admin/users/${selectedUserId}`);
+      return response.data;
+    },
+    enabled: !!selectedUserId && isEditModalOpen,
+  });
+
+  const handleEdit = (userId: string) => {
+    setSelectedUserId(userId);
+    setIsEditModalOpen(true);
+  };
+
+  // Parse user data and populate form when user data is loaded
+  useEffect(() => {
+    if (userData && isEditModalOpen) {
+      // Parse name into first and last name
+      const nameParts = (userData.name || '').split(' ');
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
+
+      // Determine country code from country field first, then fallback to phone
+      let countryCode = '+1'; // Default
+      const countries = getUniqueCountries();
+      
+      // Try to find country code from country name
+      if (userData.country) {
+        const countryMatch = countries.find(
+          (c) => c.name.toLowerCase() === userData.country.toLowerCase()
+        );
+        if (countryMatch) {
+          countryCode = countryMatch.code;
+        }
+      }
+
+      // Parse phone number to extract country code (only if country field didn't provide one)
+      let phoneNumber = '';
+      if (userData.phone) {
+        // Try to extract country code from phone (format: +1234567890)
+        const phoneMatch = userData.phone.match(/^(\+\d{1,4})(.*)$/);
+        if (phoneMatch) {
+          // Only use phone country code if we didn't get one from country field
+          if (countryCode === '+1' && !userData.country) {
+            countryCode = phoneMatch[1];
+          }
+          phoneNumber = phoneMatch[2];
+        } else {
+          phoneNumber = userData.phone;
+        }
+      }
+
+      // Set a placeholder value to indicate password exists (we can't retrieve actual password)
+      const passwordPlaceholder = '••••••••';
+      
+      setFormData({
+        firstName,
+        lastName,
+        email: userData.email || '',
+        phoneNumber,
+        countryCode,
+        password: passwordPlaceholder,
+        passwordConfirmation: '',
+      });
+      setOriginalPassword(passwordPlaceholder);
+    }
+  }, [userData, isEditModalOpen]);
+
+  const handleCloseModal = () => {
+    setIsEditModalOpen(false);
+    setSelectedUserId(null);
+    setFormData({
+      firstName: '',
+      lastName: '',
+      email: '',
+      phoneNumber: '',
+      countryCode: '+1',
+      password: '',
+      passwordConfirmation: '',
+    });
+    setOriginalPassword('');
+    setShowPassword(false);
+  };
+
+  const handleSubmitEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      // Validation
+      if (!formData.firstName || !formData.lastName || !formData.email) {
+        toast.error('Please fill in all required fields');
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Check if password has been changed (not the placeholder and not empty)
+      const isPasswordChanged = formData.password && formData.password !== originalPassword && formData.password.trim() !== '';
+      
+      // Only validate password if it's been changed
+      if (isPasswordChanged && formData.password.length < 8) {
+        toast.error('Password must be at least 8 characters');
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Get country name from country code
+      const countries = getUniqueCountries();
+      const selectedCountry = countries.find(c => c.code === formData.countryCode);
+      const countryName = selectedCountry ? selectedCountry.name : null;
+
+      // Prepare update data
+      const updateData: any = {
+        name: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email.trim(),
+      };
+
+      // Always include country if we have a country code
+      if (countryName) {
+        updateData.country = countryName;
+      }
+
+      // Include phone if provided
+      if (formData.phoneNumber && formData.phoneNumber.trim() !== '') {
+        updateData.phone = `${formData.countryCode}${formData.phoneNumber}`;
+      } else {
+        // Allow clearing phone number
+        updateData.phone = null;
+      }
+
+      // Only include password if it's been changed
+      if (isPasswordChanged) {
+        updateData.password = formData.password;
+      }
+
+      await adminApiClient.put(`/admin/users/${selectedUserId}`, updateData);
+      toast.success('User updated successfully');
+      handleCloseModal();
+      refetch();
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Failed to update user');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDelete = async (userId: string) => {
+    if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+      return;
+    }
+    try {
+      await adminApiClient.delete(`/admin/users/${userId}`);
+      toast.success('User deleted');
+      refetch();
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Failed to delete user');
+    }
+  };
+
   const handleDeactivate = async (userId: string) => {
     try {
       await adminApiClient.post(`/admin/users/${userId}/deactivate`);
@@ -36,6 +226,21 @@ const AdminUsersPage = () => {
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to deactivate user');
     }
+  };
+
+  const handleActivate = async (userId: string) => {
+    try {
+      await adminApiClient.put(`/admin/users/${userId}`, { is_active: true });
+      toast.success('User activated');
+      refetch();
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Failed to activate user');
+    }
+  };
+
+  const handleAddUser = () => {
+    // TODO: Implement add user functionality
+    toast.info('Add user functionality coming soon');
   };
 
   const handleSearchChange = (value: string) => {
@@ -54,6 +259,9 @@ const AdminUsersPage = () => {
   const from = total > 0 ? (currentPage - 1) * perPage + 1 : 0;
   const to = Math.min(currentPage * perPage, total);
 
+  const countries = getUniqueCountries();
+  const selectedCountry = countries.find(c => c.code === formData.countryCode) || countries[0];
+
   return (
     <div className="space-y-6">
       <div>
@@ -61,16 +269,180 @@ const AdminUsersPage = () => {
         <p className="text-muted-foreground">Manage all users</p>
       </div>
 
+      {/* Edit User Modal */}
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit User</DialogTitle>
+            <DialogDescription>
+              Update user information. Leave password fields empty to keep the current password.
+            </DialogDescription>
+          </DialogHeader>
+          {isLoadingUser ? (
+            <div className="space-y-4 py-4">
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+            </div>
+          ) : (
+            <form onSubmit={handleSubmitEdit} className="space-y-4">
+              {/* First Name and Last Name */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">First Name</label>
+                  <Input
+                    value={formData.firstName}
+                    onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Last Name</label>
+                  <Input
+                    value={formData.lastName}
+                    onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Email */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Email</label>
+                <Input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  required
+                />
+              </div>
+
+              {/* Phone Number with Country Code */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Phone Number</label>
+                <div className="flex gap-2">
+                  <Select
+                    value={formData.countryCode}
+                    onValueChange={(value) => setFormData({ ...formData, countryCode: value })}
+                  >
+                    <SelectTrigger className="w-[140px]">
+                      <SelectValue>
+                        <span className="flex items-center gap-2">
+                          <span>{selectedCountry.flag}</span>
+                          <span>{selectedCountry.code}</span>
+                        </span>
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent className="max-h-[300px]">
+                      {countries.map((country) => (
+                        <SelectItem key={`${country.code}-${country.name}`} value={country.code}>
+                          <span className="flex items-center gap-2">
+                            <span>{country.flag}</span>
+                            <span>{country.name}</span>
+                            <span className="text-muted-foreground">{country.code}</span>
+                          </span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Input
+                    type="tel"
+                    placeholder="201-555-0123"
+                    value={formData.phoneNumber}
+                    onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                    className="flex-1"
+                  />
+                </div>
+              </div>
+
+              {/* Password (Optional) */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium"> Password</label>
+                <div className="relative">
+                  <Input
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Enter new password to change"
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    onFocus={() => {
+                      // Clear placeholder value when user focuses on the field
+                      if (formData.password === originalPassword) {
+                        setFormData({ ...formData, password: '' });
+                      }
+                    }}
+                    onBlur={() => {
+                      // Restore placeholder if field is empty
+                      if (formData.password === '') {
+                        setFormData({ ...formData, password: originalPassword });
+                      }
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {formData.password === originalPassword 
+                    ? 'Leave empty to keep current password' 
+                    : 'Enter a new password to update'}
+                </p>
+              </div>
+
+              {/* Password Confirmation (Only show if password is provided) */}
+              {/* {formData.password && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Confirm New Password</label>
+                  <div className="relative">
+                    <Input
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="Confirm new password"
+                      value={formData.passwordConfirmation}
+                      onChange={(e) => setFormData({ ...formData, passwordConfirmation: e.target.value })}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+              )} */}
+
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={handleCloseModal} disabled={isSubmitting}>
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? 'Updating...' : 'Update User'}
+                </Button>
+              </DialogFooter>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
+
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>All Users</CardTitle>
-            <Input
-              placeholder="Search users..."
-              value={search}
-              onChange={(e) => handleSearchChange(e.target.value)}
-              className="w-[300px]"
-            />
+            <div className="flex items-center gap-2">
+              <Input
+                placeholder="Search users..."
+                value={search}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                className="w-[300px]"
+              />
+              <Button onClick={handleAddUser}>
+                <UserPlus className="mr-2 h-4 w-4" />
+                Add User
+              </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
@@ -109,29 +481,60 @@ const AdminUsersPage = () => {
                       <TableCell>{user.email}</TableCell>
                       <TableCell>{user.phone || 'N/A'}</TableCell>
                       <TableCell>
-                        <span className={`px-2 py-1 rounded text-xs ${
-                          user.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                        }`}>
+                        <span className={`px-2 py-1 rounded text-xs ${user.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                          }`}>
                           {user.is_active ? 'Active' : 'Inactive'}
                         </span>
                       </TableCell>
                       <TableCell>{formatDate(user.created_at)}</TableCell>
                       <TableCell>
-                        {user.is_active && (
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => handleDeactivate(user.id)}
-                          >
-                            Deactivate
-                          </Button>
-                        )}
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 bg-accent hover:bg-accent/90 border-none cursor-pointer">
+                              <MoreVertical className="h-4 w-4 text-white" />
+                              <span className="sr-only">Open menu</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={() => handleEdit(user.id)}
+                            >
+                              <Edit className="mr-2 h-4 w-4 hover:text-white" />
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            {user.is_active ? (
+                              <DropdownMenuItem
+                                onClick={() => handleDeactivate(user.id)}
+                                variant="destructive"
+                              >
+                                <UserMinus className="mr-2 h-4 w-4" />
+                                Deactivate
+                              </DropdownMenuItem>
+                            ) : (
+                              <DropdownMenuItem
+                                onClick={() => handleActivate(user.id)}
+                              >
+                                <UserPlus className="mr-2 h-4 w-4" />
+                                Activate
+                              </DropdownMenuItem>
+                            )}
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              onClick={() => handleDelete(user.id)}
+                              variant="destructive"
+                            >
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
-              
+
               {/* Pagination Controls */}
               <div className="flex items-center justify-between mt-4">
                 <div className="text-sm text-muted-foreground">
