@@ -106,8 +106,8 @@ const AdminDashboardPage = () => {
           icon={CheckCircle}
         />
         <StatsCard
-          title="Active Users"
-          value={stats?.active_users || 0}
+          title="Company Owners"
+          value={stats?.total_company_owners || 0}
           icon={UserCheck}
         />
         <StatsCard
