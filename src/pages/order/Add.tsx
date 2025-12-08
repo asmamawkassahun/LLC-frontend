@@ -54,9 +54,20 @@ interface ApiOrderResponse {
                 full_name: string;
                 ownership_percentage: number;
                 is_company: boolean;
+                address?: {
+                    street_address?: string;
+                    streetAddress?: string;
+                    city: string;
+                    state: string;
+                    zip_code?: string;
+                    zipCode?: string;
+                    country: string;
+                } | null;
             }>;
             addresses?: Array<{
                 id: number;
+                use_registered_agent?: boolean;
+                registered_agent_address_id?: number | null;
                 street_address: string;
                 city: string;
                 state: string;
@@ -145,14 +156,39 @@ const AddOrderPage = () => {
                         name: order.state?.name || '',
                         cost: order.state?.formation_fee || 0,
                     },
-                    owners: order.company?.owners?.map((owner, index) => ({
-                        id: owner.id?.toString() || `temp-${index}`,
-                        fullName: owner.full_name,
-                        ownershipPercentage: typeof owner.ownership_percentage === 'string' 
-                            ? parseFloat(owner.ownership_percentage) 
-                            : Number(owner.ownership_percentage) || 0,
-                        isCompany: owner.is_company,
-                    })) || [],
+            owners: order.company?.owners?.map((owner, index) => {
+                // Handle address - it comes as an object/array from the backend
+                // Always provide an address object, even if empty, for consistency
+                let address = {
+                    streetAddress: '',
+                    city: '',
+                    state: '',
+                    zipCode: '',
+                    country: 'Ethiopia',
+                };
+                
+                if (owner.address) {
+                    // Address can be an object with either snake_case or camelCase keys
+                    const addr = owner.address as any;
+                    address = {
+                        streetAddress: addr.street_address || addr.streetAddress || '',
+                        city: addr.city || '',
+                        state: addr.state || '',
+                        zipCode: addr.zip_code || addr.zipCode || '',
+                        country: addr.country || 'Ethiopia',
+                    };
+                }
+                
+                return {
+                    id: owner.id?.toString() || `temp-${index}`,
+                    fullName: owner.full_name,
+                    ownershipPercentage: typeof owner.ownership_percentage === 'string' 
+                        ? parseFloat(owner.ownership_percentage) 
+                        : Number(owner.ownership_percentage) || 0,
+                    isCompany: owner.is_company,
+                    address: address,
+                };
+            }) || [],
                     address: {
                         streetAddress: order.company?.addresses?.[0]?.street_address || '',
                         city: order.company?.addresses?.[0]?.city || '',
@@ -160,6 +196,8 @@ const AddOrderPage = () => {
                         zipCode: order.company?.addresses?.[0]?.zip_code || '',
                         country: order.company?.addresses?.[0]?.country || 'United States',
                     },
+                    useRegisteredAgent: order.company?.addresses?.[0]?.use_registered_agent || false,
+                    registeredAgentAddressId: order.company?.addresses?.[0]?.registered_agent_address_id || null,
                     services: {
                         // Prefill services: if the service field is not null, set to true
                         ein: order.company?.service?.ein !== null && order.company?.service?.ein !== undefined,
@@ -240,7 +278,19 @@ const AddOrderPage = () => {
 
         state: { name: '', cost: 0 },
 
-        owners: [] as Array<{ id: string; fullName: string; ownershipPercentage: number; isCompany: boolean }>,
+        owners: [] as Array<{ 
+            id: string; 
+            fullName: string; 
+            ownershipPercentage: number; 
+            isCompany: boolean;
+            address?: {
+                streetAddress: string;
+                city: string;
+                state: string;
+                zipCode: string;
+                country: string;
+            };
+        }>,
         address: {
             streetAddress: '',
             city: '',
@@ -248,6 +298,8 @@ const AddOrderPage = () => {
             zipCode: '',
             country: 'United States',
         },
+        useRegisteredAgent: false,
+        registeredAgentAddressId: null as number | null,
         services: {
             ein: false,
             itin: false,
@@ -270,6 +322,30 @@ const AddOrderPage = () => {
         }
         return plan?.includes('_uk') || false;
     }, [isEditMode, orderCountryName, formData.plan, plan]);
+
+    // Check if plan is Premium (skip step 5 for Premium plans)
+    const isPremiumPlan = useMemo(() => {
+        const currentPlan = formData.plan && formData.plan.length > 0 
+            ? formData.plan[0].pricingPlan 
+            : plan || '';
+        return currentPlan && (currentPlan.startsWith('Premium') || currentPlan.startsWith('premium'));
+    }, [formData.plan, plan]);
+
+    // Set all services to true if Premium plan
+    useEffect(() => {
+        if (isPremiumPlan) {
+            setFormData((prev) => ({
+                ...prev,
+                services: {
+                    ein: true,
+                    itin: true,
+                    website: true,
+                    domainHosting: true,
+                    businessEmail: true,
+                }
+            }));
+        }
+    }, [isPremiumPlan]);
 
     const animateStepTransition = (newStep: number, direction: 'next' | 'back', currentStepValue: number) => {
         if (isAnimatingRef.current || !stepContainerRef.current) return;
@@ -341,6 +417,10 @@ const AddOrderPage = () => {
             if (isUKPlan && nextStep === 2) {
                 nextStep = 3;
             }
+            // Skip step 5 for Premium plans
+            if (isPremiumPlan && nextStep === 5) {
+                nextStep = 6;
+            }
             animateStepTransition(nextStep, 'next', currentStep);
         }
     };
@@ -351,6 +431,10 @@ const AddOrderPage = () => {
             // Skip step 2 for UK plans
             if (isUKPlan && prevStep === 2) {
                 prevStep = 1;
+            }
+            // Skip step 5 for Premium plans
+            if (isPremiumPlan && prevStep === 5) {
+                prevStep = 4;
             }
             animateStepTransition(prevStep, 'back', currentStep);
         }
@@ -365,6 +449,13 @@ const AddOrderPage = () => {
                     full_name: owner.fullName,
                     ownership_percentage: owner.ownershipPercentage,
                     is_company: owner.isCompany,
+                    address: owner.address ? {
+                        street_address: owner.address.streetAddress,
+                        city: owner.address.city,
+                        state: owner.address.state,
+                        zip_code: owner.address.zipCode,
+                        country: owner.address.country,
+                    } : null,
                 };
             });
 
@@ -379,6 +470,8 @@ const AddOrderPage = () => {
                 owners: ownersData,
                 addresses: [{
                     type: 'registered',
+                    use_registered_agent: formData.useRegisteredAgent || false,
+                    registered_agent_address_id: formData.registeredAgentAddressId || null,
                     street_address: formData.address.streetAddress,
                     city: formData.address.city,
                     state: formData.address.state,
@@ -425,6 +518,10 @@ const AddOrderPage = () => {
             // Skip step 2 for UK plans - if trying to edit step 2, go to step 1 instead
             if (isUKPlan && step === 2) {
                 return; // Don't allow editing step 2 for UK plans
+            }
+            // Skip step 5 for Premium plans - don't allow editing step 5
+            if (isPremiumPlan && step === 5) {
+                return; // Don't allow editing step 5 for Premium plans
             }
             const direction = step > currentStep ? 'next' : 'back';
             animateStepTransition(step, direction, currentStep);
@@ -477,7 +574,8 @@ const AddOrderPage = () => {
             case 4:
                 return isStep4Valid();
             case 5:
-                return isStep5Valid();
+                // Skip validation for step 5 if Premium plan
+                return isPremiumPlan ? true : isStep5Valid();
             case 6:
                 return true; // Step 6 (Order summary) doesn't need validation
             default:
@@ -486,8 +584,26 @@ const AddOrderPage = () => {
     };
 
 
-    // Filter steps to exclude step 2 for UK plans
-    const displaySteps = isUKPlan ? steps.filter(step => step.number !== 2) : steps;
+    // Filter steps to exclude step 2 for UK plans and step 5 for Premium plans
+    const filteredSteps = steps.filter(step => {
+        if (isUKPlan && step.number === 2) return false;
+        if (isPremiumPlan && step.number === 5) return false;
+        return true;
+    });
+
+    // Renumber steps sequentially for display
+    const displaySteps = filteredSteps.map((step, index) => ({
+        ...step,
+        number: index + 1
+    }));
+
+    // Map current step to display step number
+    const getDisplayStepNumber = (actualStep: number): number => {
+        const stepIndex = filteredSteps.findIndex(step => step.number === actualStep);
+        return stepIndex !== -1 ? stepIndex + 1 : actualStep;
+    };
+
+    const displayCurrentStep = getDisplayStepNumber(currentStep);
 
     // Show loading state while fetching order data
     if (isLoadingOrder) {
@@ -500,13 +616,13 @@ const AddOrderPage = () => {
 
     console.log('Here is the formData: ', formData);
     return (
-        <div className="h-[calc(100vh-96px)] w-full max-w-[1920px] mx-auto flex flex-col md:flex-row gap-2 bg-background px-2 sm:px-4 md:px-6 mb-6 overflow-hidden">
+        <div className="h-[calc(100vh-96px)] w-full max-w-[1920px] mx-auto flex flex-col md:flex-row gap-2 bg-background px-2 mb-6 overflow-hidden">
             {/* Mobile Progress Bar */}
             <div className="md:hidden pt-4">
                 <ProgressBar
-                    currentStep={currentStep}
+                    currentStep={displayCurrentStep}
                     totalSteps={displaySteps.length}
-                    stepLabel={currentStep === 1 ? 'About company' : displaySteps.find(s => s.number === currentStep)?.label || steps.find(s => s.number === currentStep)?.label || 'Step'}
+                    stepLabel={displaySteps.find(s => s.number === displayCurrentStep)?.label || 'Step'}
                 />
             </div>
 
@@ -557,10 +673,17 @@ const AddOrderPage = () => {
                                         address={formData.address}
                                         onAddressChange={(address) => handleFormDataChange({ address })}
                                         selectedState={formData.state.name}
+                                        useRegisteredAgent={formData.useRegisteredAgent}
+                                        onRegisteredAgentChange={(useRegisteredAgent, registeredAgentAddressId) => 
+                                            handleFormDataChange({ 
+                                                useRegisteredAgent, 
+                                                registeredAgentAddressId 
+                                            })
+                                        }
                                     />
                                 </div>
                             )}
-                            {(currentStep === 5 || animatingStep === 5) && (
+                            {(currentStep === 5 || animatingStep === 5) && !isPremiumPlan && (
                                 <div data-step="5" className="relative">
                                     <Step5Services
                                         services={formData.services}
@@ -619,6 +742,13 @@ const AddOrderPage = () => {
                                                             fullName: owner.fullName,
                                                             ownershipPercentage: owner.ownershipPercentage,
                                                             isCompany: owner.isCompany,
+                                                            address: owner.address ? {
+                                                                streetAddress: owner.address.streetAddress,
+                                                                city: owner.address.city,
+                                                                state: owner.address.state,
+                                                                zipCode: owner.address.zipCode,
+                                                                country: owner.address.country,
+                                                            } : null,
                                                         })),
                                                         address: {
                                                             streetAddress: formData.address.streetAddress,
@@ -713,7 +843,7 @@ const AddOrderPage = () => {
 
                 {/* Progress Sidebar - Hidden on mobile */}
                 <div className="hidden md:block border border-border rounded-lg overflow-y-auto">
-                    <ProgressSidebar currentStep={currentStep} steps={displaySteps} />
+                    <ProgressSidebar currentStep={displayCurrentStep} steps={displaySteps} />
                 </div>
             </div>
 

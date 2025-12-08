@@ -5,11 +5,22 @@ import Tooltip from './Tooltip';
 import { IoIosAddCircleOutline } from 'react-icons/io';
 import { CiCircleMinus } from "react-icons/ci";
 import userService from '@/services/userService';
+import { COUNTRIES } from '../../constants/countries';
+
+interface OwnerAddress {
+    streetAddress: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country: string;
+}
+
 interface Owner {
     id: string;
     fullName: string;
     ownershipPercentage: number;
     isCompany: boolean;
+    address?: OwnerAddress;
 }
 
 interface Step3OwnersProps {
@@ -18,14 +29,51 @@ interface Step3OwnersProps {
     onOwnersChange: (owners: Owner[]) => void;
 }
 
+// Helper function to normalize owner address
+const normalizeOwnerAddress = (owner: Owner): Owner => {
+    return {
+        ...owner,
+        address: owner.address ? {
+            streetAddress: owner.address.streetAddress || '',
+            city: owner.address.city || '',
+            state: owner.address.state || '',
+            zipCode: owner.address.zipCode || '',
+            country: owner.address.country || 'Ethiopia',
+        } : {
+            streetAddress: '',
+            city: '',
+            state: '',
+            zipCode: '',
+            country: 'Ethiopia',
+        },
+    };
+};
+
 const Step3Owners = ({ companyName, owners, onOwnersChange }: Step3OwnersProps) => {
-    const [localOwners, setLocalOwners] = useState<Owner[]>(owners.length > 0 ? owners : [
-        { id: '1', fullName: '', ownershipPercentage: 100, isCompany: false }
-    ]);
+    // Normalize owners to ensure all have address objects
+    const normalizedOwners = owners.length > 0 
+        ? owners.map(normalizeOwnerAddress)
+        : [{
+            id: '1', 
+            fullName: '', 
+            ownershipPercentage: 100, 
+            isCompany: false,
+            address: {
+                streetAddress: '',
+                city: '',
+                state: '',
+                zipCode: '',
+                country: 'Ethiopia'
+            }
+        }];
+
+    const [localOwners, setLocalOwners] = useState<Owner[]>(normalizedOwners);
 
     useEffect(() => {
         if (owners.length > 0) {
-            setLocalOwners(owners);
+            // Normalize owners to ensure addresses are properly structured
+            const normalized = owners.map(normalizeOwnerAddress);
+            setLocalOwners(normalized);
         }
     }, [owners]);
 
@@ -55,10 +103,33 @@ const Step3Owners = ({ companyName, owners, onOwnersChange }: Step3OwnersProps) 
         fetchUserAndPrefill();
     }, []); // Only run once on mount
 
-    const handleOwnerChange = (id: string, field: keyof Owner, value: string | number | boolean) => {
+    const handleOwnerChange = (id: string, field: keyof Owner, value: string | number | boolean | OwnerAddress) => {
         const updatedOwners = localOwners.map(owner =>
             owner.id === id ? { ...owner, [field]: value } : owner
         );
+        setLocalOwners(updatedOwners);
+        onOwnersChange(updatedOwners);
+    };
+
+    const handleAddressChange = (id: string, field: keyof OwnerAddress, value: string) => {
+        const updatedOwners = localOwners.map(owner => {
+            if (owner.id === id) {
+                return {
+                    ...owner,
+                    address: {
+                        ...(owner.address || {
+                            streetAddress: '',
+                            city: '',
+                            state: '',
+                            zipCode: '',
+                            country: 'Ethiopia'
+                        }),
+                        [field]: value
+                    }
+                };
+            }
+            return owner;
+        });
         setLocalOwners(updatedOwners);
         onOwnersChange(updatedOwners);
     };
@@ -68,7 +139,14 @@ const Step3Owners = ({ companyName, owners, onOwnersChange }: Step3OwnersProps) 
             id: Date.now().toString(),
             fullName: '',
             ownershipPercentage: 0,
-            isCompany: false
+            isCompany: false,
+            address: {
+                streetAddress: '',
+                city: '',
+                state: '',
+                zipCode: '',
+                country: 'Ethiopia'
+            }
         };
         const updatedOwners = [...localOwners, newOwner];
         setLocalOwners(updatedOwners);
@@ -100,7 +178,7 @@ const Step3Owners = ({ companyName, owners, onOwnersChange }: Step3OwnersProps) 
                 <StepHeader
                     icon="https://app.privatily.com/assets/img/header-icones/owners.png"
                     title={`Owners of ${companyName}`}
-                    subtitle="Please provide the names of all company owners along with their respective ownership percentages."
+                    subtitle="Please provide the names of all company owners along with their respective ownership percentages and their addresses."
                 />
 
                 <div className="space-y-6">
@@ -147,6 +225,76 @@ const Step3Owners = ({ companyName, owners, onOwnersChange }: Step3OwnersProps) 
                                 </div>
                             </div>
 
+                            {/* Address Fields */}
+                            <div className="space-y-4">
+                                <label className="text-xs lg:text-sm font-medium text-foreground mb-2 block">
+                                    Address <span className="text-red-500">*</span>
+                                </label>
+                                
+                                {/* Street Address */}
+                                <div>
+                                    <input
+                                        type="text"
+                                        value={owner.address?.streetAddress || ''}
+                                        onChange={(e) => handleAddressChange(owner.id, 'streetAddress', e.target.value)}
+                                        placeholder="eg. 123 Main Street"
+                                        className="w-full px-4 py-1 border border-input rounded-sm focus:outline-none focus:ring-2 focus:ring-purple focus:border-transparent text-foreground bg-background"
+                                    />
+                                </div>
+
+                                {/* City and State */}
+                                <div className="flex flex-col md:flex-row gap-4">
+                                    <div className="flex-1">
+                                        <input
+                                            type="text"
+                                            value={owner.address?.city || ''}
+                                            onChange={(e) => handleAddressChange(owner.id, 'city', e.target.value)}
+                                            placeholder="City"
+                                            className="w-full px-4 py-1 border border-input rounded-sm focus:outline-none focus:ring-2 focus:ring-purple focus:border-transparent text-foreground bg-background"
+                                        />
+                                    </div>
+                                    <div className="flex-1">
+                                        <input
+                                            type="text"
+                                            value={owner.address?.state || ''}
+                                            onChange={(e) => handleAddressChange(owner.id, 'state', e.target.value)}
+                                            placeholder="State / Province"
+                                            className="w-full px-4 py-1 border border-input rounded-sm focus:outline-none focus:ring-2 focus:ring-purple focus:border-transparent text-foreground bg-background"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* ZIP Code and Country */}
+                                <div className="flex flex-col md:flex-row gap-4">
+                                    <div className="flex-1">
+                                        <input
+                                            type="text"
+                                            value={owner.address?.zipCode || ''}
+                                            onChange={(e) => handleAddressChange(owner.id, 'zipCode', e.target.value)}
+                                            placeholder="Postal Code"
+                                            className="w-full px-4 py-1 border border-input rounded-sm focus:outline-none focus:ring-2 focus:ring-purple focus:border-transparent text-foreground bg-background"
+                                        />
+                                    </div>
+                                    <div className="flex-1 relative">
+                                        <select
+                                            value={owner.address?.country || 'United States'}
+                                            onChange={(e) => handleAddressChange(owner.id, 'country', e.target.value)}
+                                            className="w-full px-4 py-1 border border-input rounded-sm focus:outline-none focus:ring-2 focus:ring-purple focus:border-transparent text-foreground bg-background appearance-none cursor-pointer pr-10"
+                                        >
+                                            {COUNTRIES.map((country) => (
+                                                <option key={country.name} value={country.name}>
+                                                    {country.flag} {country.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                                            <svg className="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
                             <div className='flex items-center justify-start gap-4'>
                                 

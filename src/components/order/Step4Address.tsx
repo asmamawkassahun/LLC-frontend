@@ -39,9 +39,11 @@ interface Step4AddressProps {
     address: AddressData;
     onAddressChange: (address: AddressData) => void;
     selectedState?: string; // State selected in step 2
+    useRegisteredAgent?: boolean;
+    onRegisteredAgentChange?: (useRegisteredAgent: boolean, registeredAgentAddressId: number | null) => void;
 }
 
-const Step4Address = ({ address, onAddressChange, selectedState }: Step4AddressProps) => {
+const Step4Address = ({ address, onAddressChange, selectedState, useRegisteredAgent: propUseRegisteredAgent = false, onRegisteredAgentChange }: Step4AddressProps) => {
     const [localAddress, setLocalAddress] = useState<AddressData>(address || {
         streetAddress: '',
         city: '',
@@ -50,7 +52,8 @@ const Step4Address = ({ address, onAddressChange, selectedState }: Step4AddressP
         country: 'United States',
     });
 
-    const [useRegisteredAgent, setUseRegisteredAgent] = useState(false);
+    const [useRegisteredAgent, setUseRegisteredAgent] = useState(propUseRegisteredAgent);
+    const [registeredAgentAddressId, setRegisteredAgentAddressId] = useState<number | null>(null);
     const [isLoadingAddress, setIsLoadingAddress] = useState(false);
 
 
@@ -61,6 +64,10 @@ const Step4Address = ({ address, onAddressChange, selectedState }: Step4AddressP
             setLocalAddress(prev => ({ ...prev, state: selectedState }));
         }
     }, [address, selectedState]);
+
+    useEffect(() => {
+        setUseRegisteredAgent(propUseRegisteredAgent);
+    }, [propUseRegisteredAgent]);
 
     const handleChange = (field: keyof AddressData, value: string) => {
         const updated = { ...localAddress, [field]: value };
@@ -80,6 +87,9 @@ const Step4Address = ({ address, onAddressChange, selectedState }: Step4AddressP
                 const agentAddress = response.data.data;
 
                 if (agentAddress) {
+                    // Store the registered agent address ID
+                    setRegisteredAgentAddressId(agentAddress.id);
+                    
                     const updatedAddress: AddressData = {
                         streetAddress: agentAddress.address || '',
                         city: agentAddress.city || '',
@@ -89,6 +99,11 @@ const Step4Address = ({ address, onAddressChange, selectedState }: Step4AddressP
                     };
                     setLocalAddress(updatedAddress);
                     onAddressChange(updatedAddress);
+                    
+                    // Notify parent component
+                    if (onRegisteredAgentChange) {
+                        onRegisteredAgentChange(true, agentAddress.id);
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching registered agent address:', error);
@@ -98,6 +113,7 @@ const Step4Address = ({ address, onAddressChange, selectedState }: Step4AddressP
             }
         } else {
             // Reset to empty or previous values when unchecked
+            setRegisteredAgentAddressId(null);
             const resetAddress: AddressData = {
                 streetAddress: '',
                 city: '',
@@ -107,6 +123,11 @@ const Step4Address = ({ address, onAddressChange, selectedState }: Step4AddressP
             };
             setLocalAddress(resetAddress);
             onAddressChange(resetAddress);
+            
+            // Notify parent component
+            if (onRegisteredAgentChange) {
+                onRegisteredAgentChange(false, null);
+            }
         }
     };
 
@@ -115,8 +136,8 @@ const Step4Address = ({ address, onAddressChange, selectedState }: Step4AddressP
             <div className="flex flex-col gap-16">
                 <StepHeader
                     icon="https://app.privatily.com/assets/img/header-icones/adresse.png"
-                    title="Residential Address"
-                    subtitle="This is the home address of my name, You can be located in any country."
+                    title="Company Address"
+                    subtitle="This is the home address of your company."
                 />
 
                 <div className="space-y-6">
