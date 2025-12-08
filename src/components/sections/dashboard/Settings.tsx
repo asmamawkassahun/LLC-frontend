@@ -322,6 +322,7 @@ const Settings = () => {
                                     <input
                                         type="email"
                                         value={formData.email}
+                                        disabled
                                         onChange={(e) => handleInputChange('email', e.target.value)}
                                         className="flex-1 px-4 py-2 bg-muted border border-input rounded-sm shadow-xs focus:outline-none focus:ring-2 focus:ring-purple focus:border-transparent text-muted-foreground"
                                     />

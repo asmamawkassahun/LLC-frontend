@@ -53,7 +53,7 @@ const Step4Address = ({ address, onAddressChange, selectedState, useRegisteredAg
     });
 
     const [useRegisteredAgent, setUseRegisteredAgent] = useState(propUseRegisteredAgent);
-    const [registeredAgentAddressId, setRegisteredAgentAddressId] = useState<number | null>(null);
+    const [_registeredAgentAddressId, setRegisteredAgentAddressId] = useState<number | null>(null);
     const [isLoadingAddress, setIsLoadingAddress] = useState(false);
 
 

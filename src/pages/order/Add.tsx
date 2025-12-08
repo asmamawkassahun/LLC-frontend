@@ -99,7 +99,7 @@ const AddOrderPage = () => {
     const location = useLocation();
     const stepContainerRef = useRef<HTMLDivElement>(null);
     const isAnimatingRef = useRef<boolean>(false);
-    const [lastSaved, setLastSaved] = useState<Date>(new Date());
+    const [_lastSaved, setLastSaved] = useState<Date>(new Date());
     const [isEditMode, setIsEditMode] = useState(false);
     const [isLoadingOrder, setIsLoadingOrder] = useState(false);
     const [orderCountryName, setOrderCountryName] = useState<string>('');
@@ -257,15 +257,6 @@ const AddOrderPage = () => {
 
         return () => clearInterval(interval);
     }, []);
-
-    const getTimeAgo = (date: Date): string => {
-        const now = new Date();
-        const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / 60000);
-
-        if (diffInMinutes < 1) return 'just now';
-        if (diffInMinutes === 1) return '1 minute ago';
-        return `${diffInMinutes} minutes ago`;
-    };
 
 
     const [currentStep, setCurrentStep] = useState(1);
