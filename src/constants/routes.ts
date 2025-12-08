@@ -17,6 +17,20 @@ export const ROUTES = {
     SETTINGS: '/settings',
     ORDERS: '/orders',
     LOGOUT: '/logout',
+    // Admin routes
+    ADMIN_LOGIN: '/admin/login',
+    ADMIN_DASHBOARD: '/admin/dashboard',
+    ADMIN_ORDERS: '/admin/orders',
+    ADMIN_USERS: '/admin/users',
+    ADMIN_COMPANIES: '/admin/companies',
+    ADMIN_PAYMENTS: '/admin/payments',
+    ADMIN_PRICING_PLANS: '/admin/pricing-plans',
+    ADMIN_PROMO_CODES: '/admin/promo-codes',
+    ADMIN_MARKETPLACE: '/admin/marketplace',
+    ADMIN_AFFILIATES: '/admin/affiliates',
+    ADMIN_SUPPORT: '/admin/support',
+    ADMIN_SETTINGS: '/admin/settings',
+    ADMIN_ACTIVITY_LOGS: '/admin/activity-logs',
   } as const;
   
   export type Route = typeof ROUTES[keyof typeof ROUTES];

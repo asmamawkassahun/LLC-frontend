@@ -330,9 +330,6 @@
   animation: pulse-slow 3s ease-in-out infinite;
 }
 
-
-
-
 .smooth-text {
   transition: font-size 0.3s ease;
 }

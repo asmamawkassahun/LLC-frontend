@@ -16,6 +16,21 @@ import Settings from './components/sections/dashboard/Settings';
 import Orders from './components/sections/dashboard/Orders';
 import { Toaster } from './components/ui/sonner';
 import PaymentSuccess from './pages/order/payment/Success';
+import AdminLayout from './layouts/AdminLayout';
+import AdminProtectedRoute from './components/auth/AdminProtectedRoute';
+import AdminLoginPage from './pages/admin/Login';
+import AdminDashboardPage from './pages/admin/Dashboard';
+import AdminOrdersPage from './pages/admin/Orders';
+import AdminUsersPage from './pages/admin/Users';
+import AdminCompaniesPage from './pages/admin/Companies';
+import AdminPaymentsPage from './pages/admin/Payments';
+import AdminPricingPlansPage from './pages/admin/PricingPlans';
+import AdminPromoCodesPage from './pages/admin/PromoCodes';
+import AdminMarketplacePage from './pages/admin/Marketplace';
+import AdminAffiliatesPage from './pages/admin/Affiliates';
+import AdminSupportPage from './pages/admin/Support';
+import AdminSettingsPage from './pages/admin/Settings';
+import AdminActivityLogsPage from './pages/admin/ActivityLogs';
 
 
 function App() {
@@ -73,6 +88,29 @@ function App() {
           }
         />
         <Route path="/payment/success" element={<PaymentSuccess />} />
+
+        {/* Admin Routes */}
+        <Route path={ROUTES.ADMIN_LOGIN} element={<AdminLoginPage />} />
+        <Route
+          element={
+            <AdminProtectedRoute>
+              <AdminLayout />
+            </AdminProtectedRoute>
+          }
+        >
+          <Route path={ROUTES.ADMIN_DASHBOARD} element={<AdminDashboardPage />} />
+          <Route path={ROUTES.ADMIN_ORDERS} element={<AdminOrdersPage />} />
+          <Route path={ROUTES.ADMIN_USERS} element={<AdminUsersPage />} />
+          <Route path={ROUTES.ADMIN_COMPANIES} element={<AdminCompaniesPage />} />
+          <Route path={ROUTES.ADMIN_PAYMENTS} element={<AdminPaymentsPage />} />
+          <Route path={ROUTES.ADMIN_PRICING_PLANS} element={<AdminPricingPlansPage />} />
+          <Route path={ROUTES.ADMIN_PROMO_CODES} element={<AdminPromoCodesPage />} />
+          <Route path={ROUTES.ADMIN_MARKETPLACE} element={<AdminMarketplacePage />} />
+          <Route path={ROUTES.ADMIN_AFFILIATES} element={<AdminAffiliatesPage />} />
+          <Route path={ROUTES.ADMIN_SUPPORT} element={<AdminSupportPage />} />
+          <Route path={ROUTES.ADMIN_SETTINGS} element={<AdminSettingsPage />} />
+          <Route path={ROUTES.ADMIN_ACTIVITY_LOGS} element={<AdminActivityLogsPage />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
