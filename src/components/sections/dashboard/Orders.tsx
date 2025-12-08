@@ -48,6 +48,7 @@ interface ApiOrder {
     };
     created_at: string;
     updated_at: string;
+    latest_updated_at?: string;
 }
 
 
@@ -83,7 +84,7 @@ const Orders = () => {
                 planType: apiOrder.pricing_plan?.name || 'N/A',
                 price: Number(apiOrder.total_amount) || 0, // Ensure it's always a number
                 status: apiOrder.payment_status_label || apiOrder.payment_status || '',
-                updatedAt: formatDate(apiOrder.updated_at || ''),
+                updatedAt: formatDate(apiOrder.latest_updated_at || apiOrder.updated_at || ''),
                 isPrimary: apiOrder.company?.is_primary || false,
                 paymentStatus: apiOrder.payment_status || 'unpaid',
             }));
