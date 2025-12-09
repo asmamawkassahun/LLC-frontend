@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import adminApiClient from '@/utils/api-helpers/adminApiClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -46,6 +46,8 @@ const AdminUsersPage = () => {
   const [originalPassword, setOriginalPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const queryClient = useQueryClient();
+
   const { data, isLoading, refetch, error } = useQuery({
     queryKey: ['admin-users', search, page, perPage],
     queryFn: async () => {
@@ -81,38 +83,65 @@ const AdminUsersPage = () => {
       const firstName = nameParts[0] || '';
       const lastName = nameParts.slice(1).join(' ') || '';
 
-      // Determine country code from country field first, then fallback to phone
+      // Parse phone number - extract country code from phone number first (most reliable)
       let countryCode = '+1'; // Default
+      let phoneNumber = '';
       const countries = getUniqueCountries();
       
-      // Try to find country code from country name
-      if (userData.country) {
-        const countryMatch = countries.find(
-          (c) => c.name.toLowerCase() === userData.country.toLowerCase()
-        );
-        if (countryMatch) {
-          countryCode = countryMatch.code;
-        }
-      }
-
-      // Parse phone number to extract country code (only if country field didn't provide one)
-      let phoneNumber = '';
       if (userData.phone) {
-        // Try to extract country code from phone (format: +1234567890)
-        const phoneMatch = userData.phone.match(/^(\+\d{1,4})(.*)$/);
-        if (phoneMatch) {
-          // Only use phone country code if we didn't get one from country field
-          if (countryCode === '+1' && !userData.country) {
-            countryCode = phoneMatch[1];
+        // Phone number starts with +, try to extract country code
+        if (userData.phone.startsWith('+')) {
+          // Try to match known country codes (1-4 digits) from longest to shortest
+          // This ensures we match "+251" before trying "+2" or "+25"
+          let matched = false;
+          for (let length = 4; length >= 1; length--) {
+            const potentialCode = userData.phone.substring(0, 1 + length); // + and digits
+            const countryMatch = countries.find(c => c.code === potentialCode);
+            if (countryMatch) {
+              countryCode = potentialCode;
+              phoneNumber = userData.phone.substring(1 + length); // Everything after country code
+              matched = true;
+              break;
+            }
           }
-          phoneNumber = phoneMatch[2];
+          
+          // If no match found in country list, fallback to regex (extract first 1-4 digits)
+          if (!matched) {
+            const phoneMatch = userData.phone.match(/^(\+\d{1,4})(.*)$/);
+            if (phoneMatch) {
+              countryCode = phoneMatch[1];
+              phoneNumber = phoneMatch[2];
+            } else {
+              phoneNumber = userData.phone.substring(1); // Remove the +
+            }
+          }
         } else {
+          // Phone doesn't start with +, use as-is
           phoneNumber = userData.phone;
+          // Try to find country code from country field as fallback
+          if (userData.country) {
+            const countryMatch = countries.find(
+              (c) => c.name.toLowerCase() === userData.country.toLowerCase()
+            );
+            if (countryMatch) {
+              countryCode = countryMatch.code;
+            }
+          }
+        }
+      } else {
+        // No phone number, try to get country code from country field
+        if (userData.country) {
+          const countryMatch = countries.find(
+            (c) => c.name.toLowerCase() === userData.country.toLowerCase()
+          );
+          if (countryMatch) {
+            countryCode = countryMatch.code;
+          }
         }
       }
 
-      // Set a placeholder value to indicate password exists (we can't retrieve actual password)
-      const passwordPlaceholder = '••••••••';
+      // Get the actual password from the API (decrypted by backend for admin)
+      const actualPassword = userData.password || '';
       
       setFormData({
         firstName,
@@ -120,10 +149,10 @@ const AdminUsersPage = () => {
         email: userData.email || '',
         phoneNumber,
         countryCode,
-        password: passwordPlaceholder,
+        password: actualPassword,
         passwordConfirmation: '',
       });
-      setOriginalPassword(passwordPlaceholder);
+      setOriginalPassword(actualPassword);
     }
   }, [userData, isEditModalOpen]);
 
@@ -155,14 +184,17 @@ const AdminUsersPage = () => {
         return;
       }
 
-      // Check if password has been changed (not the placeholder and not empty)
-      const isPasswordChanged = formData.password && formData.password !== originalPassword && formData.password.trim() !== '';
-      
-      // Only validate password if it's been changed
-      if (isPasswordChanged && formData.password.length < 8) {
-        toast.error('Password must be at least 8 characters');
-        setIsSubmitting(false);
-        return;
+      // Check if password has been changed
+      const trimmedPassword = formData.password?.trim() || '';
+      const isPasswordChanged = trimmedPassword !== '' && trimmedPassword !== originalPassword;
+
+      // Validate password if it's been changed
+      if (isPasswordChanged) {
+        if (trimmedPassword.length < 8) {
+          toast.error('Password must be at least 8 characters');
+          setIsSubmitting(false);
+          return;
+        }
       }
 
       // Get country name from country code
@@ -191,10 +223,15 @@ const AdminUsersPage = () => {
 
       // Only include password if it's been changed
       if (isPasswordChanged) {
-        updateData.password = formData.password;
+        updateData.password = trimmedPassword;
       }
 
       await adminApiClient.put(`/admin/users/${selectedUserId}`, updateData);
+      
+      // Invalidate and refetch the specific user query to get fresh data with updated password
+      await queryClient.invalidateQueries({ queryKey: ['admin-user', selectedUserId] });
+      await queryClient.refetchQueries({ queryKey: ['admin-user', selectedUserId] });
+      
       toast.success('User updated successfully');
       handleCloseModal();
       refetch();
@@ -322,6 +359,7 @@ const AdminUsersPage = () => {
                 <label className="text-sm font-medium">Phone Number</label>
                 <div className="flex gap-2">
                   <Select
+                    key={`country-select-${selectedUserId}-${formData.countryCode}`}
                     value={formData.countryCode}
                     onValueChange={(value) => setFormData({ ...formData, countryCode: value })}
                   >
@@ -355,27 +393,15 @@ const AdminUsersPage = () => {
                 </div>
               </div>
 
-              {/* Password (Optional) */}
+              {/* Password */}
               <div className="space-y-2">
                 <label className="text-sm font-medium"> Password</label>
                 <div className="relative">
                   <Input
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="Enter new password to change"
+                    placeholder="Enter password"
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    onFocus={() => {
-                      // Clear placeholder value when user focuses on the field
-                      if (formData.password === originalPassword) {
-                        setFormData({ ...formData, password: '' });
-                      }
-                    }}
-                    onBlur={() => {
-                      // Restore placeholder if field is empty
-                      if (formData.password === '') {
-                        setFormData({ ...formData, password: originalPassword });
-                      }
-                    }}
                   />
                   <button
                     type="button"
@@ -387,8 +413,8 @@ const AdminUsersPage = () => {
                 </div>
                 <p className="text-xs text-muted-foreground">
                   {formData.password === originalPassword 
-                    ? 'Leave empty to keep current password' 
-                    : 'Enter a new password to update'}
+                    ? 'Current password is displayed. Change it to update.' 
+                    : 'Password will be updated when you save'}
                 </p>
               </div>
 
