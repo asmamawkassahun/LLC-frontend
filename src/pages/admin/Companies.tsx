@@ -151,7 +151,7 @@ const AdminCompaniesPage = () => {
                   <TableRow>
                     <TableHead>Name</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Created</TableHead>
+                    <TableHead>Created at</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -177,7 +177,7 @@ const AdminCompaniesPage = () => {
                         />
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 bg-accent hover:bg-accent/90 border-none cursor-pointer">
+                            <Button variant="ghost" size="icon" className="h-8 w-12 bg-accent hover:bg-accent/90 border-none cursor-pointer">
                               <MoreVertical className="h-4 w-4 text-white" />
                               <span className="sr-only">Open menu</span>
                             </Button>
