@@ -6,9 +6,16 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatDate } from '@/lib/formatters';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useState, useRef } from 'react';
 import { toast } from 'sonner';
-import { ChevronLeft, ChevronRight, Upload } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Upload, Download, MoreVertical } from 'lucide-react';
 
 const AdminCompaniesPage = () => {
   const [page, setPage] = useState(1);
@@ -56,6 +63,46 @@ const AdminCompaniesPage = () => {
     const file = event.target.files?.[0];
     if (file) {
       handleFileUpload(companyId, file);
+    }
+  };
+
+  const handleDownloadSummary = async (companyId: string) => {
+    try {
+      const response = await adminApiClient.get(`/admin/companies/${companyId}/download-summary`, {
+        responseType: 'blob',
+        headers: {
+          'Accept': 'application/pdf',
+        },
+      });
+
+      if (response.status >= 200 && response.status < 300) {
+        const contentType = response.headers['content-type'] || '';
+        if (!contentType.includes('application/pdf')) {
+          const text = await response.data.text();
+          try {
+            const errorData = JSON.parse(text);
+            throw new Error(errorData.message || 'Failed to download company summary');
+          } catch (parseError) {
+            throw new Error('Invalid response from server');
+          }
+        }
+
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `company-summary-${companyId}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        
+        toast.success('Company summary downloaded successfully');
+      } else {
+        throw new Error('Failed to download company summary');
+      }
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || error.message || 'Failed to download company summary');
     }
   };
 
@@ -117,29 +164,41 @@ const AdminCompaniesPage = () => {
                       <TableCell>{company.status_label || company.status}</TableCell>
                       <TableCell>{formatDate(company.created_at)}</TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-2">
-                          <input
-                            ref={(el) => {
-                              fileInputRefs.current[company.id] = el;
-                            }}
-                            type="file"
-                            id={`file-upload-${company.id}`}
-                            className="hidden"
-                            onChange={(e) => handleFileSelect(company.id, e)}
-                            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                            disabled={uploadingCompanyId === company.id}
-                          />
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="cursor-pointer"
-                            onClick={() => fileInputRefs.current[company.id]?.click()}
-                            disabled={uploadingCompanyId === company.id}
-                          >
-                            <Upload className="mr-2 h-4 w-4" />
-                            {uploadingCompanyId === company.id ? 'Uploading...' : 'Upload File'}
-                          </Button>
-                        </div>
+                        <input
+                          ref={(el) => {
+                            fileInputRefs.current[company.id] = el;
+                          }}
+                          type="file"
+                          id={`file-upload-${company.id}`}
+                          className="hidden"
+                          onChange={(e) => handleFileSelect(company.id, e)}
+                          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                          disabled={uploadingCompanyId === company.id}
+                        />
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 bg-accent hover:bg-accent/90 border-none cursor-pointer">
+                              <MoreVertical className="h-4 w-4 text-white" />
+                              <span className="sr-only">Open menu</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={() => fileInputRefs.current[company.id]?.click()}
+                              disabled={uploadingCompanyId === company.id}
+                            >
+                              <Upload className="mr-2 h-4 w-4 hover:text-white" />
+                              {uploadingCompanyId === company.id ? 'Uploading...' : 'Upload File'}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              onClick={() => handleDownloadSummary(company.id)}
+                            >
+                              <Download className="mr-2 h-4 w-4 hover:text-white" />
+                              Download Summary
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </TableCell>
                     </TableRow>
                   ))}
