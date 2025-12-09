@@ -6,55 +6,62 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatDate } from '@/lib/formatters';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { toast } from 'sonner';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Upload } from 'lucide-react';
 
 const AdminCompaniesPage = () => {
-  const [statusFilter, setStatusFilter] = useState<string>('all');
   const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(20);
+  const [perPage, setPerPage] = useState(10);
+  const [uploadingCompanyId, setUploadingCompanyId] = useState<string | null>(null);
+  const fileInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
 
   const { data, isLoading, refetch, error } = useQuery({
-    queryKey: ['admin-companies', statusFilter, page, perPage],
+    queryKey: ['admin-companies', page, perPage],
     queryFn: async () => {
       const params: any = { per_page: perPage, page };
-      if (statusFilter !== 'all') {
-        params.status = statusFilter;
-      }
       const response = await adminApiClient.get('/admin/companies', { params });
       return response.data;
     },
   });
 
-  const handleStatusUpdate = async (companyId: string, newStatus: string) => {
+  const handleFileUpload = async (companyId: string, file: File) => {
+    if (!file) return;
+
+    setUploadingCompanyId(companyId);
     try {
-      await adminApiClient.put(`/admin/companies/${companyId}/status`, { status: newStatus });
-      toast.success('Company status updated');
+      const formData = new FormData();
+      formData.append('file', file);
+
+      await adminApiClient.post(`/admin/companies/${companyId}/upload`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      toast.success('File uploaded successfully');
       refetch();
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to update company status');
+      toast.error(error.response?.data?.message || 'Failed to upload file');
+    } finally {
+      setUploadingCompanyId(null);
+      // Reset file input
+      if (fileInputRefs.current[companyId]) {
+        fileInputRefs.current[companyId]!.value = '';
+      }
     }
   };
 
-  const handleApprove = async (companyId: string) => {
-    try {
-      await adminApiClient.post(`/admin/companies/${companyId}/approve`);
-      toast.success('Company approved');
-      refetch();
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to approve company');
+  const handleFileSelect = (companyId: string, event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      handleFileUpload(companyId, file);
     }
-  };
-
-  const handleStatusFilterChange = (value: string) => {
-    setStatusFilter(value);
-    setPage(1); // Reset to first page when filter changes
   };
 
   const handlePerPageChange = (value: string) => {
     setPerPage(Number(value));
-    setPage(1); // Reset to first page when per_page changes
+    setPage(1);
   };
 
   const currentPage = data?.current_page || 1;
@@ -72,21 +79,7 @@ const AdminCompaniesPage = () => {
 
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>All Companies</CardTitle>
-            <Select value={statusFilter} onValueChange={handleStatusFilterChange}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filter by status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="processing">Processing</SelectItem>
-                <SelectItem value="formed">Formed</SelectItem>
-                <SelectItem value="rejected">Rejected</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <CardTitle>All Companies</CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -110,9 +103,7 @@ const AdminCompaniesPage = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Name</TableHead>
-                    <TableHead>Type</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Registration Number</TableHead>
                     <TableHead>Created</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
@@ -120,35 +111,34 @@ const AdminCompaniesPage = () => {
                 <TableBody>
                   {data.data.map((company: any) => (
                     <TableRow key={company.id}>
-                      <TableCell className="font-medium">{company.name}</TableCell>
-                      <TableCell>{company.type_label || company.type}</TableCell>
+                      <TableCell className="font-medium">
+                        {company.name} ({company.type})
+                      </TableCell>
                       <TableCell>{company.status_label || company.status}</TableCell>
-                      <TableCell>{company.registration_number || 'N/A'}</TableCell>
                       <TableCell>{formatDate(company.created_at)}</TableCell>
                       <TableCell>
-                        <div className="flex gap-2">
-                          <Select
-                            value={company.status}
-                            onValueChange={(value) => handleStatusUpdate(company.id, value)}
+                        <div className="flex items-center gap-2">
+                          <input
+                            ref={(el) => {
+                              fileInputRefs.current[company.id] = el;
+                            }}
+                            type="file"
+                            id={`file-upload-${company.id}`}
+                            className="hidden"
+                            onChange={(e) => handleFileSelect(company.id, e)}
+                            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                            disabled={uploadingCompanyId === company.id}
+                          />
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="cursor-pointer"
+                            onClick={() => fileInputRefs.current[company.id]?.click()}
+                            disabled={uploadingCompanyId === company.id}
                           >
-                            <SelectTrigger className="w-[150px]">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="pending">Pending</SelectItem>
-                              <SelectItem value="processing">Processing</SelectItem>
-                              <SelectItem value="formed">Formed</SelectItem>
-                              <SelectItem value="rejected">Rejected</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          {company.status === 'pending' && (
-                            <Button
-                              size="sm"
-                              onClick={() => handleApprove(company.id)}
-                            >
-                              Approve
-                            </Button>
-                          )}
+                            <Upload className="mr-2 h-4 w-4" />
+                            {uploadingCompanyId === company.id ? 'Uploading...' : 'Upload File'}
+                          </Button>
                         </div>
                       </TableCell>
                     </TableRow>

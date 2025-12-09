@@ -150,12 +150,12 @@ const AdminOrdersPage = () => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            {order.status !== 'formed' && (
+                            {order.status !== 'confirmed' && (
                               <DropdownMenuItem
-                                onClick={() => handleStatusUpdate(order.id, 'formed')}
+                                onClick={() => handleStatusUpdate(order.id, 'confirmed')}
                               >
                                 <CheckCircle2 className="mr-2 h-4 w-4 hover:text-white" />
-                                Mark as Formed
+                                Confirm Order
                               </DropdownMenuItem>
                             )}
                             {order.status !== 'cancelled' && (
@@ -167,7 +167,7 @@ const AdminOrdersPage = () => {
                                 Cancel Order
                               </DropdownMenuItem>
                             )}
-                            {(order.status !== 'formed' || order.status !== 'cancelled') && (
+                            {(order.status !== 'confirmed' || order.status !== 'cancelled') && (
                               <DropdownMenuSeparator />
                             )}
                             <DropdownMenuItem
