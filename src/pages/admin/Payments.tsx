@@ -62,28 +62,28 @@ const AdminPaymentsPage = () => {
             </div>
           ) : (
             <>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Transaction ID</TableHead>
-                    <TableHead>Order Number</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Method</TableHead>
-                    <TableHead>Date</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Transaction ID</TableHead>
+                  <TableHead>Order Number</TableHead>
+                  <TableHead>Amount</TableHead>
+                  <TableHead>Method</TableHead>
+                  <TableHead>Date</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                   {data.data.map((payment: any) => (
-                    <TableRow key={payment.id}>
-                      <TableCell className="font-medium">{payment.transaction_id || 'N/A'}</TableCell>
-                      <TableCell>{payment?.order_number || 'N/A'}</TableCell>
-                      <TableCell>{formatCurrency(payment.amount)}</TableCell>
-                      <TableCell>{payment.payment_method || 'N/A'}</TableCell>
-                      <TableCell>{formatDate(payment.created_at)}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  <TableRow key={payment.id}>
+                    <TableCell className="font-medium">{payment.transaction_id || 'N/A'}</TableCell>
+                    <TableCell>{payment?.order_number || 'N/A'}</TableCell>
+                    <TableCell>{formatCurrency(payment.amount)}</TableCell>
+                    <TableCell>{payment.payment_method || 'N/A'}</TableCell>
+                    <TableCell>{formatDate(payment.created_at)}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
 
               {/* Pagination Controls */}
               <div className="flex items-center justify-between mt-4">
