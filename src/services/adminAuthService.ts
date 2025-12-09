@@ -27,8 +27,8 @@ const adminAuthService = {
   },
 
   async me(): Promise<Admin> {
-    const response = await adminApiClient.get<{ data: Admin }>('/admin/me');
-    return response.data.data;
+    const response = await adminApiClient.get<Admin>('/admin/me');
+    return response.data;
   },
 
   isAuthenticated(): boolean {
