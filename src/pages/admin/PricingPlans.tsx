@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatCurrency } from '@/lib/formatters';
 import { toast } from 'sonner';
-import { Plus, Edit, Trash2, ToggleLeft, ToggleRight, X } from 'lucide-react';
+import { Plus, Edit, Trash2, X, MoreVertical, CheckCircle2, XCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -29,6 +29,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const AdminPricingPlansPage = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -223,7 +230,7 @@ const AdminPricingPlansPage = () => {
           <h1 className="text-3xl font-bold">Pricing Plans</h1>
           <p className="text-muted-foreground">Manage pricing plans</p>
         </div>
-        <Button onClick={() => { setEditingPlan(null); setIsDialogOpen(true); }}>
+        <Button className='cursor-pointer' onClick={() => { setEditingPlan(null); setIsDialogOpen(true); }}>
           <Plus className="mr-2 h-4 w-4" />
           Add Plan
         </Button>
@@ -377,7 +384,6 @@ const AdminPricingPlansPage = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
-                  <TableHead>Description</TableHead>
                   <TableHead>Base Price</TableHead>
                   <TableHead>Yearly Price</TableHead>
                   <TableHead>Status</TableHead>
@@ -388,17 +394,6 @@ const AdminPricingPlansPage = () => {
                 {data?.data?.map((plan: any) => (
                   <TableRow key={plan.id}>
                     <TableCell className="font-medium">{plan.name}</TableCell>
-                    <TableCell>
-                      {Array.isArray(plan.description) && plan.description.length > 0 ? (
-                        <ul className="list-disc list-inside space-y-1">
-                          {plan.description.map((desc: string, index: number) => (
-                            <li key={index} className="text-sm">{desc}</li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <span className="text-muted-foreground">No description</span>
-                      )}
-                    </TableCell>
                     <TableCell>{formatCurrency(plan.base_price)}</TableCell>
                     <TableCell>{plan.yearly_price ? formatCurrency(plan.yearly_price) : 'N/A'}</TableCell>
                     <TableCell>
@@ -409,34 +404,47 @@ const AdminPricingPlansPage = () => {
                       </span>
                     </TableCell>
                     <TableCell>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => toggleStatusMutation.mutate(plan.id)}
-                        >
-                          {plan.is_active ? (
-                            <ToggleRight className="h-4 w-4" />
-                          ) : (
-                            <ToggleLeft className="h-4 w-4" />
-                          )}
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => { setEditingPlan(plan); setIsDialogOpen(true); }}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDeleteClick(plan)}
-                          disabled={deleteMutation.isPending}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-8 w-12 bg-accent hover:bg-accent/90 border-none cursor-pointer">
+                            <MoreVertical className="h-4 w-4 text-white" />
+                            <span className="sr-only">Open menu</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            onClick={() => { setEditingPlan(plan); setIsDialogOpen(true); }}
+                          >
+                            <Edit className="mr-2 h-4 w-4 hover:text-white" />
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onClick={() => toggleStatusMutation.mutate(plan.id)}
+                          >
+                            {plan.is_active ? (
+                              <>
+                                <XCircle className="mr-2 h-4 w-4 hover:text-white" />
+                                Deactivate
+                              </>
+                            ) : (
+                              <>
+                                <CheckCircle2 className="mr-2 h-4 w-4 hover:text-white" />
+                                Activate
+                              </>
+                            )}
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onClick={() => handleDeleteClick(plan)}
+                            className="text-destructive focus:text-destructive hover:text-white! "
+                            disabled={deleteMutation.isPending}
+                          >
+                            <Trash2 className="mr-2 h-4 w-4 hover:text-white!" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
                 ))}
