@@ -31,6 +31,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
+import maintenanceService from '@/services/maintenanceService';
 
 const AdminNavbar = () => {
   const navigate = useNavigate();
@@ -57,6 +58,46 @@ const AdminNavbar = () => {
   });
 
   const [maintenanceMode, setMaintenanceMode] = useState(false);
+
+  // Fetch maintenance status on mount
+  const { data: maintenanceStatus } = useQuery({
+    queryKey: ['maintenance-status'],
+    queryFn: async () => {
+      try {
+        return await maintenanceService.getAdminStatus();
+      } catch (error) {
+        return { enabled: false };
+      }
+    },
+    enabled: adminAuthService.isAuthenticated(),
+    refetchInterval: 30000, // Refetch every 30 seconds
+  });
+
+  // Update local state when maintenance status changes
+  useEffect(() => {
+    if (maintenanceStatus !== undefined) {
+      setMaintenanceMode(maintenanceStatus.enabled);
+    }
+  }, [maintenanceStatus]);
+
+  const toggleMaintenanceMutation = useMutation({
+    mutationFn: async (enabled: boolean) => {
+      if (enabled) {
+        return await maintenanceService.enable();
+      } else {
+        return await maintenanceService.disable();
+      }
+    },
+    onSuccess: (data) => {
+      setMaintenanceMode(data.enabled);
+      queryClient.invalidateQueries({ queryKey: ['maintenance-status'] });
+      toast.success(data.message || `Maintenance mode ${data.enabled ? 'enabled' : 'disabled'}`);
+    },
+    onError: (error: any) => {
+      const errorMessage = error.response?.data?.message || 'Failed to toggle maintenance mode';
+      toast.error(errorMessage);
+    },
+  });
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data: { name?: string; email?: string; password?: string }) => {
@@ -200,9 +241,9 @@ const AdminNavbar = () => {
                 <Switch
                   checked={maintenanceMode}
                   onCheckedChange={(checked) => {
-                    setMaintenanceMode(checked);
-                    toast.success(`Maintenance mode ${checked ? 'enabled' : 'disabled'}`);
+                    toggleMaintenanceMutation.mutate(checked);
                   }}
+                  disabled={toggleMaintenanceMutation.isPending}
                 />
               </div>
               <DropdownMenuSeparator />

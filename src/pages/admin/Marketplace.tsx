@@ -399,8 +399,8 @@ const AdminMarketplacePage = () => {
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
-                            onClick={() => toggleStatusMutation.mutate(service.id)}
-                          >
+                        onClick={() => toggleStatusMutation.mutate(service.id)}
+                      >
                             {service.is_active ? (
                               <>
                                 <XCircle className="mr-2 h-4 w-4 hover:text-white" />

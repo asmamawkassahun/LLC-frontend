@@ -31,12 +31,14 @@ import AdminAffiliatesPage from './pages/admin/Affiliates';
 import AdminSupportPage from './pages/admin/Support';
 import AdminSettingsPage from './pages/admin/Settings';
 import AdminActivityLogsPage from './pages/admin/ActivityLogs';
+import MaintenanceCheck from './components/MaintenanceCheck';
 
 
 function App() {
   return (
     <BrowserRouter>
     <Toaster richColors position="top-right" />
+      <MaintenanceCheck>
       <Routes>
         {/* Routes with MainLayout (with Navbar) */}
         <Route element={<MainLayout />}>
@@ -112,6 +114,7 @@ function App() {
           <Route path={ROUTES.ADMIN_ACTIVITY_LOGS} element={<AdminActivityLogsPage />} />
         </Route>
       </Routes>
+      </MaintenanceCheck>
     </BrowserRouter>
   );
 }

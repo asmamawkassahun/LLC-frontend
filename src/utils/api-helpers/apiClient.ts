@@ -25,11 +25,27 @@ apiClient.interceptors.request.use(
   }
 );
 
-// Response interceptor to handle token refresh
+// Response interceptor to handle token refresh and maintenance mode
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+
+    // If 503 (Service Unavailable), it's likely maintenance mode
+    // Don't redirect for maintenance status endpoint or admin routes
+    if (error.response?.status === 503) {
+      const url = originalRequest?.url || '';
+      const isMaintenanceStatus = url.includes('/maintenance/status');
+      const isAdminRoute = url.includes('/admin/');
+      
+      // If it's not the maintenance status endpoint or admin route, set a flag
+      if (!isMaintenanceStatus && !isAdminRoute) {
+        // Set a flag in sessionStorage to indicate maintenance mode
+        sessionStorage.setItem('maintenance_mode', 'true');
+        // Trigger a custom event that MaintenanceCheck can listen to
+        window.dispatchEvent(new CustomEvent('maintenance-mode-detected'));
+      }
+    }
 
     // If 401 and not already retrying, try to refresh token
     if (error.response?.status === 401 && !originalRequest._retry) {
