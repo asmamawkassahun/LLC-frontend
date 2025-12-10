@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { formatCurrency } from '@/lib/formatters';
+import { formatCurrency, formatDate } from '@/lib/formatters';
 import { toast } from 'sonner';
 import { Plus, X, MoreVertical, Edit, Trash2, CheckCircle2, XCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
@@ -38,6 +38,7 @@ import { Label } from '@/components/ui/label';
 
 const AdminMarketplacePage = () => {
   const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState<'services' | 'orders'>('services');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingService, setEditingService] = useState<any>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -58,6 +59,16 @@ const AdminMarketplacePage = () => {
       const response = await adminApiClient.get('/admin/marketplace/services');
       return response.data;
     },
+    enabled: activeTab === 'services',
+  });
+
+  const { data: ordersData, isLoading: isLoadingOrders } = useQuery({
+    queryKey: ['admin-marketplace-orders'],
+    queryFn: async () => {
+      const response = await adminApiClient.get('/admin/marketplace/orders');
+      return response.data;
+    },
+    enabled: activeTab === 'orders',
   });
 
   // Populate form when editing
@@ -223,244 +234,382 @@ const AdminMarketplacePage = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Marketplace Services</h1>
-          <p className="text-muted-foreground">Manage marketplace services</p>
+      {/* Tabs */}
+      <div className="flex  bg-foreground/5 rounded-md p-1">
+        <div className="flex gap-4 items-center justify-between w-full">
+          <button
+            onClick={() => setActiveTab('services')}
+            className={`px-4 py-2 font-medium transition-colors cursor-pointer w-full ${activeTab === 'services'
+                ? 'bg-background text-primary rounded-md'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
+              }`}
+          >
+            Marketplace Services
+          </button>
+          <button
+            onClick={() => setActiveTab('orders')}
+            className={`px-4 py-2 font-medium transition-colors cursor-pointer w-full ${activeTab === 'orders'
+                ? 'bg-background text-primary rounded-md'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
+              }`}
+          >
+            Marketplace Orders
+          </button>
         </div>
-        <Button className="cursor-pointer" onClick={() => { setEditingService(null); setIsDialogOpen(true); }}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Service
-        </Button>
+
       </div>
 
-      {/* Add Service Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={handleCloseDialog}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{editingService ? 'Edit Marketplace Service' : 'Add New Marketplace Service'}</DialogTitle>
-            <DialogDescription>
-              {editingService ? 'Update marketplace service information' : 'Create a new marketplace service with name, description, requirements, and price.'}
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Name */}
-            <div className="space-y-2">
-              <Label htmlFor="name">Name *</Label>
-              <Input
-                id="name"
-                type="text"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="Service Name"
-                required
-                maxLength={255}
-              />
+      {/* Marketplace Services Tab */}
+      {activeTab === 'services' && (
+        <>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold">Marketplace Services</h1>
+              <p className="text-muted-foreground">Manage marketplace services</p>
             </div>
-
-            {/* Description */}
-            <div className="space-y-2">
-              <Label htmlFor="description">Description *</Label>
-              <textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Enter service description"
-                required
-                rows={4}
-                className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              />
+            <div>
+              {/* {activeTab === 'services' && ( */}
+              <Button className="cursor-pointer" onClick={() => { setEditingService(null); setIsDialogOpen(true); }}>
+                <Plus className="mr-2 h-4 w-4" />
+                Add Service
+              </Button>
+              {/* )} */}
             </div>
+          </div>
 
-            {/* Requirements */}
-            <div className="space-y-2">
-              <Label htmlFor="requirements">Requirements</Label>
-              <Input
-                id="requirements"
-                type="text"
-                value={requirementInput}
-                onChange={(e) => setRequirementInput(e.target.value)}
-                onKeyPress={handleRequirementKeyPress}
-                placeholder="Enter requirement and press Enter"
-              />
-              <p className="text-xs text-muted-foreground">
-                Press Enter to add each requirement
-              </p>
-              
-              {/* Display added requirements */}
-              {formData.requirements.length > 0 && (
-                <div className="space-y-2 mt-2">
-                  {formData.requirements.map((req, index) => (
-                    <div key={index} className="flex items-center gap-2 p-2 bg-muted rounded-md">
-                      <span className="flex-1 text-sm">{req}</span>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleRemoveRequirement(index)}
-                        className="h-6 w-6 p-0"
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
+          {/* Add Service Dialog */}
+          <Dialog open={isDialogOpen} onOpenChange={handleCloseDialog}>
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>{editingService ? 'Edit Marketplace Service' : 'Add New Marketplace Service'}</DialogTitle>
+                <DialogDescription>
+                  {editingService ? 'Update marketplace service information' : 'Create a new marketplace service with name, description, requirements, and price.'}
+                </DialogDescription>
+              </DialogHeader>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Name */}
+                <div className="space-y-2">
+                  <Label htmlFor="name">Name *</Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="Service Name"
+                    required
+                    maxLength={255}
+                  />
+                </div>
+
+                {/* Description */}
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description *</Label>
+                  <textarea
+                    id="description"
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    placeholder="Enter service description"
+                    required
+                    rows={4}
+                    className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  />
+                </div>
+
+                {/* Requirements */}
+                <div className="space-y-2">
+                  <Label htmlFor="requirements">Requirements</Label>
+                  <Input
+                    id="requirements"
+                    type="text"
+                    value={requirementInput}
+                    onChange={(e) => setRequirementInput(e.target.value)}
+                    onKeyPress={handleRequirementKeyPress}
+                    placeholder="Enter requirement and press Enter"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Press Enter to add each requirement
+                  </p>
+
+                  {/* Display added requirements */}
+                  {formData.requirements.length > 0 && (
+                    <div className="space-y-2 mt-2">
+                      {formData.requirements.map((req, index) => (
+                        <div key={index} className="flex items-center gap-2 p-2 bg-muted rounded-md">
+                          <span className="flex-1 text-sm">{req}</span>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleRemoveRequirement(index)}
+                            className="h-6 w-6 p-0"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
                     </div>
+                  )}
+                </div>
+
+                {/* Price */}
+                <div className="space-y-2">
+                  <Label htmlFor="price">Price *</Label>
+                  <Input
+                    id="price"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={formData.price}
+                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                    placeholder="0.00"
+                    required
+                  />
+                </div>
+
+                {/* Is Active */}
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="is_active"
+                    checked={formData.is_active}
+                    onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                    className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary cursor-pointer"
+                  />
+                  <Label htmlFor="is_active" className="cursor-pointer">
+                    Active
+                  </Label>
+                </div>
+
+                <DialogFooter>
+                  <Button type="button" variant="outline" className="cursor-pointer" onClick={handleCloseDialog} disabled={isSubmitting}>
+                    Cancel
+                  </Button>
+                  <Button type="submit" className="cursor-pointer" disabled={isSubmitting}>
+                    {isSubmitting ? 'Saving...' : editingService ? 'Update Service' : 'Create Service'}
+                  </Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>All Services</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <div className="space-y-2">
+                  {[...Array(5)].map((_, i) => (
+                    <Skeleton key={i} className="h-12 w-full" />
                   ))}
                 </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Price</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {data?.data?.map((service: any) => (
+                      <TableRow key={service.id}>
+                        <TableCell className="font-medium">{service.name}</TableCell>
+                        <TableCell>{formatCurrency(service.price)}</TableCell>
+                        <TableCell>
+                          <span className={`px-2 py-1 rounded text-xs ${service.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                            }`}>
+                            {service.is_active ? 'Active' : 'Inactive'}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-12 bg-accent hover:bg-accent/90 border-none cursor-pointer">
+                                <MoreVertical className="h-4 w-4 text-white" />
+                                <span className="sr-only">Open menu</span>
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem
+                                onClick={() => handleEditClick(service)}
+                              >
+                                <Edit className="mr-2 h-4 w-4 hover:text-white" />
+                                Edit
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                onClick={() => toggleStatusMutation.mutate(service.id)}
+                              >
+                                {service.is_active ? (
+                                  <>
+                                    <XCircle className="mr-2 h-4 w-4 hover:text-white" />
+                                    Deactivate
+                                  </>
+                                ) : (
+                                  <>
+                                    <CheckCircle2 className="mr-2 h-4 w-4 hover:text-white" />
+                                    Activate
+                                  </>
+                                )}
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                onClick={() => handleDeleteClick(service)}
+                                className="text-destructive focus:text-destructive"
+                              >
+                                <Trash2 className="mr-2 h-4 w-4 hover:text-white" />
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               )}
+            </CardContent>
+          </Card>
+
+          {/* Delete Confirmation Dialog */}
+          <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete the marketplace service{' '}
+                  <span className="font-semibold">{serviceToDelete?.name}</span>.
+                  {serviceToDelete?.marketplaceOrders?.length > 0 && (
+                    <span className="block mt-2 text-destructive">
+                      Warning: This service has associated orders and cannot be deleted.
+                    </span>
+                  )}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={() => setServiceToDelete(null)}>
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleConfirmDelete}
+                  disabled={deleteMutation.isPending}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </>
+      )}
+
+      {/* Marketplace Orders Tab */}
+      {activeTab === 'orders' && (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold">Marketplace Orders</h1>
+              <p className="text-muted-foreground">Manage all marketplace orders</p>
+
             </div>
+            
+          </div>
 
-            {/* Price */}
-            <div className="space-y-2">
-              <Label htmlFor="price">Price *</Label>
-              <Input
-                id="price"
-                type="number"
-                step="0.01"
-                min="0"
-                value={formData.price}
-                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                placeholder="0.00"
-                required
-              />
-            </div>
-
-            {/* Is Active */}
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="is_active"
-                checked={formData.is_active}
-                onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary cursor-pointer"
-              />
-              <Label htmlFor="is_active" className="cursor-pointer">
-                Active
-              </Label>
-            </div>
-
-            <DialogFooter>
-              <Button type="button" variant="outline" className="cursor-pointer" onClick={handleCloseDialog} disabled={isSubmitting}>
-                Cancel
-              </Button>
-              <Button type="submit" className="cursor-pointer" disabled={isSubmitting}>
-                {isSubmitting ? 'Saving...' : editingService ? 'Update Service' : 'Create Service'}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>All Services</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div className="space-y-2">
-              {[...Array(5)].map((_, i) => (
-                <Skeleton key={i} className="h-12 w-full" />
-              ))}
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Price</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {data?.data?.map((service: any) => (
-                  <TableRow key={service.id}>
-                    <TableCell className="font-medium">{service.name}</TableCell>
-                    <TableCell>{formatCurrency(service.price)}</TableCell>
-                    <TableCell>
-                      <span className={`px-2 py-1 rounded text-xs ${
-                        service.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                      }`}>
-                        {service.is_active ? 'Active' : 'Inactive'}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-12 bg-accent hover:bg-accent/90 border-none cursor-pointer">
-                            <MoreVertical className="h-4 w-4 text-white" />
-                            <span className="sr-only">Open menu</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            onClick={() => handleEditClick(service)}
-                          >
-                            <Edit className="mr-2 h-4 w-4 hover:text-white" />
-                            Edit
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                        onClick={() => toggleStatusMutation.mutate(service.id)}
-                      >
-                            {service.is_active ? (
-                              <>
-                                <XCircle className="mr-2 h-4 w-4 hover:text-white" />
-                                Deactivate
-                              </>
-                            ) : (
-                              <>
-                                <CheckCircle2 className="mr-2 h-4 w-4 hover:text-white" />
-                                Activate
-                              </>
-                            )}
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            onClick={() => handleDeleteClick(service)}
-                            className="text-destructive focus:text-destructive"
-                          >
-                            <Trash2 className="mr-2 h-4 w-4 hover:text-white" />
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the marketplace service{' '}
-              <span className="font-semibold">{serviceToDelete?.name}</span>.
-              {serviceToDelete?.marketplaceOrders?.length > 0 && (
-                <span className="block mt-2 text-destructive">
-                  Warning: This service has associated orders and cannot be deleted.
-                </span>
+          <Card>
+            <CardHeader>
+              <CardTitle>All Marketplace Orders</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoadingOrders ? (
+                <div className="space-y-2">
+                  {[...Array(5)].map((_, i) => (
+                    <Skeleton key={i} className="h-12 w-full" />
+                  ))}
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Company Name</TableHead>
+                      <TableHead>Company Status</TableHead>
+                      <TableHead>Order ID</TableHead>
+                      <TableHead>User Name</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Order Created Date</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {ordersData?.data?.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={7} className="text-center text-muted-foreground">
+                          No marketplace orders found
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      ordersData?.data?.map((order: any) => (
+                        <TableRow key={order.id}>
+                          <TableCell className="font-medium">
+                            {order.company?.name || 'N/A'}
+                          </TableCell>
+                          <TableCell>
+                            <span className={`px-2 py-1 rounded text-xs ${order.company?.status === 'formed'
+                                ? 'bg-green-100 text-green-800'
+                                : order.company?.status === 'pending'
+                                  ? 'bg-yellow-100 text-yellow-800'
+                                  : 'bg-gray-100 text-gray-800'
+                              }`}>
+                              {order.company?.status ? order.company.status.charAt(0).toUpperCase() + order.company.status.slice(1) : 'N/A'}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            {order.order_id ? `#${order.order_id}` : 'N/A'}
+                          </TableCell>
+                          <TableCell>
+                            {order.user?.name || order.user?.email || 'N/A'}
+                          </TableCell>
+                          <TableCell>
+                            <span className={`px-2 py-1 rounded text-xs ${order.status === 'completed'
+                                ? 'bg-green-100 text-green-800'
+                                : order.status === 'pending'
+                                  ? 'bg-yellow-100 text-yellow-800'
+                                  : 'bg-gray-100 text-gray-800'
+                              }`}>
+                              {order.status ? order.status.charAt(0).toUpperCase() + order.status.slice(1) : 'N/A'}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            {order.created_at ? formatDate(order.created_at) : 'N/A'}
+                          </TableCell>
+                          <TableCell>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-8 w-12 bg-accent hover:bg-accent/90 border-none cursor-pointer">
+                                  <MoreVertical className="h-4 w-4 text-white" />
+                                  <span className="sr-only">Open menu</span>
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem>
+                                  <Edit className="mr-2 h-4 w-4 hover:text-white" />
+                                  View Details
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
               )}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setServiceToDelete(null)}>
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleConfirmDelete}
-              disabled={deleteMutation.isPending}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 };
