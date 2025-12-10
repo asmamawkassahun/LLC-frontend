@@ -10,7 +10,6 @@ import Step1CompanyName from '@/components/order/Step1CompanyName';
 import Step2StateSelection from '@/components/order/Step2StateSelection';
 import Step3Owners from '@/components/order/Step3Owners';
 import Step4Address from '@/components/order/Step4Address';
-import Step5Services from '@/components/order/Step5Services';
 import Step6OrderSummary from '@/components/order/Step6OrderSummary';
 import apiClient from '@/utils/api-helpers/apiClient';
 
@@ -19,8 +18,7 @@ const steps = [
     { number: 2, label: 'State' },
     { number: 3, label: 'Owners' },
     { number: 4, label: 'Address' },
-    { number: 5, label: 'Services' },
-    { number: 6, label: 'Order summary' },
+    { number: 5, label: 'Order summary' },
 ];
 
 interface LocationState {
@@ -74,13 +72,6 @@ interface ApiOrderResponse {
                 zip_code: string;
                 country: string;
             }>;
-            service?: {
-                ein?: string | null;
-                itin?: string | null;
-                website?: string | null;
-                domain_hosting?: string | null;
-                business_email?: string | null;
-            } | null;
         };
         state?: {
             id: number;
@@ -198,14 +189,6 @@ const AddOrderPage = () => {
                     },
                     useRegisteredAgent: order.company?.addresses?.[0]?.use_registered_agent || false,
                     registeredAgentAddressId: order.company?.addresses?.[0]?.registered_agent_address_id || null,
-                    services: {
-                        // Prefill services: if the service field is not null, set to true
-                        ein: order.company?.service?.ein !== null && order.company?.service?.ein !== undefined,
-                        itin: order.company?.service?.itin !== null && order.company?.service?.itin !== undefined,
-                        website: order.company?.service?.website !== null && order.company?.service?.website !== undefined,
-                        domainHosting: order.company?.service?.domain_hosting !== null && order.company?.service?.domain_hosting !== undefined,
-                        businessEmail: order.company?.service?.business_email !== null && order.company?.service?.business_email !== undefined,
-                    },
                 };
 
                 setFormData(mappedFormData);
@@ -291,13 +274,6 @@ const AddOrderPage = () => {
         },
         useRegisteredAgent: false,
         registeredAgentAddressId: null as number | null,
-        services: {
-            ein: false,
-            itin: false,
-            website: false,
-            domainHosting: false,
-            businessEmail: false,
-        },
     });
 
     const handleFormDataChange = (data: Partial<typeof formData>) => {
@@ -314,29 +290,6 @@ const AddOrderPage = () => {
         return plan?.includes('_uk') || false;
     }, [isEditMode, orderCountryName, formData.plan, plan]);
 
-    // Check if plan is Premium (skip step 5 for Premium plans)
-    const isPremiumPlan = useMemo(() => {
-        const currentPlan = formData.plan && formData.plan.length > 0 
-            ? formData.plan[0].pricingPlan 
-            : plan || '';
-        return currentPlan && (currentPlan.startsWith('Premium') || currentPlan.startsWith('premium'));
-    }, [formData.plan, plan]);
-
-    // Set all services to true if Premium plan
-    useEffect(() => {
-        if (isPremiumPlan) {
-            setFormData((prev) => ({
-                ...prev,
-                services: {
-                    ein: true,
-                    itin: true,
-                    website: true,
-                    domainHosting: true,
-                    businessEmail: true,
-                }
-            }));
-        }
-    }, [isPremiumPlan]);
 
     const animateStepTransition = (newStep: number, direction: 'next' | 'back', currentStepValue: number) => {
         if (isAnimatingRef.current || !stepContainerRef.current) return;
@@ -408,10 +361,6 @@ const AddOrderPage = () => {
             if (isUKPlan && nextStep === 2) {
                 nextStep = 3;
             }
-            // Skip step 5 for Premium plans
-            if (isPremiumPlan && nextStep === 5) {
-                nextStep = 6;
-            }
             animateStepTransition(nextStep, 'next', currentStep);
         }
     };
@@ -422,10 +371,6 @@ const AddOrderPage = () => {
             // Skip step 2 for UK plans
             if (isUKPlan && prevStep === 2) {
                 prevStep = 1;
-            }
-            // Skip step 5 for Premium plans
-            if (isPremiumPlan && prevStep === 5) {
-                prevStep = 4;
             }
             animateStepTransition(prevStep, 'back', currentStep);
         }
@@ -469,7 +414,6 @@ const AddOrderPage = () => {
                     zip_code: formData.address.zipCode,
                     country: formData.address.country,
                 }],
-                services: formData.services,
             };
 
             let order;
@@ -483,18 +427,18 @@ const AddOrderPage = () => {
                 order = response.data.data || response.data;
             }
 
-        // Get pricing plan from formData.plan array
-        const currentPlan = formData.plan && formData.plan.length > 0 
-            ? formData.plan[0].pricingPlan 
-            : plan || '';
+            // Get pricing plan from formData.plan array
+            const currentPlan = formData.plan && formData.plan.length > 0 
+                ? formData.plan[0].pricingPlan 
+                : plan || '';
 
-        // Check if the plan is Premium - if so, go directly to payment summary
-        // Otherwise, go to upgrade page (for Basic plans)
-        if (currentPlan && (currentPlan.startsWith('Premium') || currentPlan.startsWith('premium'))) {
-            // Pass plan via location state
+            // Check if the plan is Premium - if so, go directly to payment summary
+            // Otherwise, go to upgrade page (for Basic plans)
+            if (currentPlan && (currentPlan.startsWith('Premium') || currentPlan.startsWith('premium'))) {
+                // Pass plan via location state
                 navigate(`/order/payment/${order.id}`, { state: { plan: currentPlan } });
-        } else {
-            // Navigate to upgrade page first with order ID (for Basic plans)
+            } else {
+                // Navigate to upgrade page first with order ID (for Basic plans)
                 navigate(`/order/upgrade/${order.id}`);
             }
         } catch (error: any) {
@@ -509,10 +453,6 @@ const AddOrderPage = () => {
             // Skip step 2 for UK plans - if trying to edit step 2, go to step 1 instead
             if (isUKPlan && step === 2) {
                 return; // Don't allow editing step 2 for UK plans
-            }
-            // Skip step 5 for Premium plans - don't allow editing step 5
-            if (isPremiumPlan && step === 5) {
-                return; // Don't allow editing step 5 for Premium plans
             }
             const direction = step > currentStep ? 'next' : 'back';
             animateStepTransition(step, direction, currentStep);
@@ -548,11 +488,6 @@ const AddOrderPage = () => {
         );
     };
 
-    const isStep5Valid = () => {
-        // Step 5 (Services) validation - can be optional, so always return true for now
-        return true;
-    };
-
     const isCurrentStepValid = () => {
         switch (currentStep) {
             case 1:
@@ -565,20 +500,16 @@ const AddOrderPage = () => {
             case 4:
                 return isStep4Valid();
             case 5:
-                // Skip validation for step 5 if Premium plan
-                return isPremiumPlan ? true : isStep5Valid();
-            case 6:
-                return true; // Step 6 (Order summary) doesn't need validation
+                return true; // Step 5 (Order summary) doesn't need validation
             default:
                 return false;
         }
     };
 
 
-    // Filter steps to exclude step 2 for UK plans and step 5 for Premium plans
+    // Filter steps to exclude step 2 for UK plans
     const filteredSteps = steps.filter(step => {
         if (isUKPlan && step.number === 2) return false;
-        if (isPremiumPlan && step.number === 5) return false;
         return true;
     });
 
@@ -674,16 +605,8 @@ const AddOrderPage = () => {
                                     />
                                 </div>
                             )}
-                            {(currentStep === 5 || animatingStep === 5) && !isPremiumPlan && (
+                            {(currentStep === 5 || animatingStep === 5) && (
                                 <div data-step="5" className="relative">
-                                    <Step5Services
-                                        services={formData.services}
-                                        onServicesChange={(services) => handleFormDataChange({ services })}
-                                    />
-                                </div>
-                            )}
-                            {(currentStep === 6 || animatingStep === 6) && (
-                                <div data-step="6" className="relative">
                                     <Step6OrderSummary
                                         formData={formData}
                                         onEditStep={handleEditStep}
@@ -704,8 +627,8 @@ const AddOrderPage = () => {
 
                             {/* Right: Navigation Buttons */}
                             <div className="flex gap-3 sm:gap-8 items-center">
-                                {/* Download Summary Button - Only for Step 6 */}
-                                {currentStep === 6 && (
+                                {/* Download Summary Button - Only for Step 5 */}
+                                {currentStep === 5 && (
                                     <Button
                                         variant="outline"
                                         onClick={async () => {
@@ -809,7 +732,7 @@ const AddOrderPage = () => {
                                 )}
 
                                 {/* Next/Save & Confirm Button */}
-                                {currentStep === 6 ? (
+                                {currentStep === 5 ? (
                                     <Button
                                         onClick={handleSubmit}
                                         className="bg-purple hover:bg-purple-dark text-white px-6 py-2 text-sm font-medium cursor-pointer"
