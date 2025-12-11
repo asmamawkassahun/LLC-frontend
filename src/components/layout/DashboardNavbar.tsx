@@ -1,10 +1,10 @@
 import { GoQuestion } from "react-icons/go";
 import { Button } from "../ui";
-import { IoMdNotifications } from "react-icons/io";
 import { HiOutlineMenuAlt1 } from "react-icons/hi";
 import { Link } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
 import CompanySelector from "@/components/company/CompanySelector";
+import NotificationDropdown from "@/components/NotificationDropdown";
 
 interface DashboardNavbarProps {
     onMenuClick: () => void;
@@ -44,12 +44,12 @@ const DashboardNavbar = ({ onMenuClick }: DashboardNavbarProps) => {
                     <Button
                         variant="outline"
                         size="icon"
-                        className="bg-blue-700 w-24 hover:bg-accent-dark text-white text-xs px-4 border-none rounded-full"
+                        className="bg-blue-700 w-24 hover:bg-accent-dark text-white text-xs px-4 border-none rounded-full  cursor-pointer"
                     >
                         <GoQuestion className="w-6 h-6 " />
                         Get help
                     </Button>
-                    <IoMdNotifications className="w-6 h-6 text-foreground/25" />
+                    <NotificationDropdown />
                 </div>
             </div>
         </div>

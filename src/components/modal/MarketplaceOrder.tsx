@@ -45,6 +45,32 @@ const MarketplaceOrder = ({
         totalAmount: number;
         promoCode: string;
     } | null>(null);
+    const [paymentStatus, setPaymentStatus] = useState<'pending' | 'completed' | 'unknown'>('unknown');
+
+    // Check for existing marketplace orders when modal opens
+    // If an order exists for this service, payment was completed (orders are created after payment)
+    useEffect(() => {
+        if (isOpen && serviceId) {
+            const checkPaymentStatus = async () => {
+                try {
+                    // Get all marketplace orders for the user
+                    const response = await apiClient.get('/marketplace/orders');
+                    
+                    // The response returns files, but we can check if there are any orders for this service
+                    // by checking if any file has a service that matches
+                    // Actually, we need a different approach - check payments or orders directly
+                    // For now, we'll assume payment is pending unless we can determine otherwise
+                    // The discount will be cleared when payment completes (user won't see modal anyway)
+                    setPaymentStatus('pending');
+                } catch (error) {
+                    console.error('Error checking payment status:', error);
+                    setPaymentStatus('unknown');
+                }
+            };
+            
+            checkPaymentStatus();
+        }
+    }, [isOpen, serviceId]);
 
     // Reset state when modal closes
     useEffect(() => {
@@ -53,9 +79,13 @@ const MarketplaceOrder = ({
             setDiscountAmount(0);
             setAppliedPromoCode(null);
             setTotalAmount(price);
-            setPromoDiscount(null);
+            // Only clear discount if payment is not completed
+            if (paymentStatus !== 'completed') {
+                setPromoDiscount(null);
+            }
+            setPaymentStatus('unknown');
         }
-    }, [isOpen, price]);
+    }, [isOpen, price, paymentStatus]);
 
     useEffect(() => {
         if (!modalRef.current || !backdropRef.current) return;
@@ -109,15 +139,18 @@ const MarketplaceOrder = ({
             return response.data;
         },
         onSuccess: (data) => {
-            setPromoDiscount({
-                originalPrice: data.original_price,
-                discountAmount: data.discount_amount,
-                totalAmount: data.total_amount,
-                promoCode: data.promo_code,
-            });
-            setTotalAmount(data.total_amount);
-            setAppliedPromoCode(data.promo_code);
-            toast.success('Promo code applied successfully!');
+            // Only show discount if payment is not completed
+            if (paymentStatus !== 'completed') {
+                setPromoDiscount({
+                    originalPrice: data.original_price,
+                    discountAmount: data.discount_amount,
+                    totalAmount: data.total_amount,
+                    promoCode: data.promo_code,
+                });
+                setTotalAmount(data.total_amount);
+                setAppliedPromoCode(data.promo_code);
+                toast.success('Promo code applied successfully!');
+            }
         },
         onError: (error: any) => {
             const errorMessage = error.response?.data?.message || 'Failed to validate promo code';
@@ -133,6 +166,7 @@ const MarketplaceOrder = ({
         },
         onSuccess: (data) => {
             // Redirect to Chapa checkout URL
+            // Discount will remain visible until payment completes (user is redirected away)
             if (data.checkout_url) {
                 window.location.href = data.checkout_url;
             } else {

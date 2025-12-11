@@ -16,7 +16,7 @@ const AdminMarketplacePage = () => {
               activeTab === 'services'
                 ? 'bg-background text-primary rounded-md'
                 : 'border-transparent text-muted-foreground hover:text-foreground'
-            }`}
+              }`}
           >
             Marketplace Services
           </button>
@@ -26,7 +26,7 @@ const AdminMarketplacePage = () => {
               activeTab === 'orders'
                 ? 'bg-background text-primary rounded-md'
                 : 'border-transparent text-muted-foreground hover:text-foreground'
-            }`}
+              }`}
           >
             Marketplace Orders
           </button>

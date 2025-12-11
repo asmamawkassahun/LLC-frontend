@@ -33,6 +33,7 @@ import AdminSettingsPage from './pages/admin/Settings';
 import AdminActivityLogsPage from './pages/admin/ActivityLogs';
 import MaintenanceCheck from './components/MaintenanceCheck';
 import Inbox from './components/sections/dashboard/Inbox';
+import NotificationProvider from './components/NotificationProvider';
 
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
     <BrowserRouter>
     <Toaster richColors position="top-right" />
       <MaintenanceCheck>
+        <NotificationProvider>
       <Routes>
         {/* Routes with MainLayout (with Navbar) */}
         <Route element={<MainLayout />}>
@@ -116,6 +118,7 @@ function App() {
           <Route path={ROUTES.ADMIN_ACTIVITY_LOGS} element={<AdminActivityLogsPage />} />
         </Route>
       </Routes>
+        </NotificationProvider>
       </MaintenanceCheck>
     </BrowserRouter>
   );
