@@ -299,6 +299,7 @@ const MarketplaceOrders = () => {
                   <TableHead>Company Name</TableHead>
                   <TableHead>Company Status</TableHead>
                   <TableHead>Service Order Number</TableHead>
+                  <TableHead>Amount</TableHead>
                   <TableHead>User Name</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Order Created Date</TableHead>
@@ -330,6 +331,9 @@ const MarketplaceOrders = () => {
                       </TableCell>
                       <TableCell>
                         {order.service_order_number ? order.service_order_number : 'N/A'}
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        {order.amount ? `$${Number(order.amount).toFixed(2)}` : 'N/A'}
                       </TableCell>
                       <TableCell>
                         {order.user?.name || order.user?.email || 'N/A'}
