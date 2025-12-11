@@ -205,9 +205,9 @@ const AdminNavbar = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4">
-        <SidebarTrigger className="-ml-1" />
-        <div className="flex flex-1 items-center justify-end gap-4">
+    <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4">
+      <SidebarTrigger className="-ml-1" />
+      <div className="flex flex-1 items-center justify-end gap-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-10 w-10 rounded-full cursor-pointer">
@@ -222,7 +222,7 @@ const AdminNavbar = () => {
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
                   <p className="text-sm font-medium leading-none">
-                    {adminData?.name || 'Admin'}
+            {adminData?.name || 'Admin'}
                   </p>
                   <p className="text-xs leading-none text-muted-foreground">
                     {adminData?.email || ''}
@@ -323,7 +323,7 @@ const AdminNavbar = () => {
             )}
 
             <DialogFooter>
-              <Button
+        <Button
                 type="button"
                 variant="outline"
                 onClick={() => setIsProfileDialogOpen(false)}
@@ -333,7 +333,7 @@ const AdminNavbar = () => {
               </Button>
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? 'Updating...' : 'Update Profile'}
-              </Button>
+        </Button>
             </DialogFooter>
           </form>
         </DialogContent>

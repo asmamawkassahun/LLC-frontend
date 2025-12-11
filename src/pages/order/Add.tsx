@@ -427,18 +427,18 @@ const AddOrderPage = () => {
                 order = response.data.data || response.data;
             }
 
-            // Get pricing plan from formData.plan array
-            const currentPlan = formData.plan && formData.plan.length > 0 
-                ? formData.plan[0].pricingPlan 
-                : plan || '';
+        // Get pricing plan from formData.plan array
+        const currentPlan = formData.plan && formData.plan.length > 0 
+            ? formData.plan[0].pricingPlan 
+            : plan || '';
 
-            // Check if the plan is Premium - if so, go directly to payment summary
-            // Otherwise, go to upgrade page (for Basic plans)
-            if (currentPlan && (currentPlan.startsWith('Premium') || currentPlan.startsWith('premium'))) {
-                // Pass plan via location state
+        // Check if the plan is Premium - if so, go directly to payment summary
+        // Otherwise, go to upgrade page (for Basic plans)
+        if (currentPlan && (currentPlan.startsWith('Premium') || currentPlan.startsWith('premium'))) {
+            // Pass plan via location state
                 navigate(`/order/payment/${order.id}`, { state: { plan: currentPlan } });
-            } else {
-                // Navigate to upgrade page first with order ID (for Basic plans)
+        } else {
+            // Navigate to upgrade page first with order ID (for Basic plans)
                 navigate(`/order/upgrade/${order.id}`);
             }
         } catch (error: any) {

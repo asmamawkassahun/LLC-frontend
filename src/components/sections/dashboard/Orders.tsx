@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/constants/routes';
 import DashboardHeader from "./DashboardHeader";
@@ -62,7 +62,7 @@ const Orders = () => {
     const [isDeleting, setIsDeleting] = useState(false);
     const navigate = useNavigate();
 
-        const fetchOrders = async () => {
+        const fetchOrders = useCallback(async () => {
             try {
             setLoading(true);
             const response = await apiClient.get('/orders', {
@@ -96,11 +96,24 @@ const Orders = () => {
         } finally {
             setLoading(false);
             }
-        };
+        }, [pageSize]);
 
     useEffect(() => {
         fetchOrders();
     }, [pageSize]);
+
+    // Listen for company change events (from CompanySelector)
+    useEffect(() => {
+        const handleCompanyChange = () => {
+            fetchOrders();
+        };
+
+        window.addEventListener('companyChanged', handleCompanyChange);
+
+        return () => {
+            window.removeEventListener('companyChanged', handleCompanyChange);
+        };
+    }, [fetchOrders]);
 
     const formatDate = (dateString: string): string => {
 
@@ -227,11 +240,19 @@ const Orders = () => {
             // Call API to set company as primary
             await apiClient.post(`/companies/${orderData.company.id}/set-primary`);
 
+            // Dispatch event to refresh CompanySelector
+            window.dispatchEvent(new CustomEvent('companyPrimaryChanged', { 
+                detail: { companyId: orderData.company.id } 
+            }));
+
             // Refetch orders to get updated data
             await fetchOrders();
-        } catch (error) {
+            
+            toast.success('Company set as primary successfully');
+        } catch (error: any) {
             console.error('Error setting company as primary:', error);
-            // Optionally show error message to user
+            const errorMessage = error.response?.data?.message || 'Failed to set company as primary';
+            toast.error(errorMessage);
         }
     };
 

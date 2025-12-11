@@ -1,5 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
+import { useMutation } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import apiClient from '@/utils/api-helpers/apiClient';
 import PaymentSummaryCard from "@/pages/order/payment/PaymentSummaryCard";
 import MarketplaceDescription from "../sections/dashboard/marketplace/MarketplaceDescription";
 
@@ -11,6 +15,7 @@ type DescriptionItem =
 interface MarketplaceOrderProps {
     isOpen: boolean;
     onClose: () => void;
+    serviceId: number;
     serviceTitle: string;
     description: DescriptionItem[];
     requirements: string[];
@@ -20,6 +25,7 @@ interface MarketplaceOrderProps {
 const MarketplaceOrder = ({ 
     isOpen, 
     onClose, 
+    serviceId,
     serviceTitle, 
     description, 
     requirements, 
@@ -27,8 +33,22 @@ const MarketplaceOrder = ({
 }: MarketplaceOrderProps) => {
     const modalRef = useRef<HTMLDivElement>(null);
     const backdropRef = useRef<HTMLDivElement>(null);
+    const navigate = useNavigate();
     const [promoCode, setPromoCode] = useState('');
     const [isVisible, setIsVisible] = useState(false);
+    const [discountAmount, setDiscountAmount] = useState(0);
+    const [appliedPromoCode, setAppliedPromoCode] = useState<string | null>(null);
+    const [totalAmount, setTotalAmount] = useState(price);
+
+    // Reset state when modal closes
+    useEffect(() => {
+        if (!isOpen) {
+            setPromoCode('');
+            setDiscountAmount(0);
+            setAppliedPromoCode(null);
+            setTotalAmount(price);
+        }
+    }, [isOpen, price]);
 
     useEffect(() => {
         if (!modalRef.current || !backdropRef.current) return;
@@ -72,14 +92,58 @@ const MarketplaceOrder = ({
         }
     }, [isOpen, isVisible]);
 
-    const handleCheckout = () => {
-        console.log('Checkout for:', serviceTitle);
-        // TODO: Implement checkout functionality
+    // Mutation to validate and calculate promo code discount
+    const validatePromoCodeMutation = useMutation({
+        mutationFn: async (code: string) => {
+            // First, we need to validate the promo code and get its details
+            // We'll calculate the discount on the backend when creating the order
+            // For now, just store the promo code
+            return { code };
+        },
+    });
+
+    // Mutation to create marketplace order
+    const createOrderMutation = useMutation({
+        mutationFn: async (data: { service_id: number; promo_code?: string }) => {
+            const response = await apiClient.post('/marketplace/order', data);
+            return response.data;
+        },
+        onSuccess: (data) => {
+            // Redirect to Chapa checkout URL
+            if (data.checkout_url) {
+                window.location.href = data.checkout_url;
+            } else {
+                toast.success('Marketplace order created successfully!');
+                onClose();
+            }
+        },
+        onError: (error: any) => {
+            const errorMessage = error.response?.data?.message || 'Failed to create marketplace order';
+            toast.error(errorMessage);
+        },
+    });
+
+    const handleApplyPromo = async () => {
+        if (!promoCode.trim()) {
+            toast.error('Please enter a promo code');
+            return;
+        }
+
+        // The promo code will be validated and discount calculated on the backend
+        // For now, we'll just store it and show it will be applied at checkout
+        setAppliedPromoCode(promoCode.trim());
+        toast.success('Promo code will be applied at checkout');
     };
 
-    const handleApplyPromo = () => {
-        console.log('Applying promo code:', promoCode);
-        // TODO: Implement promo code application
+    const handleCheckout = async () => {
+        try {
+            await createOrderMutation.mutateAsync({
+                service_id: serviceId,
+                promo_code: appliedPromoCode || promoCode.trim() || undefined,
+            });
+        } catch (error) {
+            // Error is already handled in the mutation
+        }
     };
 
     if (!isVisible && !isOpen) return null;
@@ -117,12 +181,13 @@ const MarketplaceOrder = ({
                                 packagePrice={price}
                                 stateName=""
                                 stateFee={0}
-                                totalDue={price}
+                                totalDue={totalAmount}
                                 promoCode={promoCode}
                                 onPromoCodeChange={setPromoCode}
                                 onApplyPromo={handleApplyPromo}
                                 onCheckout={handleCheckout}
                                 showUpgradeButton={false}
+                                isLoading={createOrderMutation.isPending}
                             />
                         </div>
                     </div>

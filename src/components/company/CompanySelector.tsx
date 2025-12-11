@@ -46,6 +46,17 @@ const CompanySelector = ({
         };
 
         fetchCompanies();
+
+        // Listen for company primary change events (from orders table)
+        const handleCompanyPrimaryChange = () => {
+            fetchCompanies();
+        };
+
+        window.addEventListener('companyPrimaryChanged', handleCompanyPrimaryChange);
+
+        return () => {
+            window.removeEventListener('companyPrimaryChanged', handleCompanyPrimaryChange);
+        };
     }, []);
 
     const otherCompanies = companies.filter(c => selectedCompany && c.id !== selectedCompany.id);
@@ -77,6 +88,11 @@ const CompanySelector = ({
                     ...c,
                     is_primary: c.id === company.id
                 })));
+                
+                // Dispatch event to refresh orders table
+                window.dispatchEvent(new CustomEvent('companyChanged', { 
+                    detail: { companyId: company.id } 
+                }));
             }
             setSelectedCompany(company);
             setIsCompanyDropdownOpen(false);

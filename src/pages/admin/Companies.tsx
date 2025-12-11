@@ -13,15 +13,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
-import { ChevronLeft, ChevronRight, Upload, Download, MoreVertical } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Download, MoreVertical } from 'lucide-react';
 
 const AdminCompaniesPage = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
-  const [uploadingCompanyId, setUploadingCompanyId] = useState<string | null>(null);
-  const fileInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
 
   const { data, isLoading, refetch, error } = useQuery({
     queryKey: ['admin-companies', page, perPage],
@@ -32,39 +30,6 @@ const AdminCompaniesPage = () => {
     },
   });
 
-  const handleFileUpload = async (companyId: string, file: File) => {
-    if (!file) return;
-
-    setUploadingCompanyId(companyId);
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-
-      await adminApiClient.post(`/admin/companies/${companyId}/upload`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      toast.success('File uploaded successfully');
-      refetch();
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to upload file');
-    } finally {
-      setUploadingCompanyId(null);
-      // Reset file input
-      if (fileInputRefs.current[companyId]) {
-        fileInputRefs.current[companyId]!.value = '';
-      }
-    }
-  };
-
-  const handleFileSelect = (companyId: string, event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      handleFileUpload(companyId, file);
-    }
-  };
 
   const handleDownloadSummary = async (companyId: string) => {
     try {
@@ -164,17 +129,6 @@ const AdminCompaniesPage = () => {
                       <TableCell>{company.status_label || company.status}</TableCell>
                       <TableCell>{formatDate(company.created_at)}</TableCell>
                       <TableCell>
-                        <input
-                          ref={(el) => {
-                            fileInputRefs.current[company.id] = el;
-                          }}
-                          type="file"
-                          id={`file-upload-${company.id}`}
-                          className="hidden"
-                          onChange={(e) => handleFileSelect(company.id, e)}
-                          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                          disabled={uploadingCompanyId === company.id}
-                        />
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon" className="h-8 w-12 bg-accent hover:bg-accent/90 border-none cursor-pointer">
@@ -183,14 +137,6 @@ const AdminCompaniesPage = () => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              onClick={() => fileInputRefs.current[company.id]?.click()}
-                              disabled={uploadingCompanyId === company.id}
-                            >
-                              <Upload className="mr-2 h-4 w-4 hover:text-white" />
-                              {uploadingCompanyId === company.id ? 'Uploading...' : 'Upload File'}
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
                             <DropdownMenuItem
                               onClick={() => handleDownloadSummary(company.id)}
                             >
