@@ -63,6 +63,11 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
             badge: ordersCount
         },
         {
+            imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSK9rP8x5i8swWmAGwbnyiSVOiWPwFek7fWnA&s',
+            label: 'Inbox',
+            path: ROUTES.INBOX,
+        },
+        {
             imageUrl: 'https://app.privatily.com/assets/img/menu/refer-a-friend.svg',
             label: 'Affiliate Program',
             path: ROUTES.AFFILIATE_PROGRAM

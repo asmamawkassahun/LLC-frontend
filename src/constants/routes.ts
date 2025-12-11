@@ -16,6 +16,7 @@ export const ROUTES = {
     AFFILIATE_PROGRAM: '/referrals',
     SETTINGS: '/settings',
     ORDERS: '/orders',
+    INBOX: '/inbox',
     LOGOUT: '/logout',
     // Admin routes
     ADMIN_LOGIN: '/admin/login',

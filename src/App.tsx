@@ -32,6 +32,7 @@ import AdminSupportPage from './pages/admin/Support';
 import AdminSettingsPage from './pages/admin/Settings';
 import AdminActivityLogsPage from './pages/admin/ActivityLogs';
 import MaintenanceCheck from './components/MaintenanceCheck';
+import Inbox from './components/sections/dashboard/Inbox';
 
 
 function App() {
@@ -74,6 +75,7 @@ function App() {
           <Route path={ROUTES.AFFILIATE_PROGRAM} element={<Referrals />} />
           <Route path={ROUTES.SETTINGS} element={<Settings />} />
           <Route path={ROUTES.ORDERS} element={<Orders />} />
+          <Route path={ROUTES.INBOX} element={<Inbox />} />
           <Route path={ROUTES.ORDER_COUNTRY_SELECTION} element={<CountrySelectionPage />} />
           <Route path="/orders/:orderId" element={<AddOrderPage />} />
           <Route path="/order/add/:plan" element={<AddOrderPage />} />
