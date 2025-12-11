@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { ROUTES } from '@/constants/routes';
 import maintenanceService from '@/services/maintenanceService';
 import MaintenancePage from '@/pages/Maintenance';
 import adminAuthService from '@/services/adminAuthService';

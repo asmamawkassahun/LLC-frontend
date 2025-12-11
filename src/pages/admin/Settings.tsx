@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const AdminSettingsPage = () => {
   const queryClient = useQueryClient();
@@ -18,14 +18,17 @@ const AdminSettingsPage = () => {
       const response = await adminApiClient.get('/admin/settings');
       return response.data;
     },
-    onSuccess: (data) => {
+  });
+
+  useEffect(() => {
+    if (data) {
       const settingsObj: Record<string, any> = {};
       Object.values(data).forEach((setting: any) => {
         settingsObj[setting.key] = setting.value;
       });
       setSettings(settingsObj);
-    },
-  });
+    }
+  }, [data]);
 
   const updateMutation = useMutation({
     mutationFn: async (settingsToUpdate: any[]) => {

@@ -18,14 +18,15 @@ export const useNotifications = (userId: number | null) => {
         const updateEchoAuth = () => {
             const token = authService.getAccessToken();
             if (token && echo.connector && echo.connector.pusher && echo.connector.pusher.config) {
-                if (!echo.connector.pusher.config.auth) {
-                    echo.connector.pusher.config.auth = {};
+                const config = echo.connector.pusher.config as any;
+                if (!config.auth) {
+                    config.auth = {};
                 }
-                if (!echo.connector.pusher.config.auth.headers) {
-                    echo.connector.pusher.config.auth.headers = {};
+                if (!config.auth.headers) {
+                    config.auth.headers = {};
                 }
-                echo.connector.pusher.config.auth.headers = {
-                    ...echo.connector.pusher.config.auth.headers,
+                config.auth.headers = {
+                    ...config.auth.headers,
                     Authorization: `Bearer ${token}`,
                 };
             }

@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { useMutation } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import apiClient from '@/utils/api-helpers/apiClient';
 import PaymentSummaryCard from "@/pages/order/payment/PaymentSummaryCard";
@@ -33,10 +32,9 @@ const MarketplaceOrder = ({
 }: MarketplaceOrderProps) => {
     const modalRef = useRef<HTMLDivElement>(null);
     const backdropRef = useRef<HTMLDivElement>(null);
-    const navigate = useNavigate();
     const [promoCode, setPromoCode] = useState('');
     const [isVisible, setIsVisible] = useState(false);
-    const [discountAmount, setDiscountAmount] = useState(0);
+    const [_discountAmount, setDiscountAmount] = useState(0);
     const [appliedPromoCode, setAppliedPromoCode] = useState<string | null>(null);
     const [totalAmount, setTotalAmount] = useState(price);
     const [promoDiscount, setPromoDiscount] = useState<{
@@ -54,7 +52,7 @@ const MarketplaceOrder = ({
             const checkPaymentStatus = async () => {
                 try {
                     // Get all marketplace orders for the user
-                    const response = await apiClient.get('/marketplace/orders');
+                    await apiClient.get('/marketplace/orders');
                     
                     // The response returns files, but we can check if there are any orders for this service
                     // by checking if any file has a service that matches
