@@ -39,6 +39,12 @@ const MarketplaceOrder = ({
     const [discountAmount, setDiscountAmount] = useState(0);
     const [appliedPromoCode, setAppliedPromoCode] = useState<string | null>(null);
     const [totalAmount, setTotalAmount] = useState(price);
+    const [promoDiscount, setPromoDiscount] = useState<{
+        originalPrice: number;
+        discountAmount: number;
+        totalAmount: number;
+        promoCode: string;
+    } | null>(null);
 
     // Reset state when modal closes
     useEffect(() => {
@@ -47,6 +53,7 @@ const MarketplaceOrder = ({
             setDiscountAmount(0);
             setAppliedPromoCode(null);
             setTotalAmount(price);
+            setPromoDiscount(null);
         }
     }, [isOpen, price]);
 
@@ -95,10 +102,26 @@ const MarketplaceOrder = ({
     // Mutation to validate and calculate promo code discount
     const validatePromoCodeMutation = useMutation({
         mutationFn: async (code: string) => {
-            // First, we need to validate the promo code and get its details
-            // We'll calculate the discount on the backend when creating the order
-            // For now, just store the promo code
-            return { code };
+            const response = await apiClient.post('/marketplace/validate-promo-code', {
+                promo_code: code,
+                service_id: serviceId,
+            });
+            return response.data;
+        },
+        onSuccess: (data) => {
+            setPromoDiscount({
+                originalPrice: data.original_price,
+                discountAmount: data.discount_amount,
+                totalAmount: data.total_amount,
+                promoCode: data.promo_code,
+            });
+            setTotalAmount(data.total_amount);
+            setAppliedPromoCode(data.promo_code);
+            toast.success('Promo code applied successfully!');
+        },
+        onError: (error: any) => {
+            const errorMessage = error.response?.data?.message || 'Failed to validate promo code';
+            toast.error(errorMessage);
         },
     });
 
@@ -129,10 +152,7 @@ const MarketplaceOrder = ({
             return;
         }
 
-        // The promo code will be validated and discount calculated on the backend
-        // For now, we'll just store it and show it will be applied at checkout
-        setAppliedPromoCode(promoCode.trim());
-        toast.success('Promo code will be applied at checkout');
+        await validatePromoCodeMutation.mutateAsync(promoCode.trim());
     };
 
     const handleCheckout = async () => {
@@ -187,7 +207,8 @@ const MarketplaceOrder = ({
                                 onApplyPromo={handleApplyPromo}
                                 onCheckout={handleCheckout}
                                 showUpgradeButton={false}
-                                isLoading={createOrderMutation.isPending}
+                                isLoading={createOrderMutation.isPending || validatePromoCodeMutation.isPending}
+                                promoDiscount={promoDiscount}
                             />
                         </div>
                     </div>

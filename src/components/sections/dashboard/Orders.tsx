@@ -56,7 +56,6 @@ const Orders = () => {
     const [orders, setOrders] = useState<Order[]>([]);
     const [loading, setLoading] = useState(true);
     const [pageSize, setPageSize] = useState(10);
-    const [processingPayment, setProcessingPayment] = useState<string | null>(null); // Track which order is processing
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [orderToDelete, setOrderToDelete] = useState<Order | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -133,29 +132,9 @@ const Orders = () => {
         return date.toLocaleDateString();
     };
 
-    const handlePay = async (orderId: string) => {
-        try {
-            setProcessingPayment(orderId);
-            
-            // Initialize Chapa payment (same as checkout button)
-            const response = await apiClient.post('/payments/chapa/initialize', {
-                order_id: parseInt(orderId),
-            });
-
-            const { checkout_url } = response.data;
-
-            if (checkout_url) {
-                // Redirect to Chapa checkout page
-                window.location.href = checkout_url;
-            } else {
-                throw new Error('No checkout URL received from payment gateway');
-            }
-        } catch (error: any) {
-            console.error('Chapa payment initialization error:', error);
-            const errorMessage = error.response?.data?.message || 'Failed to initialize payment. Please try again.';
-            toast.error(errorMessage);
-            setProcessingPayment(null);
-        }
+    const handlePay = (orderId: string) => {
+        // Navigate to payment page where user can apply promo code
+        navigate(`/order/payment/${orderId}`);
     };
 
     const handleUpdateOrder = (orderId: string) => {
@@ -337,7 +316,6 @@ const Orders = () => {
                     onNewOrder={handleNewOrder}
                     onPageSizeChange={handlePageSizeChange}
                     pageSize={pageSize}
-                    processingPaymentId={processingPayment} // Pass processing state
                 />
             </div>
 

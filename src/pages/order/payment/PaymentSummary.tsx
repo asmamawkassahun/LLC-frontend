@@ -3,6 +3,7 @@ import PaymentPage from "./Payment";
 import PremiumCard from '@/components/sections/payment/PremiumCard';
 import PaymentSummaryCard from './PaymentSummaryCard';
 import { useEffect, useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import apiClient from '@/utils/api-helpers/apiClient';
 import { toast } from 'sonner';
 
@@ -26,6 +27,12 @@ const PaymentSummary = () => {
     const [orderData, setOrderData] = useState<OrderData | null>(null);
     // const [isLoading, setIsLoading] = useState(true);
     const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+    const [promoDiscount, setPromoDiscount] = useState<{
+        originalPrice: number;
+        discountAmount: number;
+        totalAmount: number;
+        promoCode: string;
+    } | null>(null);
     
     // Get plan from location state (passed during navigation)
     const selectedPlan = (location.state as LocationState)?.plan || null;
@@ -39,13 +46,40 @@ const PaymentSummary = () => {
                 const response = await apiClient.get(`/orders/${id}`);
                 const order = response.data.data || response.data;
                 console.log('Order data: ', order);
-                setOrderData({
+                
+                // Get base_price from order (now calculated in OrderResource)
+                // Get state_fee from state relationship or calculate from subtotal
+                const basePrice = Number(order.base_price) || 0;
+                let stateFee = 0;
+                
+                if (order.state?.formation_fee) {
+                    stateFee = Number(order.state.formation_fee) || 0;
+                } else if (order.subtotal && order.base_price) {
+                    // Calculate state_fee from: subtotal = base_price + state_fee - discount_amount
+                    const subtotal = Number(order.subtotal) || 0;
+                    const discountAmount = Number(order.discount_amount) || 0;
+                    stateFee = subtotal + discountAmount - basePrice;
+                }
+                
+                const orderDataObj = {
                     id: order.id,
-                    total_amount: order.total_amount || 0,
+                    total_amount: Number(order.total_amount) || 0,
                     order_number: order.order_number || '',
-                    state_fee: Number(order.state.formation_fee) || 0,
-                    base_price: Number(order.pricing_plan.base_price) || 0,
-                });
+                    state_fee: stateFee,
+                    base_price: basePrice,
+                };
+                setOrderData(orderDataObj);
+                
+                // If order already has a promo code applied, show the discount
+                if (order.discount_amount && order.discount_amount > 0) {
+                    const originalTotal = orderDataObj.base_price + orderDataObj.state_fee;
+                    setPromoDiscount({
+                        originalPrice: originalTotal,
+                        discountAmount: order.discount_amount,
+                        totalAmount: order.total_amount,
+                        promoCode: order.promo_code?.code || 'Applied',
+                    });
+                }
             } catch (error) {
                 console.error('Error fetching order:', error);
             } finally {
@@ -103,9 +137,56 @@ const PaymentSummary = () => {
         }
     };
 
-    const handleApplyPromo = () => {
-        // Handle promo code application
-    console.log('Applying promo code:', promoCode);
+    // Mutation to apply promo code
+    const applyPromoCodeMutation = useMutation({
+        mutationFn: async (code: string) => {
+            if (!orderData?.id) {
+                throw new Error('Order ID is required');
+            }
+            const response = await apiClient.post(`/orders/${orderData.id}/apply-promo-code`, {
+                code: code,
+            });
+            return response.data;
+        },
+        onSuccess: (data) => {
+            // Update order data with new totals
+            if (orderData) {
+                const originalTotal = orderData.base_price + orderData.state_fee;
+                const discountAmount = originalTotal - data.totals.total_amount;
+                
+                setOrderData({
+                    ...orderData,
+                    total_amount: data.totals.total_amount,
+                });
+                
+                setPromoDiscount({
+                    originalPrice: originalTotal,
+                    discountAmount: discountAmount,
+                    totalAmount: data.totals.total_amount,
+                    promoCode: promoCode,
+                });
+                
+                toast.success('Promo code applied successfully!');
+            }
+        },
+        onError: (error: any) => {
+            const errorMessage = error.response?.data?.message || 'Failed to apply promo code';
+            toast.error(errorMessage);
+        },
+    });
+
+    const handleApplyPromo = async () => {
+        if (!promoCode.trim()) {
+            toast.error('Please enter a promo code');
+            return;
+        }
+        
+        if (!orderData?.id) {
+            toast.error('Order information is not available');
+            return;
+        }
+        
+        await applyPromoCodeMutation.mutateAsync(promoCode.trim());
     };
 
     const handleUpgrade = () => {
@@ -155,7 +236,8 @@ const PaymentSummary = () => {
                         onUpgrade={handleUpgrade}
                         isPremium={isPremium}
                         showUpgradeButton={true}
-                        isLoading={isProcessingPayment}
+                        isLoading={isProcessingPayment || applyPromoCodeMutation.isPending}
+                        promoDiscount={promoDiscount}
                     />
                 </div>
             </div>
