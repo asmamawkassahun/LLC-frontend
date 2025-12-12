@@ -6,6 +6,7 @@ import { getUniqueCountries } from '@/constants/countries';
 import userService from '@/services/userService';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import EmailUpdateModal from './EmailUpdateModal';
 
 interface PasswordErrors {
     current_password?: string;
@@ -21,6 +22,7 @@ const Settings = () => {
     const [showCurrentPassword, setShowCurrentPassword] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
 
     const [formData, setFormData] = useState({
         firstName: '',
@@ -213,8 +215,17 @@ const Settings = () => {
     };
 
     const handleUpdateEmail = () => {
-        console.log('Updating email:', formData.email);
-        // Add update email logic here
+        setIsEmailModalOpen(true);
+    };
+
+    const handleEmailUpdateSuccess = async () => {
+        // Refresh user data to get updated email
+        try {
+            const user = await userService.getCurrentUser();
+            setFormData(prev => ({ ...prev, email: user.email || '' }));
+        } catch (error) {
+            console.error('Error refreshing user data:', error);
+        }
     };
 
     // Show loading state
@@ -329,7 +340,7 @@ const Settings = () => {
                                     <Button
                                         type="button"
                                         onClick={handleUpdateEmail}
-                                        className="bg-purple hover:bg-purple-dark h-full rounded-r-sm rounded-l-none text-white px-6 py-3 absolute right-0 top-0"
+                                        className="bg-purple hover:bg-purple-dark h-full rounded-r-sm rounded-l-none text-white px-6 py-3 absolute right-0 top-0 cursor-pointer"
                                     >
                                         Update
                                     </Button>
@@ -509,6 +520,14 @@ const Settings = () => {
                     </form>
                 </div>
             </div>
+
+            {/* Email Update Modal */}
+            <EmailUpdateModal
+                open={isEmailModalOpen}
+                onClose={() => setIsEmailModalOpen(false)}
+                currentEmail={formData.email}
+                onSuccess={handleEmailUpdateSuccess}
+            />
         </div>
     );
 };

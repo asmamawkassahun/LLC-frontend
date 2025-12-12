@@ -59,6 +59,21 @@ const authService = {
   getAccessToken(): string | null {
     return localStorage.getItem('access_token');
   },
+
+  async forgotPassword(email: string): Promise<{ message: string }> {
+    const response = await apiClient.post<{ message: string }>('/auth/forgot-password', { email });
+    return response.data;
+  },
+
+  async verifyResetCode(email: string, code: string): Promise<{ message: string; verified: boolean }> {
+    const response = await apiClient.post<{ message: string; verified: boolean }>('/auth/verify-reset-code', { email, code });
+    return response.data;
+  },
+
+  async resetPassword(data: { email: string; code: string; password: string; password_confirmation: string }): Promise<{ message: string }> {
+    const response = await apiClient.post<{ message: string }>('/auth/reset-password', data);
+    return response.data;
+  },
 };
 
 export default authService;

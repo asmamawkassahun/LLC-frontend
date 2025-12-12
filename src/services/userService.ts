@@ -77,6 +77,31 @@ const userService = {
     const response = await apiClient.put<{ message: string }>('/user/change-password', data);
     return response.data;
   },
+
+  async sendCurrentEmailVerificationCode(): Promise<{ message: string }> {
+    const response = await apiClient.post<{ message: string }>('/user/send-current-email-code');
+    return response.data;
+  },
+
+  async verifyCurrentEmailCode(code: string): Promise<{ message: string; verified: boolean }> {
+    const response = await apiClient.post<{ message: string; verified: boolean }>('/user/verify-current-email-code', { code });
+    return response.data;
+  },
+
+  async updateEmail(newEmail: string): Promise<{ message: string; email: string }> {
+    const response = await apiClient.put<{ message: string; email: string }>('/user/update-email', { new_email: newEmail });
+    return response.data;
+  },
+
+  async sendNewEmailVerificationCode(email: string): Promise<{ message: string }> {
+    const response = await apiClient.post<{ message: string }>('/user/send-new-email-code', { email });
+    return response.data;
+  },
+
+  async verifyNewEmailCode(code: string): Promise<{ message: string; user: User }> {
+    const response = await apiClient.post<{ message: string; user: User }>('/user/verify-new-email-code', { code });
+    return response.data;
+  },
 };
 
 export default userService;

@@ -257,7 +257,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/constants/routes';
 import { getUniqueCountries } from '@/constants/countries';
 import { Button } from '@/components/ui/button';
-import { FcGoogle } from "react-icons/fc";
+// import { FcGoogle } from "react-icons/fc";
 import { HiEye, HiEyeOff } from 'react-icons/hi';
 import { FaAngleRight } from 'react-icons/fa';
 import  authService  from '@/services/authService';
@@ -559,7 +559,7 @@ const RegisterForm = () => {
                             checked={agreeToTerms}
                             onChange={(e) => setAgreeToTerms(e.target.checked)}
                             disabled={isLoading}
-                            className="mt-1 w-4 h-4 border border-input rounded focus:ring-2 focus:ring-accent text-[var(--color-purple)] cursor-pointer disabled:opacity-50"
+                            className="mt-1 w-4 h-4 border border-input rounded focus:ring-2 focus:ring-accent text-purple cursor-pointer disabled:opacity-50"
                         />
                         <label htmlFor="terms" className="text-sm text-foreground cursor-pointer">
                             I have read and agree to Privatily's{' '}
@@ -593,7 +593,7 @@ const RegisterForm = () => {
                 </div>
 
                 {/* Google Sign Up Button */}
-                <Button
+                {/* <Button
                     type="button"
                     variant="outline"
                     disabled={isLoading}
@@ -601,7 +601,7 @@ const RegisterForm = () => {
                 >
                     <FcGoogle className="w-5 h-5" />
                     Sign Up with Google
-                </Button>
+                </Button> */}
 
             </div>
             <div>

@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ROUTES } from '@/constants/routes';
-import { HomePage, AboutPage, PricingPage, ContactPage, LoginPage, RegisterPage, NotFoundPage, DashboardPage } from '@/pages';
+import { HomePage, AboutPage, PricingPage, ContactPage, LoginPage, RegisterPage, ForgotPasswordPage, VerifyCodePage, ResetPasswordPage, NotFoundPage, DashboardPage } from '@/pages';
 import MainLayout from '@/layouts/MainLayout';
 import AuthLayout from '@/layouts/AuthLayout';
 import DashboardLayout from '@/layouts/DashboardLayout';
@@ -60,6 +60,9 @@ function App() {
         >
           <Route path={ROUTES.LOGIN} element={<LoginPage />} />
           <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
+          <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPasswordPage />} />
+          <Route path={ROUTES.VERIFY_CODE} element={<VerifyCodePage />} />
+          <Route path={ROUTES.RESET_PASSWORD} element={<ResetPasswordPage />} />
         </Route>
 
         {/* Protected Routes with DashboardLayout (with Navbar) */}

@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import CountryInput from "@/components/sections/dashboard/CountryInput";
-import PhoneInput from "@/components/sections/dashboard/PhoneInput";
+// import PhoneInput from "@/components/sections/dashboard/PhoneInput";
 import TransparentPricing from "@/components/sections/Features/TransparentPricing";
 import userService from "@/services/userService";
 
 const DashboardPage = () => {
-    const [phoneSubmitted, setPhoneSubmitted] = useState(false);
+    // const [phoneSubmitted, setPhoneSubmitted] = useState(false);
     const [countrySelected, setCountrySelected] = useState(false);
     const [selectedCountry, setSelectedCountry] = useState<'US' | 'UK'>('US');
-    const [hasPhoneNumber, setHasPhoneNumber] = useState<boolean | null>(null);
+    // const [hasPhoneNumber, setHasPhoneNumber] = useState<boolean | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     // Fetch user data on mount to check if phone number exists
@@ -18,16 +18,16 @@ const DashboardPage = () => {
                 const user = await userService.getCurrentUser();
                 // Check if phone number exists and is not empty
                 const phoneExists = Boolean(user.phone && user.phone.trim() !== '');
-                setHasPhoneNumber(phoneExists);
+                // setHasPhoneNumber(phoneExists);
                 
                 // If phone exists, skip phone input step
                 if (phoneExists) {
-                    setPhoneSubmitted(true);
+                    // setPhoneSubmitted(true);
                 }
             } catch (error) {
                 console.error('Error fetching user data:', error);
                 // If error, assume no phone number (show phone input)
-                setHasPhoneNumber(false);
+                // setHasPhoneNumber(false);
             } finally {
                 setIsLoading(false);
             }
@@ -36,9 +36,9 @@ const DashboardPage = () => {
         fetchUserData();
     }, []);
 
-    const handlePhoneSubmit = () => {
-        setPhoneSubmitted(true);
-    };
+    // const handlePhoneSubmit = () => {
+    //     setPhoneSubmitted(true);
+    // };
 
     const handleCountrySelect = (country: 'US' | 'UK') => {
         setSelectedCountry(country);
@@ -57,9 +57,11 @@ const DashboardPage = () => {
     return (
         <div>
             {/* If phone number doesn't exist, show PhoneInput */}
-            {!hasPhoneNumber && !phoneSubmitted ? (
+            {/* {!hasPhoneNumber && !phoneSubmitted ? (
                 <PhoneInput onNext={handlePhoneSubmit} />
-            ) : !countrySelected ? (
+            ) :  */}
+            {
+            !countrySelected  ? (
                 /* If phone exists or was submitted, show CountryInput */
                 <CountryInput onCountrySelect={handleCountrySelect} />
             ) : (
