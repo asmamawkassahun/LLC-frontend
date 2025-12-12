@@ -348,6 +348,8 @@ const RegisterForm = () => {
             }
 
             // Redirect to dashboard
+            // Set flag to indicate user just registered
+            localStorage.setItem('just_registered', 'true');
             navigate(ROUTES.DASHBOARD);
         } catch (err: any) {
             console.error('Registration error:', err);
