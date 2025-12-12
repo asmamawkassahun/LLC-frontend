@@ -39,38 +39,38 @@ const PaymentSummary = () => {
     const selectedPlan = (location.state as LocationState)?.plan || null;
 
     // Fetch order data
-    const fetchOrder = async () => {
-        if (!id) return;
-        try {
-            // setIsLoading(true);
-            const response = await apiClient.get(`/orders/${id}`);
-            const order = response.data.data || response.data;
-            console.log('Order data: ', order);
-            
-            // Get base_price from order (now calculated in OrderResource)
-            // Get state_fee from state relationship or calculate from subtotal
-            const basePrice = Number(order.base_price) || 0;
-            let stateFee = 0;
-            
-            if (order.state?.formation_fee) {
-                stateFee = Number(order.state.formation_fee) || 0;
-            } else if (order.subtotal && order.base_price) {
-                // Calculate state_fee from: subtotal = base_price + state_fee - discount_amount
-                const subtotal = Number(order.subtotal) || 0;
-                const discountAmount = Number(order.discount_amount) || 0;
-                stateFee = subtotal + discountAmount - basePrice;
-            }
-            
-            const orderDataObj = {
-                id: order.id,
-                total_amount: Number(order.total_amount) || 0,
-                order_number: order.order_number || '',
-                state_fee: stateFee,
-                base_price: basePrice,
+        const fetchOrder = async () => {
+            if (!id) return;
+            try {
+                // setIsLoading(true);
+                const response = await apiClient.get(`/orders/${id}`);
+                const order = response.data.data || response.data;
+                console.log('Order data: ', order);
+                
+                // Get base_price from order (now calculated in OrderResource)
+                // Get state_fee from state relationship or calculate from subtotal
+                const basePrice = Number(order.base_price) || 0;
+                let stateFee = 0;
+                
+                if (order.state?.formation_fee) {
+                    stateFee = Number(order.state.formation_fee) || 0;
+                } else if (order.subtotal && order.base_price) {
+                    // Calculate state_fee from: subtotal = base_price + state_fee - discount_amount
+                    const subtotal = Number(order.subtotal) || 0;
+                    const discountAmount = Number(order.discount_amount) || 0;
+                    stateFee = subtotal + discountAmount - basePrice;
+                }
+                
+                const orderDataObj = {
+                    id: order.id,
+                    total_amount: Number(order.total_amount) || 0,
+                    order_number: order.order_number || '',
+                    state_fee: stateFee,
+                    base_price: basePrice,
                 payment_status: order.payment_status || 'unpaid',
-            };
-            setOrderData(orderDataObj);
-            
+                };
+                setOrderData(orderDataObj);
+                
             // Only show discount if payment is not completed (unpaid or pending)
             // Hide discount after payment completes (success or failure)
             const paymentStatus = (order.payment_status || 'unpaid').toLowerCase();
@@ -78,23 +78,23 @@ const PaymentSummary = () => {
             
             // If order already has a promo code applied and payment is pending, show the discount
             if (order.discount_amount && order.discount_amount > 0 && isPaymentPending) {
-                const originalTotal = orderDataObj.base_price + orderDataObj.state_fee;
-                setPromoDiscount({
-                    originalPrice: originalTotal,
-                    discountAmount: order.discount_amount,
-                    totalAmount: order.total_amount,
-                    promoCode: order.promo_code?.code || 'Applied',
-            });
+                    const originalTotal = orderDataObj.base_price + orderDataObj.state_fee;
+                    setPromoDiscount({
+                        originalPrice: originalTotal,
+                        discountAmount: order.discount_amount,
+                        totalAmount: order.total_amount,
+                        promoCode: order.promo_code?.code || 'Applied',
+                });
             } else {
                 // Clear discount if payment is completed
                 setPromoDiscount(null);
+                }
+            } catch (error) {
+                console.error('Error fetching order:', error);
+            } finally {
+                // setIsLoading(false);
             }
-        } catch (error) {
-            console.error('Error fetching order:', error);
-        } finally {
-            // setIsLoading(false);
-        }
-    };
+        };
 
     useEffect(() => {
         fetchOrder();
@@ -185,12 +185,12 @@ const PaymentSummary = () => {
                 
                 // Only set discount if payment is still pending
                 if (isPaymentPending) {
-                    setPromoDiscount({
-                        originalPrice: originalTotal,
-                        discountAmount: discountAmount,
-                        totalAmount: data.totals.total_amount,
-                        promoCode: promoCode,
-                    });
+                setPromoDiscount({
+                    originalPrice: originalTotal,
+                    discountAmount: discountAmount,
+                    totalAmount: data.totals.total_amount,
+                    promoCode: promoCode,
+                });
                 } else {
                     setPromoDiscount(null);
                 }

@@ -79,7 +79,7 @@ const MarketplaceOrder = ({
             setTotalAmount(price);
             // Only clear discount if payment is not completed
             if (paymentStatus !== 'completed') {
-                setPromoDiscount(null);
+            setPromoDiscount(null);
             }
             setPaymentStatus('unknown');
         }
@@ -139,15 +139,15 @@ const MarketplaceOrder = ({
         onSuccess: (data) => {
             // Only show discount if payment is not completed
             if (paymentStatus !== 'completed') {
-                setPromoDiscount({
-                    originalPrice: data.original_price,
-                    discountAmount: data.discount_amount,
-                    totalAmount: data.total_amount,
-                    promoCode: data.promo_code,
-                });
-                setTotalAmount(data.total_amount);
-                setAppliedPromoCode(data.promo_code);
-                toast.success('Promo code applied successfully!');
+            setPromoDiscount({
+                originalPrice: data.original_price,
+                discountAmount: data.discount_amount,
+                totalAmount: data.total_amount,
+                promoCode: data.promo_code,
+            });
+            setTotalAmount(data.total_amount);
+            setAppliedPromoCode(data.promo_code);
+            toast.success('Promo code applied successfully!');
             }
         },
         onError: (error: any) => {

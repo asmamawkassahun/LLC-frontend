@@ -1,13 +1,10 @@
 import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
 import echo from '@/lib/echo';
-import { useNavigate } from 'react-router-dom';
 import authService from '@/services/authService';
 
 export const useNotifications = (userId: number | null) => {
     const queryClient = useQueryClient();
-    const navigate = useNavigate();
 
     useEffect(() => {
         if (!userId || !authService.isAuthenticated()) {
@@ -39,19 +36,7 @@ export const useNotifications = (userId: number | null) => {
 
         // Listen for file upload notifications
         channel.listen('.file.uploaded', (data: any) => {
-            const notification = data.notification;
-            
-            // Show toast notification
-            toast.info(notification.title, {
-                description: notification.message,
-                action: {
-                    label: 'View Inbox',
-                    onClick: () => navigate('/dashboard/inbox'),
-                },
-                duration: 5000,
-            });
-
-            // Invalidate queries to refresh data
+            // Invalidate queries to refresh in-app notifications
             queryClient.invalidateQueries({ queryKey: ['notifications'] });
             queryClient.invalidateQueries({ queryKey: ['user-marketplace-orders'] });
         });
@@ -61,6 +46,6 @@ export const useNotifications = (userId: number | null) => {
             channel.stopListening('.file.uploaded');
             echo.leave(`user.${userId}`);
         };
-    }, [userId, queryClient, navigate]);
+    }, [userId, queryClient]);
 };
 
