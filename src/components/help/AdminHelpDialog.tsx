@@ -880,7 +880,7 @@ const AdminHelpDialog = ({ open, onOpenChange }: AdminHelpDialogProps) => {
                 <h3 className="font-semibold">Conversation</h3>
 
                 {/* Conversation List */}
-                <div ref={conversationContainerRef} className="space-y-3 max-h-64 overflow-y-auto border rounded-md p-2">
+                <div ref={conversationContainerRef} className="space-y-3 max-h-64 overflow-y-auto border-2 border-accent/30 rounded-md p-2">
                   {(ticketDetails?.messages || []).map((msg) => {
                     // Determine if message is outgoing (from admin/staff) or incoming (from user)
                     const isOutgoing = !!msg.staff_id || msg.is_internal;
@@ -891,7 +891,7 @@ const AdminHelpDialog = ({ open, onOpenChange }: AdminHelpDialogProps) => {
                         className={`flex ${isOutgoing ? 'justify-end rounded-r-lg' : 'justify-start rounded-l-lg'}`}
                       >
                         <div
-                          className={`max-w-[75%] px-4 py-2 bg-foreground/5 text-foreground ${
+                          className={`max-w-full px-4 py-2 bg-foreground/5 text-foreground ${
                             isOutgoing
                               ? msg.is_internal
                                 ? 'bg-yellow-50 border border-yellow-300 rounded-tl-lg rounded-tr-lg rounded-bl-lg rounded-br-none'

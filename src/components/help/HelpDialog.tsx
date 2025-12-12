@@ -58,6 +58,38 @@ const HelpDialog = ({ open, onOpenChange }: HelpDialogProps) => {
   const queryClient = useQueryClient();
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 
+  // Helper functions for tracking viewed tickets
+  const getLastViewedTimestamp = (ticketId: number): string | null => {
+    const key = `user_ticket_viewed_${ticketId}`;
+    return localStorage.getItem(key);
+  };
+
+  const markTicketAsViewed = (ticketId: number) => {
+    const key = `user_ticket_viewed_${ticketId}`;
+    localStorage.setItem(key, new Date().toISOString());
+  };
+
+  const getUnreadMessageCount = (ticket: SupportTicket): number => {
+    if (!ticket.messages || !Array.isArray(ticket.messages)) return 0;
+    
+    // Filter out internal messages for users
+    const userMessages = ticket.messages.filter(msg => !msg.is_internal);
+    if (userMessages.length === 0) return 0;
+    
+    const lastViewed = getLastViewedTimestamp(ticket.id);
+    if (!lastViewed) {
+      // If never viewed, count messages from admin/staff (not from user)
+      return userMessages.filter(msg => !!msg.staff_id).length;
+    }
+
+    const lastViewedDate = new Date(lastViewed);
+    // Count messages created after last view that are from admin/staff
+    return userMessages.filter(msg => {
+      const msgDate = new Date(msg.created_at);
+      return msgDate > lastViewedDate && !!msg.staff_id;
+    }).length;
+  };
+
   // Get current user ID
   useEffect(() => {
     if (open && authService.isAuthenticated()) {
@@ -112,7 +144,9 @@ const HelpDialog = ({ open, onOpenChange }: HelpDialogProps) => {
     // Listen for ticket message events
     channel.listen('.ticket.message.sent', (data: any) => {
       // Only update if we're viewing the ticket that received the message
-      if (selectedTicket && data.ticket_id === selectedTicket.id) {
+      if (selectedTicket && data.ticket_id === selectedTicket.id && view === 'detail') {
+        // If viewing the ticket detail, mark it as viewed (new message is automatically read)
+        markTicketAsViewed(data.ticket_id);
         // Refetch the ticket to get the latest messages
         queryClient.invalidateQueries({ queryKey: ['support-ticket', selectedTicket.id] });
         queryClient.invalidateQueries({ queryKey: ['support-tickets'] });
@@ -122,6 +156,11 @@ const HelpDialog = ({ open, onOpenChange }: HelpDialogProps) => {
             conversationContainerRef.current.scrollTop = conversationContainerRef.current.scrollHeight;
           }
         }, 300);
+      } else if (data.ticket_id) {
+        // Also update the tickets list even if not viewing the specific ticket
+        // This ensures the list shows updated message counts and unread badges
+        // Don't mark as viewed if not viewing the detail - message should remain unread
+        queryClient.invalidateQueries({ queryKey: ['support-tickets'] });
       }
     });
 
@@ -130,7 +169,7 @@ const HelpDialog = ({ open, onOpenChange }: HelpDialogProps) => {
       channel.stopListening('.ticket.message.sent');
       echo.leave(`user.${currentUserId}`);
     };
-  }, [open, currentUserId, selectedTicket, queryClient]);
+  }, [open, currentUserId, selectedTicket, view, queryClient]);
 
   // Fetch tickets
   const { data: ticketsData, isLoading: ticketsLoading } = useQuery({
@@ -173,6 +212,15 @@ const HelpDialog = ({ open, onOpenChange }: HelpDialogProps) => {
       }, 100);
     }
   }, [ticketDetails?.messages, view, selectedTicket]);
+
+  // Mark ticket as viewed when viewing detail
+  useEffect(() => {
+    if (view === 'detail' && selectedTicket) {
+      markTicketAsViewed(selectedTicket.id);
+      // Invalidate tickets query to update unread counts
+      queryClient.invalidateQueries({ queryKey: ['support-tickets'] });
+    }
+  }, [view, selectedTicket, queryClient]);
 
   // Create ticket mutation
   const createTicketMutation = useMutation({
@@ -359,6 +407,7 @@ const HelpDialog = ({ open, onOpenChange }: HelpDialogProps) => {
                     e.stopPropagation();
                     setView('create');
                   }} 
+                  className="cursor-pointer"
                   size="sm"
                 >
                   <Plus className="w-4 h-4 mr-2" />
@@ -373,7 +422,7 @@ const HelpDialog = ({ open, onOpenChange }: HelpDialogProps) => {
                   {ticketsData.data.map((ticket) => (
                     <Card
                       key={ticket.id}
-                      className="cursor-pointer hover:bg-accent transition-colors"
+                      className="cursor-pointer hover:bg-foreground/5 transition-colors"
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -384,7 +433,18 @@ const HelpDialog = ({ open, onOpenChange }: HelpDialogProps) => {
                       <CardHeader className="pb-3">
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
-                            <CardTitle className="text-base">{ticket.subject}</CardTitle>
+                            <div className="flex items-center gap-2">
+                              <CardTitle className="text-base">{ticket.subject}</CardTitle>
+                              {(() => {
+                                const unreadCount = getUnreadMessageCount(ticket);
+                                return unreadCount > 0 ? (
+                                  <Badge variant="destructive" className="flex items-center gap-1">
+                                    <MessageSquare className="w-3 h-3" />
+                                    {unreadCount}
+                                  </Badge>
+                                ) : null;
+                              })()}
+                            </div>
                             <CardDescription className="mt-1">
                               {ticket.ticket_number} • {ticket.message.substring(0, 100)}
                               {ticket.message.length > 100 ? '...' : ''}
@@ -421,7 +481,7 @@ const HelpDialog = ({ open, onOpenChange }: HelpDialogProps) => {
                         e.stopPropagation();
                         setView('create');
                       }} 
-                      className="mt-4" 
+                      className="mt-4 cursor-pointer" 
                       size="sm"
                     >
                       Create Your First Ticket
@@ -574,7 +634,7 @@ const HelpDialog = ({ open, onOpenChange }: HelpDialogProps) => {
                           className={`flex ${isOutgoing ? 'justify-end' : 'justify-start'}`}
                         >
                           <div
-                            className={`max-w-[75%] px-4 py-2 bg-foreground/5 text-foreground ${isOutgoing ? 'rounded-tl-lg rounded-tr-lg rounded-bl-lg rounded-br-none' : 'rounded-tl-none rounded-tr-lg rounded-bl-lg rounded-br-lg'}`}
+                            className={`max-w-full px-4 py-2 bg-foreground/5 text-foreground ${isOutgoing ? 'rounded-tl-lg rounded-tr-lg rounded-bl-lg rounded-br-none' : 'rounded-tl-none rounded-tr-lg rounded-bl-lg rounded-br-lg'}`}
                           >
                             {/* Sender name and timestamp */}
                             <div className={`flex items-center gap-2 mb-1 ${isOutgoing ? 'justify-end' : 'justify-start'}`}>

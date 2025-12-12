@@ -7,6 +7,9 @@ import { ROUTES } from "@/constants/routes";
 import CompanySelector from "@/components/company/CompanySelector";
 import NotificationDropdown from "@/components/NotificationDropdown";
 import HelpDialog from "@/components/help/HelpDialog";
+import { useQuery } from "@tanstack/react-query";
+import supportService from "@/services/supportService";
+import authService from "@/services/authService";
 
 interface DashboardNavbarProps {
     onMenuClick: () => void;
@@ -14,6 +17,52 @@ interface DashboardNavbarProps {
 
 const DashboardNavbar = ({ onMenuClick }: DashboardNavbarProps) => {
     const [helpDialogOpen, setHelpDialogOpen] = useState(false);
+
+    // Fetch tickets for unread count badge
+    const { data: ticketsData } = useQuery({
+        queryKey: ['support-tickets'],
+        queryFn: async () => {
+            try {
+                const response = await supportService.getTickets(1, 50);
+                return response;
+            } catch (error) {
+                return { data: [], total: 0 };
+            }
+        },
+        enabled: authService.isAuthenticated(),
+        refetchInterval: 30000, // Refetch every 30 seconds
+    });
+
+    // Calculate total unread messages across all tickets
+    const getTotalUnreadCount = (): number => {
+        if (!ticketsData?.data || !Array.isArray(ticketsData.data)) return 0;
+        
+        let totalUnread = 0;
+        ticketsData.data.forEach((ticket) => {
+            if (!ticket.messages || !Array.isArray(ticket.messages)) return;
+            
+            // Filter out internal messages for users
+            const userMessages = ticket.messages.filter(msg => !msg.is_internal);
+            if (userMessages.length === 0) return;
+            
+            const lastViewed = localStorage.getItem(`user_ticket_viewed_${ticket.id}`);
+            if (!lastViewed) {
+                // If never viewed, count messages from admin/staff
+                totalUnread += userMessages.filter(msg => !!msg.staff_id).length;
+            } else {
+                const lastViewedDate = new Date(lastViewed);
+                // Count messages created after last view that are from admin/staff
+                totalUnread += userMessages.filter(msg => {
+                    const msgDate = new Date(msg.created_at);
+                    return msgDate > lastViewedDate && !!msg.staff_id;
+                }).length;
+            }
+        });
+        
+        return totalUnread;
+    };
+
+    const totalUnreadCount = getTotalUnreadCount();
 
     return (
         <>
@@ -49,10 +98,15 @@ const DashboardNavbar = ({ onMenuClick }: DashboardNavbarProps) => {
                             variant="outline"
                             size="icon"
                             onClick={() => setHelpDialogOpen(true)}
-                            className="bg-blue-700 w-24 hover:bg-accent-dark text-white text-xs px-4 border-none rounded-full cursor-pointer"
+                            className="bg-blue-700 w-24 hover:bg-accent-dark text-white text-xs px-4 border-none rounded-full cursor-pointer relative"
                         >
                             <GoQuestion className="w-6 h-6" />
                             Get help
+                            {totalUnreadCount > 0 && (
+                                <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                                    {totalUnreadCount > 99 ? '99+' : totalUnreadCount}
+                                </span>
+                            )}
                         </Button>
                         <NotificationDropdown />
                     </div>
