@@ -77,8 +77,8 @@ const NotificationDropdown = () => {
         // Navigate based on notification type
         if (notification.type === 'marketplace_file_uploaded') {
             navigate(ROUTES.INBOX);
-        } else if (notification.data?.order_id) {
-            navigate(`/orders/${notification.data.order_id}`);
+        } else if (notification.data) {
+            navigate(`/orders`);
         }
 
         setIsOpen(false);

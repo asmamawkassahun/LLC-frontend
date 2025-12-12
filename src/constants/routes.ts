@@ -30,8 +30,6 @@ export const ROUTES = {
     ADMIN_MARKETPLACE: '/admin/marketplace',
     ADMIN_AFFILIATES: '/admin/affiliates',
     ADMIN_SUPPORT: '/admin/support',
-    ADMIN_SETTINGS: '/admin/settings',
-    ADMIN_ACTIVITY_LOGS: '/admin/activity-logs',
   } as const;
   
   export type Route = typeof ROUTES[keyof typeof ROUTES];

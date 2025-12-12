@@ -98,16 +98,6 @@ const AdminSidebar = () => {
           url: ROUTES.ADMIN_SUPPORT,
           icon: MessageSquare,
         },
-        {
-          title: 'Settings',
-          url: ROUTES.ADMIN_SETTINGS,
-          icon: Settings,
-        },
-        {
-          title: 'Activity Logs',
-          url: ROUTES.ADMIN_ACTIVITY_LOGS,
-          icon: FileText,
-        },
       ],
     },
   ];

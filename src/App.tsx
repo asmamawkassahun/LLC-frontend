@@ -29,8 +29,6 @@ import AdminPromoCodesPage from './pages/admin/PromoCodes';
 import AdminMarketplacePage from './pages/admin/Marketplace';
 import AdminAffiliatesPage from './pages/admin/Affiliates';
 import AdminSupportPage from './pages/admin/Support';
-import AdminSettingsPage from './pages/admin/Settings';
-import AdminActivityLogsPage from './pages/admin/ActivityLogs';
 import MaintenanceCheck from './components/MaintenanceCheck';
 import Inbox from './components/sections/dashboard/Inbox';
 import NotificationProvider from './components/NotificationProvider';
@@ -114,8 +112,6 @@ function App() {
           <Route path={ROUTES.ADMIN_MARKETPLACE} element={<AdminMarketplacePage />} />
           <Route path={ROUTES.ADMIN_AFFILIATES} element={<AdminAffiliatesPage />} />
           <Route path={ROUTES.ADMIN_SUPPORT} element={<AdminSupportPage />} />
-          <Route path={ROUTES.ADMIN_SETTINGS} element={<AdminSettingsPage />} />
-          <Route path={ROUTES.ADMIN_ACTIVITY_LOGS} element={<AdminActivityLogsPage />} />
         </Route>
       </Routes>
         </NotificationProvider>
