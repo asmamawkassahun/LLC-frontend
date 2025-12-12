@@ -3,10 +3,11 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 import { useNavigate } from 'react-router-dom';
 import adminAuthService from '@/services/adminAuthService';
 import { ROUTES } from '@/constants/routes';
-import { LogOut, User, Settings } from 'lucide-react';
+import { LogOut, User, Settings, MessageSquare } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import adminApiClient from '@/utils/api-helpers/adminApiClient';
 import { useState, useEffect } from 'react';
+import AdminHelpDialog from '@/components/help/AdminHelpDialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -37,6 +38,7 @@ const AdminNavbar = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false);
+  const [isHelpDialogOpen, setIsHelpDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -208,6 +210,15 @@ const AdminNavbar = () => {
     <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4">
       <SidebarTrigger className="-ml-1" />
       <div className="flex flex-1 items-center justify-end gap-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsHelpDialogOpen(true)}
+            className="bg-blue-700 hover:bg-blue-800 text-white border-none"
+          >
+            <MessageSquare className="w-4 h-4 mr-2" />
+            Get Help
+          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-10 w-10 rounded-full cursor-pointer">
@@ -338,6 +349,9 @@ const AdminNavbar = () => {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* Help Dialog */}
+      <AdminHelpDialog open={isHelpDialogOpen} onOpenChange={setIsHelpDialogOpen} />
     </>
   );
 };

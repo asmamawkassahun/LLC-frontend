@@ -35,7 +35,7 @@ export const useNotifications = (userId: number | null) => {
         const channel = echo.private(`user.${userId}`);
 
         // Listen for file upload notifications
-        channel.listen('.file.uploaded', (data: any) => {
+        channel.listen('.file.uploaded', () => {
             // Invalidate queries to refresh in-app notifications
             queryClient.invalidateQueries({ queryKey: ['notifications'] });
             queryClient.invalidateQueries({ queryKey: ['user-marketplace-orders'] });
