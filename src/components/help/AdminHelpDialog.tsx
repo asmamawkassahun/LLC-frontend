@@ -48,6 +48,35 @@ const AdminHelpDialog = ({ open, onOpenChange }: AdminHelpDialogProps) => {
   const [assignedTo, setAssignedTo] = useState<string>('');
   const [replyFiles, setReplyFiles] = useState<File[]>([]);
   const [filePreviewList, setFilePreviewList] = useState<Array<{file: File, id: string}>>([]);
+  const conversationContainerRef = useRef<HTMLDivElement>(null);
+
+  // Helper functions for tracking viewed tickets
+  const getLastViewedTimestamp = (ticketId: number): string | null => {
+    const key = `admin_ticket_viewed_${ticketId}`;
+    return localStorage.getItem(key);
+  };
+
+  const markTicketAsViewed = (ticketId: number) => {
+    const key = `admin_ticket_viewed_${ticketId}`;
+    localStorage.setItem(key, new Date().toISOString());
+  };
+
+  const getUnreadMessageCount = (ticket: SupportTicket): number => {
+    if (!ticket.messages || !Array.isArray(ticket.messages)) return 0;
+    
+    const lastViewed = getLastViewedTimestamp(ticket.id);
+    if (!lastViewed) {
+      // If never viewed, all messages from users (not from admin/staff) are unread
+      return ticket.messages.filter(msg => !msg.staff_id && !msg.is_internal).length;
+    }
+
+    const lastViewedDate = new Date(lastViewed);
+    // Count messages created after last view that are from users (not admin/staff)
+    return ticket.messages.filter(msg => {
+      const msgDate = new Date(msg.created_at);
+      return msgDate > lastViewedDate && !msg.staff_id && !msg.is_internal;
+    }).length;
+  };
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [currentAdminId, setCurrentAdminId] = useState<number | null>(null);
   const queryClient = useQueryClient();
@@ -263,14 +292,23 @@ const AdminHelpDialog = ({ open, onOpenChange }: AdminHelpDialogProps) => {
         console.log('Admin received ticket message event:', data);
         
         // Update if we're viewing the ticket that received the message
-        if (selectedTicket && data.ticket_id === selectedTicket.id) {
+        if (selectedTicket && data.ticket_id === selectedTicket.id && view === 'detail') {
           console.log('Updating ticket view for ticket:', data.ticket_id);
+          // If viewing the ticket detail, mark it as viewed (new message is automatically read)
+          markTicketAsViewed(data.ticket_id);
           // Refetch the ticket to get the latest messages
           queryClient.invalidateQueries({ queryKey: ['admin-support-ticket', selectedTicket.id] });
           queryClient.invalidateQueries({ queryKey: ['admin-support-tickets'] });
+          // Scroll to bottom when new message arrives
+          setTimeout(() => {
+            if (conversationContainerRef.current) {
+              conversationContainerRef.current.scrollTop = conversationContainerRef.current.scrollHeight;
+            }
+          }, 300);
         } else if (data.ticket_id) {
           // Also update the tickets list even if not viewing the specific ticket
-          // This ensures the list shows updated message counts
+          // This ensures the list shows updated message counts and unread badges
+          // Don't mark as viewed if not viewing the detail - message should remain unread
           console.log('Updating tickets list for ticket:', data.ticket_id);
           queryClient.invalidateQueries({ queryKey: ['admin-support-tickets'] });
         }
@@ -458,6 +496,27 @@ const AdminHelpDialog = ({ open, onOpenChange }: AdminHelpDialogProps) => {
     enabled: !!selectedTicket && view === 'detail',
   });
 
+  // Mark ticket as viewed when viewing detail
+  useEffect(() => {
+    if (view === 'detail' && selectedTicket) {
+      markTicketAsViewed(selectedTicket.id);
+      // Invalidate tickets query to update unread counts
+      queryClient.invalidateQueries({ queryKey: ['admin-support-tickets'] });
+    }
+  }, [view, selectedTicket, queryClient]);
+
+  // Auto-scroll to bottom of conversation when messages load or change
+  useEffect(() => {
+    if (view === 'detail' && conversationContainerRef.current) {
+      // Small delay to ensure DOM is updated
+      setTimeout(() => {
+        if (conversationContainerRef.current) {
+          conversationContainerRef.current.scrollTop = conversationContainerRef.current.scrollHeight;
+        }
+      }, 100);
+    }
+  }, [ticketDetails?.messages, view, selectedTicket]);
+
   // Assign ticket mutation
   const assignTicketMutation = useMutation({
     mutationFn: ({ ticketId, userId }: { ticketId: number; userId: number }) =>
@@ -508,6 +567,12 @@ const AdminHelpDialog = ({ open, onOpenChange }: AdminHelpDialogProps) => {
       }
       refetchTicket();
       refetchTickets();
+      // Scroll to bottom after sending reply
+      setTimeout(() => {
+        if (conversationContainerRef.current) {
+          conversationContainerRef.current.scrollTop = conversationContainerRef.current.scrollHeight;
+        }
+      }, 300);
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || 'Failed to send reply');
@@ -643,7 +708,7 @@ const AdminHelpDialog = ({ open, onOpenChange }: AdminHelpDialogProps) => {
                   {ticketsData.data.map((ticket) => (
                     <Card
                       key={ticket.id}
-                      className="cursor-pointer hover:bg-accent transition-colors"
+                      className="cursor-pointer hover:bg-foreground/5 transition-colors"
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -654,7 +719,18 @@ const AdminHelpDialog = ({ open, onOpenChange }: AdminHelpDialogProps) => {
                       <CardHeader className="pb-3">
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
-                            <CardTitle className="text-base">{ticket.subject}</CardTitle>
+                            <div className="flex items-center gap-2">
+                              <CardTitle className="text-base">{ticket.subject}</CardTitle>
+                              {(() => {
+                                const unreadCount = getUnreadMessageCount(ticket);
+                                return unreadCount > 0 ? (
+                                  <Badge variant="destructive" className="flex items-center gap-1">
+                                    <MessageSquare className="w-3 h-3" />
+                                    {unreadCount}
+                                  </Badge>
+                                ) : null;
+                              })()}
+                            </div>
                             <CardDescription className="mt-1">
                               {ticket.ticket_number} • {ticket.user?.name || 'Unknown User'} ({ticket.user?.email || 'N/A'})
                             </CardDescription>
@@ -802,49 +878,75 @@ const AdminHelpDialog = ({ open, onOpenChange }: AdminHelpDialogProps) => {
 
               <div className="space-y-3">
                 <h3 className="font-semibold">Conversation</h3>
-                <div className="space-y-3 max-h-64 overflow-y-auto">
-                  {(ticketDetails?.messages || []).map((msg) => (
-                    <Card key={msg.id} className={msg.is_internal ? 'bg-muted' : ''}>
-                      <CardContent className="pt-4">
-                        <div className="flex items-start justify-between mb-2">
-                          <div>
-                            <p className="font-medium text-sm">
+
+                {/* Conversation List */}
+                <div ref={conversationContainerRef} className="space-y-3 max-h-64 overflow-y-auto border rounded-md p-2">
+                  {(ticketDetails?.messages || []).map((msg) => {
+                    // Determine if message is outgoing (from admin/staff) or incoming (from user)
+                    const isOutgoing = !!msg.staff_id || msg.is_internal;
+                    
+                    return (
+                      <div
+                        key={msg.id}
+                        className={`flex ${isOutgoing ? 'justify-end rounded-r-lg' : 'justify-start rounded-l-lg'}`}
+                      >
+                        <div
+                          className={`max-w-[75%] px-4 py-2 bg-foreground/5 text-foreground ${
+                            isOutgoing
+                              ? msg.is_internal
+                                ? 'bg-yellow-50 border border-yellow-300 rounded-tl-lg rounded-tr-lg rounded-bl-lg rounded-br-none'
+                                : 'rounded-tl-lg rounded-tr-lg rounded-bl-lg rounded-br-none'
+                              : 'rounded-tl-none rounded-tr-lg rounded-bl-lg rounded-br-lg'
+                          }`}
+                        >
+                          {/* Sender name and timestamp */}
+                          <div className={`flex items-center gap-2 mb-1 ${isOutgoing ? 'justify-end' : 'justify-start'}`}>
+                            {msg.is_internal && (
+                              <Badge variant="secondary" className="text-xs px-1.5 py-0">Internal</Badge>
+                            )}
+                            <span className="text-xs font-semibold opacity-90">
                               {msg.user?.name || msg.staff?.name || 'System'}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
+                            </span>
+                            <span className={`text-xs opacity-70 text-foreground`}>
                               {formatDistanceToNow(new Date(msg.created_at), { addSuffix: true })}
-                            </p>
+                            </span>
                           </div>
-                          {msg.is_internal && (
-                            <Badge variant="secondary" className="text-xs">Internal Note</Badge>
+                          
+                          {/* Message content */}
+                          <p className={`text-sm whitespace-pre-wrap text-foreground`}>
+                            {msg.message}
+                          </p>
+                          
+                          {/* Attachments */}
+                          {msg.attachments && msg.attachments.length > 0 && (
+                            <div className="mt-2 space-y-2">
+                              <div className="flex flex-wrap gap-2">
+                                {msg.attachments.map((attachment: any, idx: number) => (
+                                  <a
+                                    key={idx}
+                                    href={attachment.file_url || attachment}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-md hover:opacity-80 transition-opacity text-sm ${
+                                      isOutgoing
+                                        ? ''
+                                        : ''
+                                    }`}
+                                  >
+                                    <FileText className="w-4 h-4" />
+                                    <span className="truncate max-w-[200px]">
+                                      {attachment.file_name || attachment}
+                                    </span>
+                                    <Download className="w-3 h-3" />
+                                  </a>
+                                ))}
+                              </div>
+                            </div>
                           )}
                         </div>
-                        <p className="text-sm whitespace-pre-wrap">{msg.message}</p>
-                        {msg.attachments && msg.attachments.length > 0 && (
-                          <div className="mt-3 space-y-2">
-                            <p className="text-xs font-medium text-muted-foreground">Attachments:</p>
-                            <div className="flex flex-wrap gap-2">
-                              {msg.attachments.map((attachment: any, idx: number) => (
-                                <a
-                                  key={idx}
-                                  href={attachment.file_url || attachment}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="flex items-center gap-2 px-3 py-1.5 bg-muted rounded-md hover:bg-muted/80 transition-colors text-sm"
-                                >
-                                  <FileText className="w-4 h-4" />
-                                  <span className="truncate max-w-[200px]">
-                                    {attachment.file_name || attachment}
-                                  </span>
-                                  <Download className="w-3 h-3" />
-                                </a>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  ))}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 

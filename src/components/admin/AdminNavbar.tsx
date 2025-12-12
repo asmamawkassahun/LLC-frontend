@@ -8,6 +8,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import adminApiClient from '@/utils/api-helpers/adminApiClient';
 import { useState, useEffect } from 'react';
 import AdminHelpDialog from '@/components/help/AdminHelpDialog';
+import adminSupportService from '@/services/adminSupportService';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -74,6 +75,48 @@ const AdminNavbar = () => {
     enabled: adminAuthService.isAuthenticated(),
     refetchInterval: 30000, // Refetch every 30 seconds
   });
+
+  // Fetch tickets for unread count badge
+  const { data: ticketsData } = useQuery({
+    queryKey: ['admin-support-tickets'],
+    queryFn: async () => {
+      try {
+        const response = await adminSupportService.getTickets(1, 50);
+        return response;
+      } catch (error) {
+        return { data: [], total: 0 };
+      }
+    },
+    enabled: adminAuthService.isAuthenticated(),
+    refetchInterval: 30000, // Refetch every 30 seconds
+  });
+
+  // Calculate total unread messages across all tickets
+  const getTotalUnreadCount = (): number => {
+    if (!ticketsData?.data || !Array.isArray(ticketsData.data)) return 0;
+    
+    let totalUnread = 0;
+    ticketsData.data.forEach((ticket) => {
+      if (!ticket.messages || !Array.isArray(ticket.messages)) return;
+      
+      const lastViewed = localStorage.getItem(`admin_ticket_viewed_${ticket.id}`);
+      if (!lastViewed) {
+        // If never viewed, count all user messages (not from admin/staff)
+        totalUnread += ticket.messages.filter(msg => !msg.staff_id && !msg.is_internal).length;
+      } else {
+        const lastViewedDate = new Date(lastViewed);
+        // Count messages created after last view that are from users
+        totalUnread += ticket.messages.filter(msg => {
+          const msgDate = new Date(msg.created_at);
+          return msgDate > lastViewedDate && !msg.staff_id && !msg.is_internal;
+        }).length;
+      }
+    });
+    
+    return totalUnread;
+  };
+
+  const totalUnreadCount = getTotalUnreadCount();
 
   // Update local state when maintenance status changes
   useEffect(() => {
@@ -214,10 +257,15 @@ const AdminNavbar = () => {
             variant="outline"
             size="sm"
             onClick={() => setIsHelpDialogOpen(true)}
-            className="bg-blue-700 hover:bg-blue-800 text-white border-none"
+            className="bg-blue-700 hover:bg-blue-800 text-white border-none relative cursor-pointer"
           >
             <MessageSquare className="w-4 h-4 mr-2" />
-            Get Help
+            Support Requests
+            {totalUnreadCount > 0 && (
+              <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                {totalUnreadCount > 99 ? '99+' : totalUnreadCount}
+              </span>
+            )}
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

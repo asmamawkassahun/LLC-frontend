@@ -53,6 +53,7 @@ const HelpDialog = ({ open, onOpenChange }: HelpDialogProps) => {
   const [replyFiles, setReplyFiles] = useState<File[]>([]);
   const [filePreviewList, setFilePreviewList] = useState<Array<{file: File, id: string}>>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const conversationContainerRef = useRef<HTMLDivElement>(null);
 
   const queryClient = useQueryClient();
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
@@ -115,6 +116,12 @@ const HelpDialog = ({ open, onOpenChange }: HelpDialogProps) => {
         // Refetch the ticket to get the latest messages
         queryClient.invalidateQueries({ queryKey: ['support-ticket', selectedTicket.id] });
         queryClient.invalidateQueries({ queryKey: ['support-tickets'] });
+        // Scroll to bottom when new message arrives
+        setTimeout(() => {
+          if (conversationContainerRef.current) {
+            conversationContainerRef.current.scrollTop = conversationContainerRef.current.scrollHeight;
+          }
+        }, 300);
       }
     });
 
@@ -154,6 +161,18 @@ const HelpDialog = ({ open, onOpenChange }: HelpDialogProps) => {
     },
     enabled: !!selectedTicket && view === 'detail',
   });
+
+  // Auto-scroll to bottom of conversation when messages load or change
+  useEffect(() => {
+    if (view === 'detail' && conversationContainerRef.current) {
+      // Small delay to ensure DOM is updated
+      setTimeout(() => {
+        if (conversationContainerRef.current) {
+          conversationContainerRef.current.scrollTop = conversationContainerRef.current.scrollHeight;
+        }
+      }, 100);
+    }
+  }, [ticketDetails?.messages, view, selectedTicket]);
 
   // Create ticket mutation
   const createTicketMutation = useMutation({
@@ -201,6 +220,12 @@ const HelpDialog = ({ open, onOpenChange }: HelpDialogProps) => {
       }
       refetchTicket();
       queryClient.invalidateQueries({ queryKey: ['support-tickets'] });
+      // Scroll to bottom after sending reply
+      setTimeout(() => {
+        if (conversationContainerRef.current) {
+          conversationContainerRef.current.scrollTop = conversationContainerRef.current.scrollHeight;
+        }
+      }, 300);
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || 'Failed to send reply');
@@ -534,48 +559,68 @@ const HelpDialog = ({ open, onOpenChange }: HelpDialogProps) => {
 
               <div className="space-y-3">
                 <h3 className="font-semibold">Conversation</h3>
-                <div className="space-y-3 max-h-64 overflow-y-auto">
+
+                {/* Conversation List */}
+                <div ref={conversationContainerRef} className="space-y-3 max-h-64 overflow-y-auto border-2 border-accent/30 rounded-md p-2">
                   {(ticketDetails?.messages || [])
                     .filter(msg => !msg.is_internal) // Filter out internal messages for users
-                    .map((msg) => (
-                    <Card key={msg.id}>
-                      <CardContent className="pt-4">
-                        <div className="flex items-start justify-between mb-2">
-                          <div>
-                            <p className="font-medium text-sm">
-                              {msg.user?.name || msg.staff?.name || 'System'}
+                    .map((msg) => {
+                      // Determine if message is outgoing (from current user) or incoming (from admin/staff)
+                      const isOutgoing = msg.user_id === currentUserId;
+                      
+                      return (
+                        <div
+                          key={msg.id}
+                          className={`flex ${isOutgoing ? 'justify-end' : 'justify-start'}`}
+                        >
+                          <div
+                            className={`max-w-[75%] px-4 py-2 bg-foreground/5 text-foreground ${isOutgoing ? 'rounded-tl-lg rounded-tr-lg rounded-bl-lg rounded-br-none' : 'rounded-tl-none rounded-tr-lg rounded-bl-lg rounded-br-lg'}`}
+                          >
+                            {/* Sender name and timestamp */}
+                            <div className={`flex items-center gap-2 mb-1 ${isOutgoing ? 'justify-end' : 'justify-start'}`}>
+                              <span className="text-xs font-semibold opacity-90">
+                                {msg.user?.name || msg.staff?.name || 'System'}
+                              </span>
+                              <span className={`text-xs opacity-70 text-foreground`}>
+                                {formatDistanceToNow(new Date(msg.created_at), { addSuffix: true })}
+                              </span>
+                            </div>
+                            
+                            {/* Message content */}
+                            <p className={`text-sm whitespace-pre-wrap text-foreground`}>
+                              {msg.message}
                             </p>
-                            <p className="text-xs text-muted-foreground">
-                              {formatDistanceToNow(new Date(msg.created_at), { addSuffix: true })}
-                            </p>
+                            
+                            {/* Attachments */}
+                            {msg.attachments && msg.attachments.length > 0 && (
+                              <div className="mt-2 space-y-2">
+                                <div className="flex flex-wrap gap-2">
+                                  {msg.attachments.map((attachment: any, idx: number) => (
+                                    <a
+                                      key={idx}
+                                      href={attachment.file_url || attachment}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className={`flex items-center gap-2 px-3 py-1.5 rounded-md hover:opacity-80 transition-opacity text-sm ${
+                                        isOutgoing
+                                          ? 'bg-blue-700 text-white'
+                                          : 'bg-gray-300 text-gray-900'
+                                      }`}
+                                    >
+                                      <FileText className="w-4 h-4" />
+                                      <span className="truncate max-w-[200px]">
+                                        {attachment.file_name || attachment}
+                                      </span>
+                                      <Download className="w-3 h-3" />
+                                    </a>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
-                        <p className="text-sm whitespace-pre-wrap">{msg.message}</p>
-                        {msg.attachments && msg.attachments.length > 0 && (
-                          <div className="mt-3 space-y-2">
-                            <p className="text-xs font-medium text-muted-foreground">Attachments:</p>
-                            <div className="flex flex-wrap gap-2">
-                              {msg.attachments.map((attachment: any, idx: number) => (
-                                <a
-                                  key={idx}
-                                  href={attachment.file_url || attachment}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="flex items-center gap-2 px-3 py-1.5 bg-muted rounded-md hover:bg-muted/80 transition-colors text-sm"
-                                >
-                                  <FileText className="w-4 h-4" />
-                                  <span className="truncate max-w-[200px]">
-                                    {attachment.file_name || attachment}
-                                  </span>
-                                  <Download className="w-3 h-3" />
-                                </a>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  ))}
+                      );
+                    })}
                 </div>
               </div>
 
