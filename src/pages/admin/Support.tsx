@@ -47,7 +47,7 @@ const AdminSupportPage = () => {
               ))}
             </div>
           ) : (
-            <Table>
+            <Table className='min-w-[860px]!'>
               <TableHeader>
                 <TableRow>
                   <TableHead>Ticket Number</TableHead>

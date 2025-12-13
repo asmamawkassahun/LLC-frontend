@@ -128,6 +128,8 @@ const CompanyDashboard = () => {
             case 'rejected':
             case 'failed':
                 return <XCircle className="w-5 h-5 text-red-600" />;
+            case 'confirmed':
+                return <CheckCircle2 className="w-5 h-5 text-green-600" />;
             default:
                 return <Clock className="w-5 h-5 text-gray-600" />;
         }
@@ -143,12 +145,11 @@ const CompanyDashboard = () => {
     };
 
     return (
-        <div className="max-w-7xl mx-auto space-y-4 py-6 px-2">
-            <DashboardHeader
-                imageUrl="https://app.privatily.com/assets/img/header-icones/settings.png"
-                title="Company Dashboard"
-                description={`Welcome to your ${order.company.name} dashboard`}
-            />
+        <div className="max-w-7xl mx-auto space-y-4 py-6 px-2 sm:px-4">
+            <div>
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold"><span className="hidden sm:inline">Company</span> Dashboard</h1>
+                <p className="text-sm sm:text-base text-muted-foreground">Welcome to your {order.company.name} dashboard</p>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* Card 1: Company Information */}

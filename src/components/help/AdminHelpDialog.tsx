@@ -673,7 +673,7 @@ const AdminHelpDialog = ({ open, onOpenChange }: AdminHelpDialogProps) => {
     const colors: Record<string, string> = {
       low: 'bg-blue-100 text-blue-800',
       medium: 'bg-yellow-100 text-yellow-800',
-      high: 'bg-orange-100 text-orange-800',
+      high: 'bg-orange-100 hover:bg-orange-200 text-orange-800',
       urgent: 'bg-red-100 text-red-800',
     };
     return colors[priority] || 'bg-gray-100 text-gray-800';
@@ -777,7 +777,7 @@ const AdminHelpDialog = ({ open, onOpenChange }: AdminHelpDialogProps) => {
 
           {view === 'detail' && selectedTicket && (
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between no-scrollbar">
                 <Button 
                   type="button"
                   variant="ghost" 
@@ -789,7 +789,7 @@ const AdminHelpDialog = ({ open, onOpenChange }: AdminHelpDialogProps) => {
                     setSelectedTicket(null);
                   }}
                 >
-                  ← Back to Tickets
+                  ← <span className="hidden sm:inline">Back to Tickets</span>
                 </Button>
                 <div className="flex items-center gap-2">
                   {getStatusBadge(ticketDetails?.status || selectedTicket.status)}
@@ -801,6 +801,7 @@ const AdminHelpDialog = ({ open, onOpenChange }: AdminHelpDialogProps) => {
                       type="button"
                       size="sm"
                       variant="outline"
+                      className='cursor-pointer'
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -838,7 +839,7 @@ const AdminHelpDialog = ({ open, onOpenChange }: AdminHelpDialogProps) => {
                   <CardHeader>
                     <CardTitle className="text-base">Assign Ticket</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-3">
+                  <CardContent className="space-y-3 px-2 sm:px-4">
                     <div className="flex gap-2">
                       <Select value={assignedTo} onValueChange={setAssignedTo}>
                         <SelectTrigger className="flex-1">
@@ -854,6 +855,7 @@ const AdminHelpDialog = ({ open, onOpenChange }: AdminHelpDialogProps) => {
                       </Select>
                       <Button
                         type="button"
+                        className='px-2 sm:px-4'
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
@@ -861,7 +863,7 @@ const AdminHelpDialog = ({ open, onOpenChange }: AdminHelpDialogProps) => {
                         }}
                         disabled={!assignedTo || assignTicketMutation.isPending}
                       >
-                        <UserCheck className="w-4 h-4 mr-2" />
+                        <UserCheck className="w-4 h-4 mr-2 hidden sm:block" />
                         {assignTicketMutation.isPending ? 'Assigning...' : 'Assign'}
                       </Button>
                     </div>
@@ -905,7 +907,7 @@ const AdminHelpDialog = ({ open, onOpenChange }: AdminHelpDialogProps) => {
                               <Badge variant="secondary" className="text-xs px-1.5 py-0">Internal</Badge>
                             )}
                             <span className="text-xs font-semibold opacity-90">
-                              {msg.user?.name || msg.staff?.name || 'System'}
+                              {!msg.is_internal && (msg.user?.name || msg.staff?.name || 'System')}
                             </span>
                             <span className={`text-xs opacity-70 text-foreground`}>
                               {formatDistanceToNow(new Date(msg.created_at), { addSuffix: true })}
@@ -952,7 +954,7 @@ const AdminHelpDialog = ({ open, onOpenChange }: AdminHelpDialogProps) => {
 
               <Separator />
 
-              <div className="space-y-2">
+              <div className="space-y-2 px-2 sm:px-4">
                 <div className="flex items-center gap-2">
                   <Label htmlFor="reply" className="flex-1">Add a Reply</Label>
                   <div className="flex items-center gap-2">
@@ -1043,7 +1045,7 @@ const AdminHelpDialog = ({ open, onOpenChange }: AdminHelpDialogProps) => {
                     handleReply();
                   }}
                   disabled={(!replyMessage.trim() && replyFiles.length === 0) || replyMutation.isPending}
-                  className="w-full"
+                  className="w-full cursor-pointer"
                 >
                   <Send className="w-4 h-4 mr-2" />
                   {replyMutation.isPending ? 'Sending...' : 'Send Reply'}

@@ -225,13 +225,13 @@ const MarketplaceServices = () => {
     <>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Marketplace Services</h1>
+          <h1 className="text-3xl font-bold"><span className='hidden sm:inline'>Marketplace</span> Services</h1>
           <p className="text-muted-foreground">Manage marketplace services</p>
         </div>
         <div>
           <Button className="cursor-pointer" onClick={() => { setEditingService(null); setIsDialogOpen(true); }}>
             <Plus className="mr-2 h-4 w-4" />
-            Add Service
+            <span className="hidden sm:block">Add Service</span>
           </Button>
         </div>
       </div>
@@ -363,7 +363,7 @@ const MarketplaceServices = () => {
               ))}
             </div>
           ) : (
-            <Table>
+            <Table className='min-w-[560px]!'>
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>

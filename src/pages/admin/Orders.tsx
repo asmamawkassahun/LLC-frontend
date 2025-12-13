@@ -98,7 +98,7 @@ const AdminOrdersPage = () => {
         <p className="text-muted-foreground">Manage all orders</p>
       </div>
 
-      <Card>
+      <Card >
         <CardHeader>
           <CardTitle>All Orders</CardTitle>
         </CardHeader>
@@ -120,7 +120,7 @@ const AdminOrdersPage = () => {
             </div>
           ) : (
             <>
-              <Table>
+              <Table className='min-w-[760px]!'>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Order Number</TableHead>
@@ -185,7 +185,7 @@ const AdminOrdersPage = () => {
               </Table>
               
               <div className="flex items-center justify-between mt-4">
-                <div className="text-sm text-muted-foreground">
+                <div className="text-sm text-muted-foreground hidden sm:block">
                   Showing {from} to {to} of {total} orders
                 </div>
                 <div className="flex items-center gap-2">
@@ -209,9 +209,9 @@ const AdminOrdersPage = () => {
                     disabled={currentPage === 1 || isLoading}
                   >
                     <ChevronLeft className="h-4 w-4 mr-1" />
-                    Previous
+                    <span className="hidden sm:block">Previous</span>
                   </Button>
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-sm text-muted-foreground hidden sm:block">
                     Page {currentPage} of {lastPage}
                   </div>
                   <Button
@@ -220,7 +220,7 @@ const AdminOrdersPage = () => {
                     onClick={() => setPage((prev) => Math.min(prev + 1, lastPage))}
                     disabled={currentPage === lastPage || isLoading}
                   >
-                    Next
+                    <span className="hidden sm:block">Next</span>
                     <ChevronRight className="h-4 w-4 ml-1" />
                   </Button>
                 </div>

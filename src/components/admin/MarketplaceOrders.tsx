@@ -276,7 +276,7 @@ const MarketplaceOrders = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Marketplace Orders</h1>
+          <h1 className="text-3xl font-bold"><span className="hidden sm:inline">Marketplace</span> Orders</h1>
           <p className="text-muted-foreground">Manage all marketplace orders</p>
         </div>
       </div>
@@ -293,7 +293,7 @@ const MarketplaceOrders = () => {
               ))}
             </div>
           ) : (
-            <Table>
+            <Table className='min-w-[860px]!'>
               <TableHeader>
                 <TableRow>
                   <TableHead>Company Name</TableHead>

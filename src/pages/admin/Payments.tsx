@@ -62,7 +62,7 @@ const AdminPaymentsPage = () => {
             </div>
           ) : (
             <>
-            <Table>
+            <Table className='min-w-[860px]!'>
               <TableHeader>
                 <TableRow>
                   <TableHead>Transaction ID</TableHead>
@@ -87,7 +87,7 @@ const AdminPaymentsPage = () => {
 
               {/* Pagination Controls */}
               <div className="flex items-center justify-between mt-4">
-                <div className="text-sm text-muted-foreground">
+                <div className="text-sm text-muted-foreground hidden sm:block">
                   Showing {from} to {to} of {total} payments
                 </div>
                 <div className="flex items-center gap-2">
@@ -111,9 +111,9 @@ const AdminPaymentsPage = () => {
                     disabled={currentPage === 1 || isLoading}
                   >
                     <ChevronLeft className="h-4 w-4 mr-1" />
-                    Previous
+                    <span className="hidden sm:block">Previous</span>
                   </Button>
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-sm text-muted-foreground hidden sm:block">
                     Page {currentPage} of {lastPage}
                   </div>
                   <Button
@@ -122,7 +122,7 @@ const AdminPaymentsPage = () => {
                     onClick={() => setPage((prev) => Math.min(prev + 1, lastPage))}
                     disabled={currentPage === lastPage || isLoading}
                   >
-                    Next
+                    <span className="hidden sm:block">Next</span>
                     <ChevronRight className="h-4 w-4 ml-1" />
                   </Button>
                 </div>

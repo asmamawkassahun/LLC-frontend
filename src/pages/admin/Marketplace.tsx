@@ -18,7 +18,7 @@ const AdminMarketplacePage = () => {
                 : 'border-transparent text-muted-foreground hover:text-foreground'
               }`}
           >
-            Marketplace Services
+            <span className="hidden sm:inline">Marketplace</span> Services
           </button>
           <button
             onClick={() => setActiveTab('orders')}
@@ -28,7 +28,7 @@ const AdminMarketplacePage = () => {
                 : 'border-transparent text-muted-foreground hover:text-foreground'
               }`}
           >
-            Marketplace Orders
+            <span className="hidden sm:inline">Marketplace</span> Orders
           </button>
         </div>
       </div>

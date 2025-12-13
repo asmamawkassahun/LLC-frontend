@@ -220,7 +220,7 @@ const AdminPromoCodesPage = () => {
         </div>
         <Button className='cursor-pointer' onClick={() => { setEditingPromoCode(null); setIsDialogOpen(true); }}>
           <Plus className="mr-2 h-4 w-4" />
-          Add Promo Code
+          <span className="hidden sm:block">Add Promo Code</span>
         </Button>
       </div>
 
@@ -386,7 +386,7 @@ const AdminPromoCodesPage = () => {
               ))}
             </div>
           ) : (
-            <Table>
+            <Table className='min-w-[660px]!'>
               <TableHeader>
                 <TableRow>
                   <TableHead>Code</TableHead>

@@ -232,7 +232,7 @@ const AdminPricingPlansPage = () => {
         </div>
         <Button className='cursor-pointer' onClick={() => { setEditingPlan(null); setIsDialogOpen(true); }}>
           <Plus className="mr-2 h-4 w-4" />
-          Add Plan
+          <span className="hidden sm:block">Add Plan</span>
         </Button>
       </div>
 

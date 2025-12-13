@@ -33,6 +33,8 @@ const AdminDashboardPage = () => {
     },
   });
 
+  console.log("Recent Orders: ", recentOrders);
+
   const { data: recentUsers, isLoading: usersLoading } = useQuery({
     queryKey: ['admin-recent-users'],
     queryFn: async () => {
@@ -132,16 +134,16 @@ const AdminDashboardPage = () => {
             ) : recentOrders && recentOrders.length > 0 ? (
               <div className="space-y-2">
                 {recentOrders.slice(0, 5).map((order: any) => (
-                  <div key={order.id} className="flex items-center justify-between p-2 border rounded">
-                    <div>
+                  <div key={order.id} className="p-2 border rounded space-y-2">
+                    <div className='flex items-center justify-between'>
                       <p className="font-medium">{order.order_number}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {order.user?.name || 'N/A'} - {formatCurrency(order.total_amount)}
-                      </p>
+                      <span className="text-sm text-muted-foreground">
+                        {order.payment_status_label || order.payment_status}
+                      </span>
                     </div>
-                    <span className="text-sm text-muted-foreground">
-                      {order.payment_status_label || order.payment_status}
-                    </span>
+                    <p className="text-sm text-muted-foreground">
+                      {order.user?.name || 'N/A'} - {formatCurrency(order.total_amount)}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -165,16 +167,15 @@ const AdminDashboardPage = () => {
             ) : recentUsers && recentUsers.length > 0 ? (
               <div className="space-y-2">
                 {recentUsers.slice(0, 5).map((user: any) => (
-                  <div key={user.id} className="flex items-center justify-between p-2 border rounded">
-                    <div>
+                  <div key={user.id} className="p-2 border rounded space-y-2">
+                    <div className='flex items-center justify-between'>
                       <p className="font-medium">{user.name}</p>
-                      <p className="text-sm text-muted-foreground">{user.email}</p>
+                      <span className={`text-xs px-2 py-1 rounded ${user.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                        }`}>
+                        {user.is_active ? 'Active' : 'Inactive'}
+                      </span>
                     </div>
-                    <span className={`text-xs px-2 py-1 rounded ${
-                      user.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                    }`}>
-                      {user.is_active ? 'Active' : 'Inactive'}
-                    </span>
+                    <p className="text-sm text-muted-foreground">{user.email}</p>
                   </div>
                 ))}
               </div>

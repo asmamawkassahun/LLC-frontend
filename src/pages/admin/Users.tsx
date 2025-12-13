@@ -89,7 +89,7 @@ const AdminUsersPage = () => {
       let countryCode = '+1'; // Default
       let phoneNumber = '';
       const countries = getUniqueCountries();
-      
+
       if (userData.phone) {
         // Phone number starts with +, try to extract country code
         if (userData.phone.startsWith('+')) {
@@ -106,7 +106,7 @@ const AdminUsersPage = () => {
               break;
             }
           }
-          
+
           // If no match found in country list, fallback to regex (extract first 1-4 digits)
           if (!matched) {
             const phoneMatch = userData.phone.match(/^(\+\d{1,4})(.*)$/);
@@ -144,7 +144,7 @@ const AdminUsersPage = () => {
 
       // Get the actual password from the API (decrypted by backend for admin)
       const actualPassword = userData.password || '';
-      
+
       setFormData({
         firstName,
         lastName,
@@ -229,11 +229,11 @@ const AdminUsersPage = () => {
       }
 
       await adminApiClient.put(`/admin/users/${selectedUserId}`, updateData);
-      
+
       // Invalidate and refetch the specific user query to get fresh data with updated password
       await queryClient.invalidateQueries({ queryKey: ['admin-user', selectedUserId] });
       await queryClient.refetchQueries({ queryKey: ['admin-user', selectedUserId] });
-      
+
       toast.success('User updated successfully');
       handleCloseModal();
       refetch();
@@ -413,8 +413,8 @@ const AdminUsersPage = () => {
                   </button>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {formData.password === originalPassword 
-                    ? 'Current password is displayed. Change it to update.' 
+                  {formData.password === originalPassword
+                    ? 'Current password is displayed. Change it to update.'
                     : 'Password will be updated when you save'}
                 </p>
               </div>
@@ -465,19 +465,19 @@ const AdminUsersPage = () => {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>All Users</CardTitle>
-            <div className="flex items-center gap-2">
+            <Button onClick={handleAddUser}>
+              <UserPlus className="mr-2 h-4 w-4" />
+              Add User
+            </Button>
+          </div>
+          <div className="flex  items-center gap-2">
               <Input
                 placeholder="Search users..."
                 value={search}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 className="w-[300px]"
               />
-              <Button onClick={handleAddUser}>
-                <UserPlus className="mr-2 h-4 w-4" />
-                Add User
-              </Button>
             </div>
-          </div>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -497,7 +497,7 @@ const AdminUsersPage = () => {
             </div>
           ) : (
             <>
-              <Table>
+              <Table className='min-w-[760px]!'>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Name</TableHead>
@@ -571,7 +571,7 @@ const AdminUsersPage = () => {
 
               {/* Pagination Controls */}
               <div className="flex items-center justify-between mt-4">
-                <div className="text-sm text-muted-foreground">
+                <div className="text-sm text-muted-foreground hidden sm:block">
                   Showing {from} to {to} of {total} users
                 </div>
                 <div className="flex items-center gap-2">
@@ -595,9 +595,9 @@ const AdminUsersPage = () => {
                     disabled={currentPage === 1 || isLoading}
                   >
                     <ChevronLeft className="h-4 w-4 mr-1" />
-                    Previous
+                    <span className="hidden sm:block">Previous</span>
                   </Button>
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-sm text-muted-foreground hidden sm:block">
                     Page {currentPage} of {lastPage}
                   </div>
                   <Button
@@ -606,7 +606,7 @@ const AdminUsersPage = () => {
                     onClick={() => setPage((prev) => Math.min(prev + 1, lastPage))}
                     disabled={currentPage === lastPage || isLoading}
                   >
-                    Next
+                    <span className="hidden sm:block">Next</span>
                     <ChevronRight className="h-4 w-4 ml-1" />
                   </Button>
                 </div>
