@@ -7,7 +7,7 @@ interface BankFormData {
     currency: string;
     accountType: string;
     fullAccountName: string;
-    achRoutingNumber: string;
+    bankName: string;
     accountNumber: string;
     accountTypeDetail: string;
     address: string;
@@ -28,7 +28,7 @@ const AddBankAccountModal = ({ isOpen, onClose, onSave }: AddBankAccountModalPro
         currency: 'USD',
         accountType: 'Personal',
         fullAccountName: '',
-        achRoutingNumber: '',
+        bankName: '',
         accountNumber: '',
         accountTypeDetail: 'Checking',
         address: '',
@@ -45,7 +45,7 @@ const AddBankAccountModal = ({ isOpen, onClose, onSave }: AddBankAccountModalPro
             currency: 'USD',
             accountType: 'Personal',
             fullAccountName: '',
-            achRoutingNumber: '',
+            bankName: '',
             accountNumber: '',
             accountTypeDetail: 'Checking',
             address: '',
@@ -86,12 +86,6 @@ const AddBankAccountModal = ({ isOpen, onClose, onSave }: AddBankAccountModalPro
 
         if (!bankFormData.fullAccountName.trim()) {
             newErrors.fullAccountName = 'Full account name is required';
-        }
-
-        if (!bankFormData.achRoutingNumber.trim()) {
-            newErrors.achRoutingNumber = 'ACH routing number is required';
-        } else if (bankFormData.achRoutingNumber.length < 8) {
-            newErrors.achRoutingNumber = 'The bank ach routing number field must be at least 8 characters.';
         }
 
         if (!bankFormData.accountNumber.trim()) {
@@ -201,31 +195,17 @@ const AddBankAccountModal = ({ isOpen, onClose, onSave }: AddBankAccountModalPro
                                 />
                             </div>
 
-                            {/* ACH routing number */}
+                            {/* Bank name */}
                             <div>
                                 <label className="text-sm font-medium text-foreground mb-2 block">
-                                    ACH routing number
+                                    Bank name
                                 </label>
-                                <div className="relative">
-                                    <input
-                                        type="text"
-                                        value={bankFormData.achRoutingNumber}
-                                        onChange={(e) => handleBankFormChange('achRoutingNumber', e.target.value.replace(/\D/g, ''))}
-                                        className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple focus:border-transparent text-foreground bg-background ${
-                                            errors.achRoutingNumber ? 'border-red-500' : 'border-input'
-                                        }`}
-                                    />
-                                    {errors.achRoutingNumber && (
-                                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                                            <div className="w-5 h-5 rounded-full bg-red-500 flex items-center justify-center">
-                                                <span className="text-white text-xs font-bold">!</span>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                                {errors.achRoutingNumber && (
-                                    <p className="text-sm text-red-500 mt-1">{errors.achRoutingNumber}</p>
-                                )}
+                                <input
+                                    type="text"
+                                    value={bankFormData.bankName}
+                                    onChange={(e) => handleBankFormChange('bankName', e.target.value)}
+                                    className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-purple focus:border-transparent text-foreground bg-background"
+                                />
                             </div>
 
                             {/* Account number */}

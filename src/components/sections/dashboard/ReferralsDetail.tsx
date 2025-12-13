@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import DashboardHeader from "./DashboardHeader";
 import { Button } from "@/components/ui";
 import {
@@ -7,73 +8,101 @@ import {
     type MRT_ColumnDef,
 } from 'material-react-table';
 import { useMemo } from 'react';
-import axios from 'axios';
 import AddBankAccountModal from '@/components/modal/AddBankAccountModal';
-
-interface Payout {
-    id: string;
-    date: string;
-    amount: string;
-    method: string;
-    status: string;
-}
-
-interface ReferralsData {
-    stats: {
-        usersReferred: number;
-        paidUsers: number;
-        referralEarnings: number;
-    };
-    wallet: {
-        balance: number;
-        bankAccount: string | null;
-    };
-    referralLink: string;
-    payouts: Payout[];
-}
+import referralService from '@/services/referralService';
+import type { Payout as ReferralPayout, CreateBankAccountRequest, RequestPayoutRequest } from '@/services/referralService';
+import { toast } from 'sonner';
+import { formatDate } from '@/lib/formatters';
 
 const ReferralsDetail = () => {
-    const [referralsData, setReferralsData] = useState<ReferralsData | null>(null);
     const [copied, setCopied] = useState(false);
-    const [loading, setLoading] = useState(true);
     const [globalFilter, setGlobalFilter] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const queryClient = useQueryClient();
 
-    useEffect(() => {
-        const fetchReferralsData = async () => {
-            try {
-                const response = await axios.get<ReferralsData>('/data/referrals.json');
-                setReferralsData(response.data);
-            } catch (error) {
-                console.error('Error fetching referrals data:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchReferralsData();
-    }, []);
+    // Fetch stats
+    const { data: stats, isLoading: isLoadingStats } = useQuery({
+        queryKey: ['referrals-stats'],
+        queryFn: () => referralService.getStats(),
+    });
 
-    const payoutColumns = useMemo<MRT_ColumnDef<Payout>[]>(
+    // Fetch referral link
+    const { data: referralLinkData, isLoading: isLoadingLink } = useQuery({
+        queryKey: ['referrals-link'],
+        queryFn: () => referralService.getReferralLink(),
+    });
+
+    // Fetch bank accounts
+    const { data: bankAccounts = [], isLoading: isLoadingBankAccounts } = useQuery({
+        queryKey: ['referrals-bank-accounts'],
+        queryFn: () => referralService.getBankAccounts(),
+    });
+
+    // Fetch payouts
+    const { data: payoutsData, isLoading: isLoadingPayouts } = useQuery({
+        queryKey: ['referrals-payouts'],
+        queryFn: () => referralService.getPayouts(),
+    });
+
+    const createBankAccountMutation = useMutation({
+        mutationFn: (data: CreateBankAccountRequest) => referralService.createBankAccount(data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['referrals-bank-accounts'] });
+            setIsModalOpen(false);
+            toast.success('Bank account added successfully');
+        },
+        onError: (error: any) => {
+            const message = error?.response?.data?.message || 'Failed to add bank account';
+            toast.error(message);
+        },
+    });
+
+    const requestPayoutMutation = useMutation({
+        mutationFn: (data: RequestPayoutRequest) => referralService.requestPayout(data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['referrals-payouts'] });
+            queryClient.invalidateQueries({ queryKey: ['referrals-stats'] });
+            toast.success('Payout request submitted successfully');
+        },
+        onError: (error: any) => {
+            const message = error?.response?.data?.message || 'Failed to request payout';
+            toast.error(message);
+        },
+    });
+
+    const loading = isLoadingStats || isLoadingLink || isLoadingBankAccounts || isLoadingPayouts;
+
+    const payoutColumns = useMemo<MRT_ColumnDef<ReferralPayout>[]>(
         () => [
             {
-                accessorKey: 'date',
+                accessorKey: 'created_at',
                 header: 'Date',
                 size: 150,
+                Cell: ({ cell }) => formatDate(cell.getValue<string>()),
             },
             {
                 accessorKey: 'amount',
                 header: 'Amount',
                 size: 120,
+                Cell: ({ cell }) => `$${Number(cell.getValue<number>()).toFixed(2)}`,
             },
             {
-                accessorKey: 'method',
-                header: 'Method',
+                accessorKey: 'bank_account',
+                header: 'Bank',
                 size: 150,
+                Cell: ({ row }) => {
+                    const bankAccount = (row.original as ReferralPayout).bank_account;
+                    return bankAccount?.bank_name || 'N/A';
+                },
             },
             {
                 accessorKey: 'status',
                 header: 'Status',
                 size: 120,
+                Cell: ({ cell }) => {
+                    const status = cell.getValue<string>();
+                    return status.charAt(0).toUpperCase() + status.slice(1);
+                },
             },
         ],
         []
@@ -81,7 +110,7 @@ const ReferralsDetail = () => {
 
     const payoutTable = useMaterialReactTable({
         columns: payoutColumns,
-        data: referralsData?.payouts || [],
+        data: payoutsData?.data || [],
         enableRowSelection: false,
         enableColumnActions: true,
         enableColumnFilters: true,
@@ -106,7 +135,7 @@ const ReferralsDetail = () => {
         defaultColumn: {
             filterFn: 'contains',
         },
-        enableBottomToolbar: (referralsData?.payouts || []).length > 0,
+        enableBottomToolbar: (payoutsData?.data || []).length > 0,
         muiTablePaperProps: {
             elevation: 0,
             sx: {
@@ -128,10 +157,11 @@ const ReferralsDetail = () => {
     });
 
     const handleCopyLink = () => {
-        if (referralsData?.referralLink) {
-            navigator.clipboard.writeText(referralsData.referralLink);
+        if (referralLinkData?.referral_link) {
+            navigator.clipboard.writeText(referralLinkData.referral_link);
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
+            toast.success('Referral link copied!');
         }
     };
 
@@ -144,38 +174,70 @@ const ReferralsDetail = () => {
     };
 
     const handleSaveBankAccount = (data: any) => {
-        // Save bank account data
-        console.log('Saving bank account:', data);
-        // TODO: Implement actual save logic
+        // Map modal data to backend format
+        const bankAccountData: CreateBankAccountRequest = {
+            account_holder_name: data.fullAccountName,
+            account_number: data.accountNumber,
+            bank_name: data.bankName,
+            country: data.country,
+            is_primary: bankAccounts.length === 0, // Set as primary if it's the first account
+        };
+        createBankAccountMutation.mutate(bankAccountData);
+    };
+
+    const handleRequestPayout = () => {
+        const primaryBankAccount = bankAccounts.find(acc => acc.is_primary) || bankAccounts[0];
+        if (!primaryBankAccount) {
+            toast.error('Please add a bank account first');
+            setIsModalOpen(true);
+            return;
+        }
+
+        if (!stats || stats.pending_earnings <= 0) {
+            toast.error('No pending earnings available');
+            return;
+        }
+
+        requestPayoutMutation.mutate({
+            amount: stats.pending_earnings,
+            bank_account_id: primaryBankAccount.id,
+        });
     };
 
     const statsCards = useMemo(() => {
-        if (!referralsData) return [];
+        if (!stats) return [];
 
         return [
             {
                 id: 'usersReferred',
                 label: 'Users referred',
-                value: referralsData.stats.usersReferred,
+                value: stats.users_referred,
                 imageUrl: 'https://app.privatily.com/assets/img/affiliate/icone-annonce.png',
             },
             {
                 id: 'paidUsers',
                 label: 'Paid users',
-                value: referralsData.stats.paidUsers,
+                value: stats.paid_users,
                 imageUrl: 'https://app.privatily.com/assets/img/affiliate/icone-users.png',
             },
             {
                 id: 'referralEarnings',
                 label: 'Referral earnings',
-                value: `$${referralsData.stats.referralEarnings.toFixed(2)}`,
+                value: `$${stats.referral_earnings.toFixed(2)}`,
                 imageUrl: 'https://app.privatily.com/assets/img/affiliate/icone-earnings.png',
             },
         ];
-    }, [referralsData]);
+    }, [stats]);
 
-    if (loading || !referralsData) {
-        return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
+    if (loading || !stats || !referralLinkData) {
+        return (
+            <div className="flex justify-center items-center min-h-screen">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple mx-auto mb-4"></div>
+                    <p className="text-muted-foreground">Loading...</p>
+                </div>
+            </div>
+        );
     }
 
     return (
@@ -229,7 +291,7 @@ const ReferralsDetail = () => {
                                 />
                                 <input
                                     type="text"
-                                    value={referralsData.referralLink}
+                                    value={referralLinkData.referral_link}
                                     readOnly
                                     className="w-full pl-10 pr-4 py-3  bg-foreground/5 rounded-lg text-xs! sm:text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-purple focus:border-transparent"
                                 />
@@ -263,16 +325,16 @@ const ReferralsDetail = () => {
                                     />
                                     <input
                                         type="text"
-                                        value={`$${referralsData.wallet.balance}`}
+                                        value={`$${stats.pending_earnings.toFixed(2)}`}
                                         readOnly
                                         className="w-full pl-10 pr-4 py-3  bg-foreground/5 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-purple focus:border-transparent"
                                     />
-                                    {/* <span className="text-2xl font-bold text-foreground">${referralsData.wallet.balance}</span> */}
                                     <Button
-                                        // disabled={referralsData.wallet.balance === 0}
-                                        className={`absolute right-1 top-1 text-xs! sm:text-sm rounded-sm bg-foreground/5 border border-foreground ${referralsData.wallet.balance === 0 ? " text-gray-500 cursor-not-allowed" : "bg-purple hover:bg-purple-dark text-white"}`}
+                                        onClick={handleRequestPayout}
+                                        disabled={stats.pending_earnings === 0 || requestPayoutMutation.isPending}
+                                        className={`absolute right-1 top-1 text-xs! sm:text-sm rounded-sm bg-foreground/5 border border-foreground ${stats.pending_earnings === 0 ? " text-gray-500 cursor-not-allowed" : "bg-purple hover:bg-purple-dark text-white"}`}
                                     >
-                                        Pay out
+                                        {requestPayoutMutation.isPending ? 'Processing...' : 'Pay out'}
                                     </Button>
                                 </div>
                             </div>
@@ -290,15 +352,16 @@ const ReferralsDetail = () => {
                                     />
                                     <input
                                         type="text"
-                                        value={referralsData.wallet.bankAccount || 'Add your bank account'}
+                                        value={bankAccounts.length > 0 ? `${bankAccounts[0].bank_name} - ${bankAccounts[0].account_number.slice(-4)}` : 'Add your bank account'}
                                         readOnly
+                                        disabled
                                         className="w-full pl-10 pr-4 py-3 bg-foreground/5 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-purple focus:border-transparent"
                                     />
                                     <Button 
                                         onClick={handleOpenModal}
                                         className="absolute right-1 top-1 text-xs! sm:text-sm px-6 rounded-sm bg-purple hover:bg-purple-dark text-white"
                                     >
-                                        {!referralsData.wallet.bankAccount ? 'Edit' : 'Add'}
+                                        {bankAccounts.length === 0 ? 'Add' : 'Edit'}
                                     </Button>
                                 </div>
                             </div>

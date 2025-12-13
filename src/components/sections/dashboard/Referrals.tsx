@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { HiPlus, HiLink, HiShare, HiCurrencyDollar } from 'react-icons/hi';
 import { HiChatBubbleLeftRight } from 'react-icons/hi2';
 import ReferralsDetail from './ReferralsDetail';
 import { PiCaretDoubleRightBold } from 'react-icons/pi';
+import referralService from '@/services/referralService';
+import { toast } from 'sonner';
 
 interface StepCard {
     number: string;
@@ -13,6 +16,46 @@ interface StepCard {
 
 const Referrals = () => {
     const [showDetail, setShowDetail] = useState(false);
+    const queryClient = useQueryClient();
+
+    // Check if user is already an affiliate
+    const { data: dashboardData, isLoading: isLoadingAffiliate } = useQuery({
+        queryKey: ['referrals-dashboard'],
+        queryFn: () => referralService.getDashboard(),
+        retry: false,
+        onError: (error: any) => {
+            // 404 means user is not an affiliate - that's fine
+            if (error?.response?.status !== 404) {
+                console.error('Error checking affiliate status:', error);
+            }
+        },
+    });
+
+    const registerMutation = useMutation({
+        mutationFn: () => referralService.register(),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['referrals-dashboard'] });
+            queryClient.invalidateQueries({ queryKey: ['referrals-stats'] });
+            queryClient.invalidateQueries({ queryKey: ['referrals-link'] });
+            setShowDetail(true);
+            toast.success('Successfully joined the affiliate program!');
+        },
+        onError: (error: any) => {
+            const message = error?.response?.data?.message || 'Failed to join affiliate program';
+            toast.error(message);
+        },
+    });
+
+    useEffect(() => {
+        // If user is already an affiliate, show detail view
+        if (dashboardData?.affiliate) {
+            setShowDetail(true);
+        }
+    }, [dashboardData]);
+
+    const handleJoin = () => {
+        registerMutation.mutate();
+    };
 
     const steps: StepCard[] = [
         {
@@ -41,7 +84,18 @@ const Referrals = () => {
         }
     ];
 
-    if (showDetail) {
+    if (isLoadingAffiliate) {
+        return (
+            <div className="flex justify-center items-center min-h-screen">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple mx-auto mb-4"></div>
+                    <p className="text-muted-foreground">Loading...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (showDetail || dashboardData?.affiliate) {
         return (
             <div>
                 <ReferralsDetail />
@@ -80,16 +134,17 @@ const Referrals = () => {
                 {/* CTA Buttons */}
                 <div className="max-w-sm mx-auto flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 md:mb-16">
                     <div 
-                        onClick={() => setShowDetail(true)}
-                        className="relative w-full bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-base font-medium rounded-md shadow-md transition-colors cursor-pointer flex items-center justify-center"
+                        onClick={handleJoin}
+                        className="relative w-full bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-base font-medium rounded-md shadow-md transition-colors cursor-pointer flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        <span>Join and let's grow together!</span>
+                        <span>{registerMutation.isPending ? 'Joining...' : "Join and let's grow together!"}</span>
                         <button
                             onClick={(e) => {
                                 e.stopPropagation();
-                                setShowDetail(true);
+                                handleJoin();
                             }}
-                            className="absolute right-1 top- bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md shadow-md transition-colors flex items-center gap-1 cursor-pointer"
+                            disabled={registerMutation.isPending}
+                            className="absolute right-1 top- bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md shadow-md transition-colors flex items-center gap-1 cursor-pointer disabled:opacity-50"
                         >
                             <PiCaretDoubleRightBold className="w-5 h-5" />
                         </button>

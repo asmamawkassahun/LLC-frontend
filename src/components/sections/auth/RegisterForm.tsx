@@ -330,6 +330,10 @@ const RegisterForm = () => {
             // Get country name from selected country
             const country = selectedCountry.name;
 
+            // Get referral code from URL parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const referralCode = urlParams.get('ref');
+
             const response = await authService.register({
                 name: fullName,
                 email: email.trim(),
@@ -337,6 +341,7 @@ const RegisterForm = () => {
                 password_confirmation: passwordConfirmation,
                 phone,
                 country,
+                referral_code: referralCode || undefined,
             });
 
             // Store tokens

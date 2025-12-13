@@ -32,6 +32,7 @@ export const ROUTES = {
     ADMIN_PROMO_CODES: '/admin/promo-codes',
     ADMIN_MARKETPLACE: '/admin/marketplace',
     ADMIN_AFFILIATES: '/admin/affiliates',
+    ADMIN_PAYOUT_REQUESTS: '/admin/payout-requests',
     ADMIN_SUPPORT: '/admin/support',
   } as const;
   
