@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import adminAuthService from '@/services/adminAuthService';
 import { ROUTES } from '@/constants/routes';
 import { LogOut, User, Settings, MessageSquare } from 'lucide-react';
+import AdminNotificationDropdown from './AdminNotificationDropdown';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import adminApiClient from '@/utils/api-helpers/adminApiClient';
 import { useState, useEffect } from 'react';
@@ -253,6 +254,7 @@ const AdminNavbar = () => {
     <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4">
       <SidebarTrigger className="-ml-1" />
       <div className="flex flex-1 items-center justify-end gap-4">
+          <AdminNotificationDropdown />
           <Button
             variant="outline"
             size="sm"

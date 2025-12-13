@@ -1,9 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import AffiliatesList from '@/components/admin/AffiliatesList';
 import PayoutRequestsList from '@/components/admin/PayoutRequestsList';
 
 const AdminAffiliatesPage = () => {
-  const [activeTab, setActiveTab] = useState<'affiliates' | 'payouts'>('affiliates');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabParam = searchParams.get('tab') as 'affiliates' | 'payouts' | null;
+  const [activeTab, setActiveTab] = useState<'affiliates' | 'payouts'>(tabParam || 'affiliates');
+
+  // Update tab when URL parameter changes
+  useEffect(() => {
+    if (tabParam && (tabParam === 'affiliates' || tabParam === 'payouts')) {
+      setActiveTab(tabParam);
+    }
+  }, [tabParam]);
+
+  const handleTabChange = (tab: 'affiliates' | 'payouts') => {
+    setActiveTab(tab);
+    setSearchParams({ tab });
+  };
 
   return (
     <div className="space-y-6">
@@ -16,7 +31,7 @@ const AdminAffiliatesPage = () => {
       <div className="flex bg-foreground/5 rounded-md p-1">
         <div className="flex gap-4 items-center justify-between w-full">
           <button
-            onClick={() => setActiveTab('affiliates')}
+            onClick={() => handleTabChange('affiliates')}
             className={`px-4 py-2 font-medium transition-colors cursor-pointer w-full ${
               activeTab === 'affiliates'
                 ? 'bg-background text-primary rounded-md'
@@ -26,7 +41,7 @@ const AdminAffiliatesPage = () => {
             Affiliates
           </button>
           <button
-            onClick={() => setActiveTab('payouts')}
+            onClick={() => handleTabChange('payouts')}
             className={`px-4 py-2 font-medium transition-colors cursor-pointer w-full ${
               activeTab === 'payouts'
                 ? 'bg-background text-primary rounded-md'
