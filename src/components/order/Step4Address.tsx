@@ -40,10 +40,11 @@ interface Step4AddressProps {
     onAddressChange: (address: AddressData) => void;
     selectedState?: string; // State selected in step 2
     useRegisteredAgent?: boolean;
+    countryName?: string; // Country from pricing plan
     onRegisteredAgentChange?: (useRegisteredAgent: boolean, registeredAgentAddressId: number | null) => void;
 }
 
-const Step4Address = ({ address, onAddressChange, selectedState, useRegisteredAgent: propUseRegisteredAgent = false, onRegisteredAgentChange }: Step4AddressProps) => {
+const Step4Address = ({ address, onAddressChange, selectedState, useRegisteredAgent: propUseRegisteredAgent = false, countryName, onRegisteredAgentChange }: Step4AddressProps) => {
     const [localAddress, setLocalAddress] = useState<AddressData>(address || {
         streetAddress: '',
         city: '',
@@ -80,10 +81,12 @@ const Step4Address = ({ address, onAddressChange, selectedState, useRegisteredAg
         setUseRegisteredAgent(checked);
 
         if (checked) {
-            // Fetch the first active registered agent address
+            // Fetch the active registered agent address for the selected country
             setIsLoadingAddress(true);
             try {
-                const response = await apiClient.get('/registered-agent-address');
+                // Build query params with country if available
+                const params = countryName ? { country: countryName } : {};
+                const response = await apiClient.get('/registered-agent-address', { params });
                 const agentAddress = response.data.data;
 
                 if (agentAddress) {

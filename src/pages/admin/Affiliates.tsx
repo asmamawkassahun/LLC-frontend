@@ -51,7 +51,7 @@ const AdminAffiliatesPage = () => {
             Payout Requests
           </button>
         </div>
-      </div>
+            </div>
 
       {/* Affiliates Tab */}
       {activeTab === 'affiliates' && <AffiliatesList />}

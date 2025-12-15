@@ -123,15 +123,15 @@ const ActionCell = ({ row, onPay, onUpdate, onDownload, onSetPrimary, onDelete, 
             >
                 {/* Only show Update order if not paid */}
                 {!isPaid && (
-                    <MenuItem
-                        onClick={() => {
-                            onUpdate(row.original.id);
-                            handleClose();
-                        }}
-                    >
-                        <EditIcon sx={{ fontSize: '16px', mr: 1 }} />
-                        Update order
-                    </MenuItem>
+                <MenuItem
+                    onClick={() => {
+                        onUpdate(row.original.id);
+                        handleClose();
+                    }}
+                >
+                    <EditIcon sx={{ fontSize: '16px', mr: 1 }} />
+                    Update order
+                </MenuItem>
                 )}
                 <MenuItem
                     onClick={() => {
@@ -156,23 +156,23 @@ const ActionCell = ({ row, onPay, onUpdate, onDownload, onSetPrimary, onDelete, 
             </Menu>
             {/* Only show Delete button if not paid and not confirmed */}
             {!isPaid && row.original.status !== 'confirmed' && (
-                <IconButton
-                    size="small"
-                    onClick={() => onDelete(row.original.id)}
-                    sx={{
-                        padding: '7px',
-                        color: '#dc2626',
-                        borderRadius: '4px',
-                        boxShadow: 'rgba(0, 0, 0, 0.4) -0.5px 1.5px 3px 0px',
+            <IconButton
+                size="small"
+                onClick={() => onDelete(row.original.id)}
+                sx={{
+                    padding: '7px',
+                    color: '#dc2626',
+                    borderRadius: '4px',
+                    boxShadow: 'rgba(0, 0, 0, 0.4) -0.5px 1.5px 3px 0px',
+                    backgroundColor: '#FF3838',
+                    '&:hover': {
                         backgroundColor: '#FF3838',
-                        '&:hover': {
-                            backgroundColor: '#FF3838',
-                            boxShadow: 'rgba(0, 0, 0, 0.3) -0.5px 2px 3px 0px',
-                        },
-                    }}
-                >
-                    <FiTrash2 style={{ width: '16px', height: '16px', color: '#ffffff' }} />
-                </IconButton>
+                        boxShadow: 'rgba(0, 0, 0, 0.3) -0.5px 2px 3px 0px',
+                    },
+                }}
+            >
+                <FiTrash2 style={{ width: '16px', height: '16px', color: '#ffffff' }} />
+            </IconButton>
             )}
         </div>
     );

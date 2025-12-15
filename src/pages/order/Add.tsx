@@ -596,6 +596,7 @@ const AddOrderPage = () => {
                                         onAddressChange={(address) => handleFormDataChange({ address })}
                                         selectedState={formData.state.name}
                                         useRegisteredAgent={formData.useRegisteredAgent}
+                                        countryName={formData.plan[0]?.countryName || countryName || ''}
                                         onRegisteredAgentChange={(useRegisteredAgent, registeredAgentAddressId) => 
                                             handleFormDataChange({ 
                                                 useRegisteredAgent, 

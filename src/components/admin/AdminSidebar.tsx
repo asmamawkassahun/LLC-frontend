@@ -24,6 +24,7 @@ import {
   MessageSquare,
   Settings,
   FileText,
+  MapPin,
 } from 'lucide-react';
 
 const AdminSidebar = () => {
@@ -87,6 +88,11 @@ const AdminSidebar = () => {
           title: 'Affiliates',
           url: ROUTES.ADMIN_AFFILIATES,
           icon: UsersRound,
+        },
+        {
+          title: 'Registered Agent Addresses',
+          url: ROUTES.ADMIN_REGISTERED_AGENT_ADDRESSES,
+          icon: MapPin,
         },
       ],
     },
