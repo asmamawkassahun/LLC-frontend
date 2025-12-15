@@ -32,6 +32,7 @@ import AdminSupportPage from './pages/admin/Support';
 import MaintenanceCheck from './components/MaintenanceCheck';
 import Inbox from './components/sections/dashboard/Inbox';
 import NotificationProvider from './components/NotificationProvider';
+import SuspendedAccountPage from './pages/SuspendedAccount';
 
 
 function App() {
@@ -64,6 +65,16 @@ function App() {
           <Route path={ROUTES.VERIFY_CODE} element={<VerifyCodePage />} />
           <Route path={ROUTES.RESET_PASSWORD} element={<ResetPasswordPage />} />
         </Route>
+
+        {/* Suspended Account Route - Accessible when authenticated but suspended */}
+        <Route
+          path={ROUTES.SUSPENDED}
+          element={
+            <ProtectedRoute>
+              <SuspendedAccountPage />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Protected Routes with DashboardLayout (with Navbar) */}
         <Route

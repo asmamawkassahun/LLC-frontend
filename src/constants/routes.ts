@@ -20,6 +20,7 @@ export const ROUTES = {
     SETTINGS: '/settings',
     ORDERS: '/orders',
     INBOX: '/inbox',
+    SUSPENDED: '/suspended',
     LOGOUT: '/logout',
     // Admin routes
     ADMIN_LOGIN: '/admin/login',
