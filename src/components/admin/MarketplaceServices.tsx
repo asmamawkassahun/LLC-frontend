@@ -49,6 +49,7 @@ const MarketplaceServices = () => {
     requirements: [] as string[],
     price: '',
     is_active: true,
+    country_id: [] as number[],
   });
   const [requirementInput, setRequirementInput] = useState('');
 
@@ -56,6 +57,16 @@ const MarketplaceServices = () => {
     queryKey: ['admin-marketplace'],
     queryFn: async () => {
       const response = await adminApiClient.get('/admin/marketplace/services');
+      return response.data;
+    },
+  });
+
+  console.log("Marketplace Services: ", data?.data);
+
+  const { data: countriesData } = useQuery({
+    queryKey: ['admin-countries'],
+    queryFn: async () => {
+      const response = await adminApiClient.get('/admin/countries');
       return response.data;
     },
   });
@@ -69,6 +80,11 @@ const MarketplaceServices = () => {
         requirements: Array.isArray(editingService.requirements) ? editingService.requirements : [],
         price: editingService.price?.toString() || '',
         is_active: editingService.is_active ?? true,
+        country_id: Array.isArray(editingService.country_id) 
+          ? editingService.country_id.map((id: any) => typeof id === 'string' ? parseInt(id) : id)
+          : editingService.country_id 
+            ? [typeof editingService.country_id === 'string' ? parseInt(editingService.country_id) : editingService.country_id]
+            : [],
       });
       setRequirementInput('');
     } else if (!editingService && isDialogOpen) {
@@ -79,6 +95,7 @@ const MarketplaceServices = () => {
         requirements: [],
         price: '',
         is_active: true,
+        country_id: [],
       });
       setRequirementInput('');
     }
@@ -93,6 +110,7 @@ const MarketplaceServices = () => {
       requirements: [],
       price: '',
       is_active: true,
+      country_id: [],
     });
     setRequirementInput('');
   };
@@ -206,6 +224,7 @@ const MarketplaceServices = () => {
         requirements: formData.requirements.length > 0 ? formData.requirements : null,
         price: parseFloat(formData.price),
         is_active: formData.is_active,
+        country_id: formData.country_id.map((id: number) => typeof id === 'string' ? parseInt(id) : id),
       };
 
       if (editingService) {
@@ -325,6 +344,45 @@ const MarketplaceServices = () => {
               />
             </div>
 
+            {/* Countries */}
+            <div className="space-y-2">
+              <Label htmlFor="country_id">Countries *</Label>
+              <div className="border rounded-md p-4 max-h-48 overflow-y-auto">
+                {countriesData?.map((country: any) => (
+                  <div key={country.id} className="flex items-center space-x-2 py-2">
+                    <input
+                      type="checkbox"
+                      id={`country-${country.id}`}
+                      checked={formData.country_id.includes(country.id)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setFormData({
+                            ...formData,
+                            country_id: [...formData.country_id, country.id],
+                          });
+                        } else {
+                          setFormData({
+                            ...formData,
+                            country_id: formData.country_id.filter((id) => id !== country.id),
+                          });
+                        }
+                      }}
+                      className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary cursor-pointer"
+                    />
+                    <Label
+                      htmlFor={`country-${country.id}`}
+                      className="text-sm font-normal cursor-pointer"
+                    >
+                      {country.name}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+              {formData.country_id.length === 0 && (
+                <p className="text-xs text-destructive">Please select at least one country</p>
+              )}
+            </div>
+
             {/* Is Active */}
             <div className="flex items-center space-x-2">
               <input
@@ -367,6 +425,7 @@ const MarketplaceServices = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
+                  <TableHead>Country</TableHead>
                   <TableHead>Price</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Actions</TableHead>
@@ -376,6 +435,13 @@ const MarketplaceServices = () => {
                 {data?.data?.map((service: any) => (
                   <TableRow key={service.id}>
                     <TableCell className="font-medium">{service.name}</TableCell>
+                    <TableCell>
+                      {service.countries && service.countries.length > 0
+                        ? service.countries.map((c: any) => c.name).join(', ')
+                        : Array.isArray(service.country_id) && service.country_id.length > 0
+                        ? 'Loading...'
+                        : 'N/A'}
+                    </TableCell>
                     <TableCell>{formatCurrency(service.price)}</TableCell>
                     <TableCell>
                       <span className={`px-2 py-1 rounded text-xs ${service.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
