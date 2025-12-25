@@ -89,9 +89,14 @@ const CompanySelector = ({
                     is_primary: c.id === company.id
                 })));
                 
-                // Dispatch event to refresh orders table
+                // Dispatch event to notify other parts of the app about the company change
+                // Include country information so listeners can decide whether to refetch heavy data
                 window.dispatchEvent(new CustomEvent('companyChanged', { 
-                    detail: { companyId: company.id } 
+                    detail: {
+                        companyId: company.id,
+                        country: company.country?.name,
+                        previousCountry: selectedCompany?.country?.name,
+                    }
                 }));
             }
             setSelectedCompany(company);

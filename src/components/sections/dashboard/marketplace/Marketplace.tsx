@@ -46,9 +46,23 @@ const Marketplace = () => {
 
     // Listen for company changes and refetch services so marketplace updates immediately
     useEffect(() => {
-        const handleCompanyChanged = () => {
-            // refetch marketplace services for the newly selected company
-            refetch().catch((err) => console.error('Error refetching marketplace services:', err));
+        const handleCompanyChanged = (e: Event) => {
+            try {
+                const detail = (e as CustomEvent)?.detail || {};
+                const newCountry = detail.country;
+                const previousCountry = detail.previousCountry;
+
+                // If both countries are defined and unchanged, avoid refetch for performance
+                if (newCountry !== undefined && previousCountry !== undefined && newCountry === previousCountry) {
+                    return;
+                }
+
+                // Otherwise refetch marketplace services for the newly selected company
+                refetch().catch((err) => console.error('Error refetching marketplace services:', err));
+            } catch (err) {
+                // Fallback: if something unexpected happens, refetch
+                refetch().catch((e) => console.error('Error refetching marketplace services:', e));
+            }
         };
 
         window.addEventListener('companyChanged', handleCompanyChanged as EventListener);
