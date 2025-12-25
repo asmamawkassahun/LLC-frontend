@@ -358,12 +358,23 @@ const CompanyDashboard = () => {
                                         {address.street_address && <p>{address.street_address}</p>}
                                         {(address.city || address.state || address.zip_code) && (
                                             <p>
-                                                {[address.city, address.state, address.zip_code]
+                                                {[
+                                                    address.city,
+                                                    // address.state may be an object ({ id, name }) or a string
+                                                    typeof address.state === 'string' ? address.state : address.state?.name,
+                                                    address.zip_code,
+                                                ]
                                                     .filter(Boolean)
                                                     .join(', ')}
                                             </p>
                                         )}
-                                        {address.country && <p>{address.country}</p>}
+                                        {address.country && (
+                                            <p>
+                                                {typeof address.country === 'string'
+                                                    ? address.country
+                                                    : address.country?.name}
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
                             ))
