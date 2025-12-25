@@ -94,7 +94,21 @@ const CompanyDashboard = () => {
             }
         };
 
+        // Initial fetch
         fetchPrimaryOrder();
+
+        // Re-fetch when company selection changes elsewhere in the app
+        const handleCompanyChanged = () => {
+            // show a small loading state while refetching
+            setLoading(true);
+            fetchPrimaryOrder();
+        };
+
+        window.addEventListener('companyChanged', handleCompanyChanged as EventListener);
+
+        return () => {
+            window.removeEventListener('companyChanged', handleCompanyChanged as EventListener);
+        };
     }, []);
 
     if (loading) {

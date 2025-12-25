@@ -36,13 +36,28 @@ const Marketplace = () => {
     const [expandedServices, setExpandedServices] = useState<Set<number>>(new Set());
 
     // Fetch marketplace services from API
-    const { data: servicesData, isLoading } = useQuery({
+    const { data: servicesData, isLoading, refetch } = useQuery({
         queryKey: ['marketplace-services'],
         queryFn: async () => {
             const response = await apiClient.get<MarketplaceService[]>('/marketplace/services');
             return response.data;
         },
     });
+
+    // Listen for company changes and refetch services so marketplace updates immediately
+    useEffect(() => {
+        const handleCompanyChanged = () => {
+            // refetch marketplace services for the newly selected company
+            refetch().catch((err) => console.error('Error refetching marketplace services:', err));
+        };
+
+        window.addEventListener('companyChanged', handleCompanyChanged as EventListener);
+        return () => {
+            window.removeEventListener('companyChanged', handleCompanyChanged as EventListener);
+        };
+        // only attach once; refetch identity from react-query is stable
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // Convert API data to ServiceCard format
     const services: ServiceCard[] = servicesData?.map((service) => {
