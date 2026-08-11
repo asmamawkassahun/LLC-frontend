@@ -1,4 +1,5 @@
 import { FaAngleRight } from "react-icons/fa";
+import { Headset, CheckCircle2 } from "lucide-react";
 import { Button } from "../ui";
 
 const CTASection = () => {
@@ -6,30 +7,52 @@ const CTASection = () => {
         <div className="max-w-7xl mx-auto bg-background pb-12 md:pb-16 lg:pb-20">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex flex-col md:flex-row items-center gap-8 lg:gap-18">
-                    {/* Left Section - Image with Purple Background */}
+                    {/* Left Section - Support Visual */}
                     <div className="flex-1 w-full md:w-auto relative order-2 sm:order-1">
-                        <div className="relative rounded-2xl overflow-hidden  p-4 md:p-6">
-                            {/* Abstract Black Curved Lines - Top Right Corner */}
-                            {/* <div className="absolute top-0 right-0 w-40 h-40 opacity-30">
-                                <svg className="w-full h-full" viewBox="0 0 200 200" preserveAspectRatio="none">
-                                    <path
-                                        d="M 0 0 Q 100 50 200 0 L 200 200 Q 100 150 0 200 Z"
-                                        fill="rgba(0, 0, 0, 0.4)"
-                                    />
-                                    <path
-                                        d="M 40 40 Q 120 80 200 40 L 200 160 Q 120 120 40 160 Z"
-                                        fill="rgba(0, 0, 0, 0.3)"
-                                    />
-                                </svg>
-                            </div> */}
-
-                            {/* Main Image */}
+                        <div className="relative rounded-2xl overflow-hidden p-4 md:p-6">
+                            {/* Visual Card */}
                             <div className="relative z-10">
-                                <img
-                                    src="https://privatily.com/wp-content/uploads/2023/08/image-contact-min.png"
-                                    alt="Customer service representative"
-                                    className="w-full h-auto rounded-xl object-cover"
-                                />
+                                <div className="bg-navy-900 rounded-xl p-8 md:p-10 relative overflow-hidden">
+                                    {/* Glow */}
+                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-gold-500/15 rounded-full blur-3xl"></div>
+
+                                    {/* Headset */}
+                                    <div className="relative z-10 flex justify-center mb-8">
+                                        <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gold-500/10 border border-gold-500/40 flex items-center justify-center">
+                                            <Headset className="w-10 h-10 md:w-12 md:h-12 text-gold-400" />
+                                        </div>
+                                    </div>
+
+                                    {/* Chat Bubbles */}
+                                    <div className="relative z-10 space-y-4 max-w-xs mx-auto">
+                                        <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gold-300 to-gold-500 flex items-center justify-center text-white text-xs font-bold">
+                                                    K
+                                                </div>
+                                                <span className="text-xs text-gold-300 font-medium">
+                                                    Incorporia Support
+                                                </span>
+                                            </div>
+                                            <p className="text-sm text-white/90">
+                                                Hi! How can we help you form your company today?
+                                            </p>
+                                        </div>
+                                        <div className="flex justify-end">
+                                            <div className="bg-gold-500/15 border border-gold-500/30 rounded-lg px-4 py-2">
+                                                <p className="text-sm text-gold-200">
+                                                    I have a question about LLC formation
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <CheckCircle2 className="w-4 h-4 text-gold-400" />
+                                            <p className="text-xs text-white/70">
+                                                Avg. response time: under 1 hour
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

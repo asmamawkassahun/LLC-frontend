@@ -663,7 +663,7 @@ const HelpDialog = ({ open, onOpenChange }: HelpDialogProps) => {
                                       rel="noopener noreferrer"
                                       className={`flex items-center gap-2 px-3 py-1.5 rounded-md hover:opacity-80 transition-opacity text-sm ${
                                         isOutgoing
-                                          ? 'bg-blue-700 text-white'
+                                          ? 'bg-primary text-white'
                                           : 'bg-gray-300 text-gray-900'
                                       }`}
                                     >

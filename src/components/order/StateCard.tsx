@@ -55,7 +55,7 @@ const StateCard = ({
             style={{ minHeight: isOther && showDropdown ? '200px' : 'auto' }}
         >
             {isSelected && (
-                <div className="absolute -top-2 -right-2 w-5 h-5 bg-purple-800 rounded-full border-2 border-white flex items-center justify-center z-10">
+                <div className="absolute -top-2 -right-2 w-5 h-5 bg-gold-800 rounded-full border-2 border-white flex items-center justify-center z-10">
                     <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>

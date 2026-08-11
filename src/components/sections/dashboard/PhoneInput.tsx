@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { HiChevronDown } from 'react-icons/hi';
 import { getUniqueCountries } from '@/constants/countries';
 import userService from '@/services/userService';
+import { Phone } from 'lucide-react';
 
 interface PhoneInputProps {
     onNext?: () => void;
@@ -109,7 +110,7 @@ const PhoneInput = ({ onNext }: PhoneInputProps) => {
                 {/* Icon - Top Right */}
                 <div className="">
                     <div className="relative">
-                        <img src="https://app.privatily.com/assets/img/header-icons/phone.png" alt="phone" className="sm:w-24 sm:h-24 w-42 h-22" />
+                        <Phone className="w-16 h-16 sm:w-24 sm:h-24 text-primary/70" />
                     </div>
                 </div>
             </div>

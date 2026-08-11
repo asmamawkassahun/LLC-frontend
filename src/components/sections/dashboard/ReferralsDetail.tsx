@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import DashboardHeader from "./DashboardHeader";
 import { Button } from "@/components/ui";
 import {
     MaterialReactTable,
@@ -13,6 +12,7 @@ import referralService from '@/services/referralService';
 import type { Payout as ReferralPayout, CreateBankAccountRequest, RequestPayoutRequest } from '@/services/referralService';
 import { toast } from 'sonner';
 import { formatDate } from '@/lib/formatters';
+import { Megaphone, Users, Banknote, Gift, Link, Copy, Wallet, Landmark } from 'lucide-react';
 
 const ReferralsDetail = () => {
     const [copied, setCopied] = useState(false);
@@ -212,19 +212,19 @@ const ReferralsDetail = () => {
                 id: 'usersReferred',
                 label: 'Users referred',
                 value: stats.users_referred,
-                imageUrl: 'https://app.privatily.com/assets/img/affiliate/icone-annonce.png',
+                icon: Megaphone,
             },
             {
                 id: 'paidUsers',
                 label: 'Paid users',
                 value: stats.paid_users,
-                imageUrl: 'https://app.privatily.com/assets/img/affiliate/icone-users.png',
+                icon: Users,
             },
             {
                 id: 'referralEarnings',
                 label: 'Referral earnings',
                 value: `$${stats.referral_earnings.toFixed(2)}`,
-                imageUrl: 'https://app.privatily.com/assets/img/affiliate/icone-earnings.png',
+                icon: Banknote,
             },
         ];
     }, [stats]);
@@ -242,11 +242,17 @@ const ReferralsDetail = () => {
 
     return (
         <div className="max-w-7xl mx-auto space-y-4 py-6 px-8">
-            <DashboardHeader
-                imageUrl="https://app.privatily.com/assets/img/header-icons/affiliate.png"
-                title="Earn $30"
-                description="Spread the word and get rewarded for every sale."
-            />
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">
+                        Earn $30
+                    </h1>
+                    <p className="text-sm sm:text-base text-foreground/80">Spread the word and get rewarded for every sale.</p>
+                </div>
+                <div className="shrink-0">
+                    <Gift className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 text-primary/70" />
+                </div>
+            </div>
 
             {/* Main Content Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -261,11 +267,7 @@ const ReferralsDetail = () => {
                                     className={`relative rounded-lg px-4 py-5 overflow-hidden bg-foreground/5`}
                                 >
                                     <div className="absolute bottom-0 right-2 ">
-                                        <img
-                                            src={stat.imageUrl}
-                                            alt={stat.label}
-                                            className="w-36 h-20"
-                                        />
+                                        <stat.icon className="w-16 h-16 text-primary/70" />
                                     </div>
                                     <div className="relative z-10">
                                         <div className="text-lg font-bold text-accent mb-1">{stat.value}</div>
@@ -284,11 +286,7 @@ const ReferralsDetail = () => {
                         <h2 className="text-sm font-bold text-foreground mb-2">Your Link</h2>
                         <div className="flex items-center gap-2">
                             <div className="relative flex-1">
-                                <img
-                                    src="https://app.privatily.com/assets/img/affiliate/link.svg"
-                                    alt="Link"
-                                    className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5"
-                                />
+                                <Link className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground/60" />
                                 <input
                                     type="text"
                                     value={referralLinkData.referral_link}
@@ -300,7 +298,7 @@ const ReferralsDetail = () => {
                                     className="absolute right-1 top-1 p-2 hover:bg-gray-200 rounded-lg transition-colors cursor-pointer"
                                     title="Copy link"
                                 >
-                                    <img src='https://app.privatily.com/assets/img/affiliate/copy.svg' className={`w-5 h-5 ${copied ? 'text-green-600' : 'text-foreground'}`} />
+                                    <Copy className={`w-5 h-5 ${copied ? 'text-green-600' : 'text-foreground'}`} />
                                 </button>
                             </div>
                         </div>
@@ -318,11 +316,7 @@ const ReferralsDetail = () => {
                             <label className="text-sm font-medium text-accent mb-2 block">Balance</label>
                             <div className="flex items-center justify-between">
                                 <div className="relative flex-1">
-                                    <img
-                                        src="https://app.privatily.com/assets/img/affiliate/balance.svg"
-                                        alt="Balance"
-                                        className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5"
-                                    />
+                                    <Wallet className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground/60" />
                                     <input
                                         type="text"
                                         value={`$${stats.pending_earnings.toFixed(2)}`}
@@ -345,11 +339,7 @@ const ReferralsDetail = () => {
                             <label className="text-sm font-medium text-accent mb-2 block">Bank account</label>
                             <div className="flex items-center justify-between">
                                 <div className="relative flex-1">
-                                    <img
-                                        src="https://app.privatily.com/assets/img/affiliate/bank.svg"
-                                        alt="Bank account"
-                                        className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5"
-                                    />
+                                    <Landmark className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground/60" />
                                     <input
                                         type="text"
                                         value={bankAccounts.length > 0 ? `${bankAccounts[0].bank_name} - ${bankAccounts[0].account_number.slice(-4)}` : 'Add your bank account'}

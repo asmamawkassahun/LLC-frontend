@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import apiClient from '@/utils/api-helpers/apiClient';
-import DashboardHeader from "../DashboardHeader";
 import { Button } from '@/components/ui/button';
 import MarketplaceOrder from '@/components/modal/MarketplaceOrder';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatCurrency } from '@/lib/formatters';
 import type { DescriptionItem } from '@/data/marketplaceServices';
+import { Store } from 'lucide-react';
 
 interface ServiceCard {
     id: number;
@@ -172,11 +172,17 @@ const Marketplace = () => {
     return (
         <>
             <div className="w-full max-w-7xl mx-auto px-2 py-6 md:py-1">
-                <DashboardHeader
-                    imageUrl="https://app.privatily.com/assets/img/header-icons/MARKETPLACE.svg"
-                    title="Marketplace"
-                    description=""
-                />
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">
+                            Marketplace
+                        </h1>
+                        <p className="text-sm sm:text-base text-foreground/80"></p>
+                    </div>
+                    <div className="shrink-0">
+                        <Store className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 text-primary/70" />
+                    </div>
+                </div>
 
                 {/* Loading State */}
                 {isLoading && (

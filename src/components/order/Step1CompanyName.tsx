@@ -1,6 +1,25 @@
 import { useState, useEffect } from 'react';
 import { HiInformationCircle } from 'react-icons/hi';
 import { HiChevronLeft, HiChevronRight } from 'react-icons/hi';
+import {
+    Cpu,
+    ShoppingBag,
+    Megaphone,
+    Briefcase,
+    GraduationCap,
+    Clapperboard,
+    Factory,
+    Landmark,
+    Building2,
+    Truck,
+    UtensilsCrossed,
+    HeartPulse,
+    ConciergeBell,
+    HardHat,
+    Scale,
+    Boxes,
+    type LucideIcon,
+} from 'lucide-react';
 import StepHeader from './StepHeader';
 import CategoryCard from './CategoryCard';
 import Tooltip from './Tooltip';
@@ -14,23 +33,23 @@ interface Step1CompanyNameProps {
     onFormDataChange: (data: Partial<{ companyName: string; type: string; category: string[] }>) => void;
 }
 
-const categories = [
-    { id: 'tech', label: 'Tech', icon: 'https://app.privatily.com/assets/img/icone-categorie/tech.png' },
-    { id: 'retail', label: 'Retail', icon: 'https://app.privatily.com/assets/img/icone-categorie/retail.png' },
-    { id: 'marketing', label: 'Marketing', icon: 'https://app.privatily.com/assets/img/icone-categorie/marketing.png' },
-    { id: 'consulting', label: 'Consulting', icon: 'https://app.privatily.com/assets/img/icone-categorie/consulting.png' },
-    { id: 'education', label: 'Education', icon: 'https://app.privatily.com/assets/img/icone-categorie/education.png' },
-    { id: 'entertainment', label: 'Entertainment', icon: 'https://app.privatily.com/assets/img/icone-categorie/entertainment.png' },
-    { id: 'manufacturing', label: 'Manufacturing', icon: 'https://app.privatily.com/assets/img/icone-categorie/manufacturing.png' },
-    { id: 'finance', label: 'Finance', icon: 'https://app.privatily.com/assets/img/icone-categorie/finance.png' },
-    { id: 'real-estate', label: 'Real Estate', icon: 'https://app.privatily.com/assets/img/icone-categorie/real-estate.png' },
-    { id: 'logistics', label: 'Logistics', icon: 'https://app.privatily.com/assets/img/icone-categorie/logistics.png' },
-    { id: 'food', label: 'Food', icon: 'https://app.privatily.com/assets/img/icone-categorie/food.png' },
-    { id: 'wellness', label: 'Wellness', icon: 'https://app.privatily.com/assets/img/icone-categorie/wellness.png' },
-    { id: 'hospitality', label: 'Hospitality', icon: 'https://app.privatily.com/assets/img/icone-categorie/hospitality.png' },
-    { id: 'construction', label: 'Construction', icon: 'https://app.privatily.com/assets/img/icone-categorie/construction.png' },
-    { id: 'legal', label: 'Legal', icon: 'https://app.privatily.com/assets/img/icone-categorie/legal.png' },
-    { id: 'other', label: 'Other', icon: 'https://app.privatily.com/assets/img/icone-categorie/other.png' },
+const categories: Array<{ id: string; label: string; icon: LucideIcon }> = [
+    { id: 'tech', label: 'Tech', icon: Cpu },
+    { id: 'retail', label: 'Retail', icon: ShoppingBag },
+    { id: 'marketing', label: 'Marketing', icon: Megaphone },
+    { id: 'consulting', label: 'Consulting', icon: Briefcase },
+    { id: 'education', label: 'Education', icon: GraduationCap },
+    { id: 'entertainment', label: 'Entertainment', icon: Clapperboard },
+    { id: 'manufacturing', label: 'Manufacturing', icon: Factory },
+    { id: 'finance', label: 'Finance', icon: Landmark },
+    { id: 'real-estate', label: 'Real Estate', icon: Building2 },
+    { id: 'logistics', label: 'Logistics', icon: Truck },
+    { id: 'food', label: 'Food', icon: UtensilsCrossed },
+    { id: 'wellness', label: 'Wellness', icon: HeartPulse },
+    { id: 'hospitality', label: 'Hospitality', icon: ConciergeBell },
+    { id: 'construction', label: 'Construction', icon: HardHat },
+    { id: 'legal', label: 'Legal', icon: Scale },
+    { id: 'other', label: 'Other', icon: Boxes },
 ];
 
 const types = ['LLC', 'LTD', 'CORP'];
@@ -79,7 +98,7 @@ const Step1CompanyName = ({ formData, onFormDataChange }: Step1CompanyNameProps)
     return (
         <div className="max-w-4xl mx-auto pb-6 md:pb-8">
             <StepHeader
-                icon="https://app.privatily.com/assets/img/header-icones/company.png"
+                icon={<Building2 className="w-12 h-12 md:w-16 md:h-16 text-accent" />}
                 title="Let's name your business!"
                 subtitle="What's the name of your company and what category does it belong to?"
             />
@@ -100,7 +119,7 @@ const Step1CompanyName = ({ formData, onFormDataChange }: Step1CompanyNameProps)
                             type="text"
                             value={formData.companyName}
                             onChange={(e) => onFormDataChange({ companyName: e.target.value })}
-                            placeholder="eg. Privatily"
+                            placeholder="eg. My Company LLC"
                             className="w-full text-xs sm:text-sm px-4 py-3 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-purple focus:border-transparent text-foreground bg-background"
                         />
                     </div>

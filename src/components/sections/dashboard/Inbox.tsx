@@ -1,10 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import DashboardHeader from "./DashboardHeader";
 import apiClient from '@/utils/api-helpers/apiClient';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { FileText, Eye, Download, Calendar, Package } from 'lucide-react';
+import { FileText, Eye, Download, Calendar, Package, Mail } from 'lucide-react';
 import { formatDate } from '@/lib/formatters';
 
 interface MarketplaceOrderFile {
@@ -60,11 +59,17 @@ const Inbox = () => {
     if (error) {
         return (
             <div className="max-w-7xl mx-auto space-y-6 py-6 px-2">
-                <DashboardHeader
-                    imageUrl="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSK9rP8x5i8swWmAGwbnyiSVOiWPwFek7fWnA&s"
-                    title="Inbox"
-                    description="Manage your inbox"
-                />
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">
+                            Inbox
+                        </h1>
+                        <p className="text-sm sm:text-base text-foreground/80">Manage your inbox</p>
+                    </div>
+                    <div className="shrink-0">
+                        <Mail className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 text-primary/70" />
+                    </div>
+                </div>
                 <Card>
                     <CardContent className="pt-6">
                         <div className="text-center py-8">
@@ -81,11 +86,17 @@ const Inbox = () => {
 
     return (
         <div className="max-w-7xl mx-auto space-y-6 py-6 px-2">
-            <DashboardHeader
-                imageUrl="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSK9rP8x5i8swWmAGwbnyiSVOiWPwFek7fWnA&s"
-                title="Inbox"
-                description="View and download files from your marketplace orders"
-            />
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">
+                        Inbox
+                    </h1>
+                    <p className="text-sm sm:text-base text-foreground/80">View and download files from your marketplace orders</p>
+                </div>
+                <div className="shrink-0">
+                    <Mail className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 text-primary/70" />
+                </div>
+            </div>
 
             {/* Files Grid */}
             {isLoading ? (

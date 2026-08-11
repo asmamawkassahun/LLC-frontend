@@ -1,166 +1,179 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 @plugin "tailwindcss-animate";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme {
+  /* Brand palette - Navy */
+  --color-navy-50: #f4f7fb;
+  --color-navy-100: #e6edf6;
+  --color-navy-200: #ccdcef;
+  --color-navy-300: #a5bfe2;
+  --color-navy-400: #7a9cd1;
+  --color-navy-500: #587dbd;
+  --color-navy-600: #4163a4;
+  --color-navy-700: #324f87;
+  --color-navy-800: #24406b;
+  --color-navy-900: #16294a;
+  --color-navy-950: #0c1830;
+
+  /* Brand palette - Gold */
+  --color-gold-50: #fbf7ee;
+  --color-gold-100: #f6edda;
+  --color-gold-200: #eedcb4;
+  --color-gold-300: #e4c685;
+  --color-gold-400: #d9af5b;
+  --color-gold-500: #c9a24a;
+  --color-gold-600: #b08536;
+  --color-gold-700: #8c6929;
+  --color-gold-800: #6b5020;
+  --color-gold-900: #4a3816;
+
   /* Primary Colors */
-  --color-primary: #1a1a1a;
+  --color-primary: #16294a;
   --color-primary-foreground: #ffffff;
 
   /* Secondary Colors */
-  --color-secondary: #f5f5f5;
-  --color-secondary-foreground: #1a1a1a;
+  --color-secondary: #f4f7fb;
+  --color-secondary-foreground: #16294a;
 
   /* Background & Foreground */
   --color-background: #ffffff;
-  --color-foreground: #1a1a1a;
+  --color-foreground: #16294a;
 
   /* Muted Colors */
-  --color-muted: #f5f5f5;
-  --color-muted-foreground: #6b7280;
+  --color-muted: #f5f7fa;
+  --color-muted-foreground: #5c6b82;
 
   /* Accent Colors */
-  --color-accent: #3b82f6;
-  --color-accent-foreground: #ffffff;
+  --color-accent: #c9a24a;
+  --color-accent-foreground: #16294a;
 
   /* Button Colors */
-  --color-button: #1a1a1a;
+  --color-button: #16294a;
   --color-button-foreground: #ffffff;
-  --color-button-hover: #2d2d2d;
-  --color-button-secondary: #f5f5f5;
-  --color-button-secondary-foreground: #1a1a1a;
+  --color-button-hover: #24406b;
+  --color-button-secondary: #f4f7fb;
+  --color-button-secondary-foreground: #16294a;
 
   /* Border & Outline */
-  --color-border: #e5e7eb;
-  --color-input: #e5e7eb;
-  --color-ring: #3b82f6;
+  --color-border: #e2e7f0;
+  --color-input: #e2e7f0;
+  --color-ring: #c9a24a;
 
   /* Destructive/Error */
-  --color-destructive: #ef4444;
+  --color-destructive: #e5484d;
   --color-destructive-foreground: #ffffff;
 
   /* Success */
-  --color-success: #10b981;
+  --color-success: #1e9e6a;
   --color-success-foreground: #ffffff;
 
   /* Warning */
-  --color-warning: #f59e0b;
+  --color-warning: #d98c24;
   --color-warning-foreground: #ffffff;
 
-  /* Purple Colors (for pricing/branding) */
-  --color-purple: #9333ea;
-  --color-purple-dark: #7e22ce;
-  --color-purple-foreground: #ffffff;
-
-  /* Orange/Coral Colors (for premium button) */
-  --color-orange: #f97316;
-  --color-orange-dark: #ea580c;
-  --color-orange-foreground: #ffffff;
+  /* Brand Gold Aliases (legacy purple/orange tokens now map to the brand gold) */
+  --color-purple: #c9a24a;
+  --color-purple-dark: #b08536;
+  --color-purple-foreground: #16294a;
+  --color-orange: #d9af5b;
+  --color-orange-dark: #b08536;
+  --color-orange-foreground: #16294a;
 
   /* Card */
   --color-card: #ffffff;
-  --color-card-foreground: #1a1a1a;
+  --color-card-foreground: #16294a;
 
   /* Popover */
   --color-popover: #ffffff;
-  --color-popover-foreground: #1a1a1a;
+  --color-popover-foreground: #16294a;
+
+  /* Fonts */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  --radius: 0.625rem;
 }
 
 :root {
   /* Primary Colors */
-  --color-primary: #1a1a1a;
+  --color-primary: #16294a;
   --color-primary-foreground: #ffffff;
 
   /* Secondary Colors */
-  --color-secondary: #f5f5f5;
-  --color-secondary-foreground: #1a1a1a;
+  --color-secondary: #f4f7fb;
+  --color-secondary-foreground: #16294a;
 
   /* Background & Foreground */
   --color-background: #ffffff;
-  --color-foreground: #1a1a1a;
+  --color-foreground: #16294a;
 
   /* Muted Colors */
-  --color-muted: #f5f5f5;
-  --color-muted-foreground: #6b7280;
+  --color-muted: #f5f7fa;
+  --color-muted-foreground: #5c6b82;
 
   /* Accent Colors */
-  --color-accent: #3b82f6;
-  --color-accent-foreground: #ffffff;
-
-  /* Button Colors */
-  --color-button: #1a1a1a;
-  --color-button-foreground: #ffffff;
-  --color-button-hover: #2d2d2d;
-  --color-button-secondary: #f5f5f5;
-  --color-button-secondary-foreground: #1a1a1a;
+  --color-accent: #c9a24a;
+  --color-accent-foreground: #16294a;
 
   /* Border & Outline */
-  --color-border: #e5e7eb;
-  --color-input: #e5e7eb;
-  --color-ring: #3b82f6;
+  --color-border: #e2e7f0;
+  --color-input: #e2e7f0;
+  --color-ring: #c9a24a;
 
   /* Destructive/Error */
-  --color-destructive: #ef4444;
+  --color-destructive: #e5484d;
   --color-destructive-foreground: #ffffff;
 
   /* Success */
-  --color-success: #10b981;
+  --color-success: #1e9e6a;
   --color-success-foreground: #ffffff;
 
   /* Warning */
-  --color-warning: #f59e0b;
+  --color-warning: #d98c24;
   --color-warning-foreground: #ffffff;
 
-  /* Purple Colors (for pricing/branding) */
-  --color-purple: #9333ea;
-  --color-purple-dark: #7e22ce;
-  --color-purple-foreground: #ffffff;
+  /* Brand Gold Aliases */
+  --color-purple: #c9a24a;
+  --color-purple-dark: #b08536;
+  --color-purple-foreground: #16294a;
+  --color-orange: #d9af5b;
+  --color-orange-dark: #b08536;
+  --color-orange-foreground: #16294a;
 
-  /* Orange/Coral Colors (for premium button) */
-  --color-orange: #f97316;
-  --color-orange-dark: #ea580c;
-  --color-orange-foreground: #ffffff;
-
-  /* Card */
-  --color-card: #ffffff;
-  --color-card-foreground: #1a1a1a;
-
-  /* Popover */
-  --color-popover: #ffffff;
-  --color-popover-foreground: #1a1a1a;
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: #3b82f6;
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --background: #ffffff;
+  --foreground: #16294a;
+  --card: #ffffff;
+  --card-foreground: #16294a;
+  --popover: #ffffff;
+  --popover-foreground: #16294a;
+  --primary: #16294a;
+  --primary-foreground: #ffffff;
+  --secondary: #f4f7fb;
+  --secondary-foreground: #16294a;
+  --muted: #f5f7fa;
+  --muted-foreground: #5c6b82;
+  --accent: #c9a24a;
+  --accent-foreground: #16294a;
+  --destructive: #e5484d;
+  --border: #e2e7f0;
+  --input: #e2e7f0;
+  --ring: #c9a24a;
+  --chart-1: #24406b;
+  --chart-2: #c9a24a;
+  --chart-3: #587dbd;
+  --chart-4: #d9af5b;
+  --chart-5: #0c1830;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #16294a;
+  --sidebar-primary: #16294a;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f4f7fb;
+  --sidebar-accent-foreground: #16294a;
+  --sidebar-border: #e2e7f0;
+  --sidebar-ring: #c9a24a;
 }
 
 @theme inline {
@@ -202,37 +215,37 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: #3b82f6;
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: #0c1830;
+  --foreground: #f4f7fb;
+  --card: #16294a;
+  --card-foreground: #f4f7fb;
+  --popover: #16294a;
+  --popover-foreground: #f4f7fb;
+  --primary: #c9a24a;
+  --primary-foreground: #0c1830;
+  --secondary: #1b3560;
+  --secondary-foreground: #f4f7fb;
+  --muted: #1b3560;
+  --muted-foreground: #a5bfe2;
+  --accent: #c9a24a;
+  --accent-foreground: #0c1830;
+  --destructive: #e5484d;
+  --border: rgb(244 247 251 / 12%);
+  --input: rgb(244 247 251 / 15%);
+  --ring: #d9af5b;
+  --chart-1: #c9a24a;
+  --chart-2: #587dbd;
+  --chart-3: #a5bfe2;
+  --chart-4: #d9af5b;
+  --chart-5: #f4f7fb;
+  --sidebar: #0c1830;
+  --sidebar-foreground: #f4f7fb;
+  --sidebar-primary: #c9a24a;
+  --sidebar-primary-foreground: #0c1830;
+  --sidebar-accent: #1b3560;
+  --sidebar-accent-foreground: #f4f7fb;
+  --sidebar-border: rgb(244 247 251 / 12%);
+  --sidebar-ring: #d9af5b;
 }
 
 @layer base {

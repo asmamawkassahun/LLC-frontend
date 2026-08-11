@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { HiInformationCircle } from 'react-icons/hi';
+import { Users } from 'lucide-react';
 import StepHeader from './StepHeader';
 import Tooltip from './Tooltip';
 import { IoIosAddCircleOutline } from 'react-icons/io';
@@ -176,7 +177,7 @@ const Step3Owners = ({ companyName, owners, onOwnersChange }: Step3OwnersProps) 
         <div className="max-w-4xl mx-auto px-4! md:px-0 pb-6 md:pb-8 space-y-24">
             <div className=' flex flex-col gap-24'>
                 <StepHeader
-                    icon="https://app.privatily.com/assets/img/header-icones/owners.png"
+                    icon={<Users className="w-12 h-12 md:w-16 md:h-16 text-accent" />}
                     title={`Owners of ${companyName}`}
                     subtitle="Please provide the names of all company owners along with their respective ownership percentages and their addresses."
                 />

@@ -29,11 +29,11 @@ export const services: ServiceCard[] = [
             },
             { 
                 type: 'paragraph', 
-                text: 'At Privatily, we handle everything for you — from preparing your paperwork to filing and submitting it directly to the IRS — all within **48 hours**. After submission, the **IRS takes 8 to 14 weeks** to process and issue the ITIN. While their timeline is out of our control, **we guarantee the fastest possible processing time on our side**, and if the IRS doesn\'t issue your ITIN, **you\'ll receive a full refund**.' 
+                text: 'At Incorporia, we handle everything for you — from preparing your paperwork to filing and submitting it directly to the IRS — all within **48 hours**. After submission, the **IRS takes 8 to 14 weeks** to process and issue the ITIN. While their timeline is out of our control, **we guarantee the fastest possible processing time on our side**, and if the IRS doesn\'t issue your ITIN, **you\'ll receive a full refund**.' 
             },
             { 
                 type: 'paragraph', 
-                text: 'With Privatily, you\'re backed by experience, speed, and a results-driven process from start to finish.' 
+                text: 'With Incorporia, you\'re backed by experience, speed, and a results-driven process from start to finish.' 
             },
             { 
                 type: 'paragraph', 
@@ -87,7 +87,7 @@ export const services: ServiceCard[] = [
             },
             { 
                 type: 'paragraph', 
-                text: 'At Privatily, we\'ve optimized the process to deliver your EIN in just 2 to 5 business days, making us one of the fastest options available for non-residents. No delays, no confusing forms — just fast and reliable service.' 
+                text: 'At Incorporia, we\'ve optimized the process to deliver your EIN in just 2 to 5 business days, making us one of the fastest options available for non-residents. No delays, no confusing forms — just fast and reliable service.' 
             },
             { 
                 type: 'paragraph', 

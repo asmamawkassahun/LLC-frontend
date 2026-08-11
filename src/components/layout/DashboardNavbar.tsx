@@ -10,6 +10,7 @@ import HelpDialog from "@/components/help/HelpDialog";
 import { useQuery } from "@tanstack/react-query";
 import supportService from "@/services/supportService";
 import authService from "@/services/authService";
+import Logo from "@/components/brand/Logo";
 
 interface DashboardNavbarProps {
     onMenuClick: () => void;
@@ -81,9 +82,7 @@ const DashboardNavbar = ({ onMenuClick }: DashboardNavbarProps) => {
 
                     {/* Logo - visible on medium screens when sidebar is closed */}
                     <Link to={ROUTES.DASHBOARD} className="lg:hidden flex items-center gap-2">
-                        <div className="relative w-24 shrink-0">
-                            <img src="https://app.privatily.com/assets/img/logo.png" alt="privatily" />
-                        </div>
+                        <Logo markClassName="h-7 w-7" />
                     </Link>
 
                     {/* Company Selector - Only show on desktop */}
@@ -98,7 +97,7 @@ const DashboardNavbar = ({ onMenuClick }: DashboardNavbarProps) => {
                         variant="outline"
                         size="icon"
                             onClick={() => setHelpDialogOpen(true)}
-                            className="bg-blue-700 w-24 hover:bg-accent-dark text-white text-xs px-4 border-none rounded-full cursor-pointer relative"
+                            className="bg-primary w-24 hover:bg-accent-dark text-white text-xs px-4 border-none rounded-full cursor-pointer relative"
                     >
                             <GoQuestion className="w-6 h-6" />
                         Get help

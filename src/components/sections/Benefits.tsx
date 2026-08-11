@@ -1,26 +1,24 @@
-import { CiClock2 } from "react-icons/ci";
-import { TfiHeadphoneAlt, TfiWorld } from 'react-icons/tfi';
-import { PiCurrencyDollarLight } from 'react-icons/pi';
+import { Zap, Globe2, Headphones, PiggyBank } from 'lucide-react';
 
 const Benefits = () => {
     const benefits = [
         {
-            icon: CiClock2,
+            icon: Zap,
             title: "Quick delivery",
             description: "Efficient processes ensure fast company formation in the US & the UK."
         },
         {
-            icon: TfiWorld,
+            icon: Globe2,
             title: "We accept all countries",
             description: "Entrepreneurs worldwide can access our services, regardless of location, promoting global business growth."
         },
         {
-            icon: TfiHeadphoneAlt,
+            icon: Headphones,
             title: "Expert Support",
             description: "Our dedicated experts provide top-notch support, addressing concerns and ensuring a seamless experience throughout the process."
         },
         {
-            icon: PiCurrencyDollarLight,
+            icon: PiggyBank,
             title: "Competitive prices",
             description: "High-quality services at affordable rates, providing exceptional value without compromising on results."
         }
@@ -32,7 +30,7 @@ const Benefits = () => {
                 {/* Header */}
                 <div className="text-center mb-12 md:mb-16">
                     <h2 className="text-2xl md:text-3xl lg:text-5xl font-bold text-foreground mb-2 md:mb-4">
-                        The Privatily Advantage
+                        The Incorporia Advantage
                     </h2>
                     <p className="text-base md:text-lg text-muted-foreground">
                         4 Key Benefits of Choosing Us
@@ -46,9 +44,9 @@ const Benefits = () => {
                         return (
                             <div key={index} className="flex flex-col items-center text-center">
                                 {/* Icon Badge */}
-                                <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mb-4 md:mb-6">
-                                    <div className=' w-12 h-12 rounded-full bg-accent/15 flex items-center justify-center'>
-                                        <Icon className="w-6 h-6 md:w-6 md:h-6 text-blue-700" />
+                                <div className="w-16 h-16 rounded-full bg-gold-500/10 flex items-center justify-center mb-4 md:mb-6">
+                                    <div className=' w-12 h-12 rounded-full bg-gold-500/15 flex items-center justify-center'>
+                                        <Icon className="w-6 h-6 md:w-6 md:h-6 text-gold-600" />
                                     </div>
                                 </div>
 

@@ -6,6 +6,7 @@ import ReferralsDetail from './ReferralsDetail';
 import { PiCaretDoubleRightBold } from 'react-icons/pi';
 import referralService from '@/services/referralService';
 import { toast } from 'sonner';
+import { Gift } from 'lucide-react';
 
 interface StepCard {
     number: string;
@@ -111,18 +112,14 @@ const Referrals = () => {
         <div className="relative bg-white w-full max-w-7xl mx-auto px-2  py-6 md:py-0">
             {/* Background decorative elements */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-20 left-10 w-64 h-64 bg-purple-100/20 rounded-full blur-3xl"></div>
-                <div className="absolute top-40 right-20 w-96 h-96 bg-purple-200/10 rounded-full blur-3xl"></div>
+                <div className="absolute top-20 left-10 w-64 h-64 bg-gold-100/20 rounded-full blur-3xl"></div>
+                <div className="absolute top-40 right-20 w-96 h-96 bg-gold-200/10 rounded-full blur-3xl"></div>
             </div>
 
             <div className="relative max-w-7xl mx-auto  border border-border rounded-lg px-4 sm:px-6 lg:px-8 pb-12 md:pb-16 lg:pb-20 pt-4 md:pt-8 lg:pt-12 mb-6 shadow-sm">
                 {/* Top Icon */}
                 <div className="flex justify-center mb-8">
-                    <img 
-                        src="https://app.privatily.com/assets/img/header-icons/affiliate.png" 
-                        alt="Affiliate Program" 
-                        className="w-32 h-32  object-contain"
-                    />
+                    <Gift className="w-24 h-24 md:w-32 md:h-32 text-primary/80" />
                 </div>
 
                 {/* Title and Description */}
@@ -131,7 +128,7 @@ const Referrals = () => {
                         Welcome to our Affiliate Program!
                     </h1>
                     <p className="text-sm text-foreground max-w-4xl px-8 mx-auto leading-relaxed">
-                        At Privatily, we believe in empowering entrepreneurs like you, and now you have the chance to not only benefit from our services but also earn by sharing them with others. Our affiliate program is designed to help you grow alongside us.
+                        At Incorporia, we believe in empowering entrepreneurs like you, and now you have the chance to not only benefit from our services but also earn by sharing them with others. Our affiliate program is designed to help you grow alongside us.
                     </p>
                 </div>
 

@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/constants/routes';
-import DashboardHeader from "./DashboardHeader";
 import OrdersTable, { type Order } from './OrdersTable';
 import apiClient from '@/utils/api-helpers/apiClient';
 import { toast } from 'sonner';
@@ -16,6 +15,7 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { HiExclamationTriangle } from 'react-icons/hi2';
+import { ClipboardList } from 'lucide-react';
 
 interface ApiOrder {
     id: number;
@@ -284,11 +284,17 @@ const Orders = () => {
     if (loading) {
         return (
             <div className="max-w-7xl mx-auto space-y-6 py-6 px-8">
-                <DashboardHeader
-                    imageUrl="https://app.privatily.com/assets/img/header-icons/icone-mybisiness.png"
-                    title="Orders list"
-                    description="Manage your orders"
-                />
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">
+                            Orders list
+                        </h1>
+                        <p className="text-sm sm:text-base text-foreground/80">Manage your orders</p>
+                    </div>
+                    <div className="shrink-0">
+                        <ClipboardList className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 text-primary/70" />
+                    </div>
+                </div>
                 <div className="flex items-center justify-center py-12">
                     <div className="text-muted-foreground">Loading orders...</div>
                 </div>
@@ -300,11 +306,17 @@ const Orders = () => {
     console.log("Orders data passed to the orders table: ", orders);
     return (
         <div className="max-w-7xl mx-auto space-y-6 py-6 px-2">
-            <DashboardHeader
-                imageUrl="https://app.privatily.com/assets/img/header-icons/icone-mybisiness.png"
-                title="Orders list"
-                description="Manage your orders"
-            />
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">
+                        Orders list
+                    </h1>
+                    <p className="text-sm sm:text-base text-foreground/80">Manage your orders</p>
+                </div>
+                <div className="shrink-0">
+                    <ClipboardList className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 text-primary/70" />
+                </div>
+            </div>
             <div style={{ boxShadow: '0 6px 10px -8px rgba(0,0,0,0.15)', borderRadius: '8px' }}>
                 <OrdersTable
                     data={orders}

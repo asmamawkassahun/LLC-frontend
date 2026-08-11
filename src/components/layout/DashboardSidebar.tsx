@@ -5,6 +5,8 @@ import authService from '@/services/authService';
 import CompanySelector from '@/components/company/CompanySelector';
 import apiClient from '@/utils/api-helpers/apiClient';
 import { useQuery } from '@tanstack/react-query';
+import Logo from '@/components/brand/Logo';
+import { LayoutDashboard, Store, ClipboardList, Mail, Gift, Settings, LogOut } from 'lucide-react';
 
 interface DashboardSidebarProps {
     isOpen: boolean;
@@ -45,39 +47,39 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
 
     const navigationItems = [
         {
-            imageUrl: 'https://app.privatily.com/assets/img/menu/home.svg',
+            icon: LayoutDashboard,
             label: 'Dashboard',
             path: ROUTES.DASHBOARD
         },
         {
-            imageUrl: 'https://app.privatily.com/assets/img/header-icons/PRODUCTS.svg',
+            icon: Store,
             label: 'Marketplace',
             path: ROUTES.MARKETPLACE,
             badge: 'NEW'
         },
         {
-            imageUrl: 'https://app.privatily.com/assets/img/menu/business.svg',
+            icon: ClipboardList,
             label: 'Orders',
             path: ROUTES.ORDERS,
             badge: ordersCount
         },
         {
-            imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSK9rP8x5i8swWmAGwbnyiSVOiWPwFek7fWnA&s',
+            icon: Mail,
             label: 'Inbox',
             path: ROUTES.INBOX,
         },
         {
-            imageUrl: 'https://app.privatily.com/assets/img/menu/refer-a-friend.svg',
+            icon: Gift,
             label: 'Affiliate Program',
             path: ROUTES.AFFILIATE_PROGRAM
         },
         {
-            imageUrl: 'https://app.privatily.com/assets/img/menu/settings.svg',
+            icon: Settings,
             label: 'Settings',
             path: ROUTES.SETTINGS
         },
         {
-            imageUrl: 'https://app.privatily.com/assets/img/menu/logout.svg',
+            icon: LogOut,
             label: 'Log Out',
             path: ROUTES.LOGOUT
         },
@@ -103,18 +105,14 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
                         <HiX className="w-5 h-5 text-gray-600" />
                     </button>
                     <Link to={ROUTES.DASHBOARD} className="flex items-center gap-2 pt-12">
-                        <div className="relative w-32 shrink-0">
-                            <img src="https://app.privatily.com/assets/img/logo.png" alt="privatily" />
-                        </div>
+                        <Logo markClassName="h-8 w-8" />
                     </Link>
                 </div>
 
                 {/* Logo - Desktop */}
                 <div className="hidden lg:flex pr-6 pt-12 items-center justify-center  pb-6">
                     <Link to={ROUTES.DASHBOARD} className="flex items-center gap-2">
-                        <div className="relative w-32 shrink-0">
-                            <img src="https://app.privatily.com/assets/img/logo.png" alt="privatily" />
-                        </div>
+                        <Logo markClassName="h-8 w-8" />
                     </Link>
                 </div>
 
@@ -141,15 +139,7 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
                                             }}
                                             className="w-full flex items-center gap-3 px-4 py-4.5 rounded-lg transition-colors text-gray-600 hover:bg-gray-50 text-left cursor-pointer"
                                         >
-                                            {item.imageUrl ? (
-                                                <img 
-                                                    src={item.imageUrl} 
-                                                    alt={item.label} 
-                                                    className="w-5 h-5 shrink-0 opacity-60"
-                                                />
-                                            ) : (
-                                                <div className="w-5 h-5 shrink-0 text-gray-600" />
-                                            )}
+                                            <item.icon className="w-5 h-5 shrink-0 text-muted-foreground" />
                                             <span className="flex-1 text-sm font-bold">{item.label}</span>
                                         </button>
                                     </li>
@@ -174,18 +164,10 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
                                             }
                                         `}
                                     >
-                                        {item.imageUrl ? (
-                                            <img 
-                                                src={item.imageUrl} 
-                                                alt={item.label} 
-                                                className={`w-5 h-5 shrink-0 ${active ? 'opacity-100' : 'opacity-60'}`}
-                                            />
-                                        ) : (
-                                            <div className={`w-5 h-5 shrink-0 ${active ? 'text-gray-900' : 'text-gray-600'}`} />
-                                        )}
+                                        <item.icon className={`w-5 h-5 shrink-0 ${active ? 'text-primary' : 'text-muted-foreground'}`} />
                                         <span className="flex-1 text-sm font-bold">{item.label}</span>
                                         {item.badge && (
-                                            <span className="px-2 py-0.5 text-xs font-semibold text-purple-700 border border-purple-700 bg-purple-100 rounded">
+                                            <span className="px-2 py-0.5 text-xs font-semibold text-gold-700 border border-gold-700 bg-gold-100 rounded">
                                                 {item.badge}
                                             </span>
                                         )}

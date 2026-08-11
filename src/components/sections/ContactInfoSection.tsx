@@ -8,28 +8,23 @@ const ContactInfoSection = () => {
             <div className="flex flex-col md:flex-row gap-6 lg:gap-8 items-start justify-between">
                 {/* Left Section - Contact Form */}
                 <div className="flex-1 w-full lg:max-w-lg order-2 md:order-1">
-                    {/* <div className="bg-card rounded-lg shadoContact Informationw-md p-6 md:p-8"> */}
-                    {/* <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6 md:mb-8">
-                            Send us a message
-                        </h2> */}
-                    {/* </div> */}
                     <ContactForm />
                 </div>
 
                 {/* Right Section - Contact Information */}
                 <div className="flex-1 w-full lg:w-auto relative order-1 md:order-2">
                     <div className="relative rounded-lg overflow-hidden">
-                        {/* Gradient Background - Dark Blue to Purple */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-blue-700 via-blue-600 to-[var(--color-purple)]"></div>
+                        {/* Gradient Background - Navy to Gold */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-navy-900 via-navy-800 to-[var(--color-purple)]"></div>
 
-                        {/* Abstract Circular Orbs - Positioned as per image */}
+                        {/* Abstract Circular Orbs */}
                         <div className="absolute inset-0 overflow-hidden">
-                            {/* Large Blue Orb - Bottom Right */}
-                            <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-400/25 rounded-full blur-3xl translate-x-1/4 translate-y-1/4"></div>
-                            {/* Medium Purple Orb - Above and left of large orb */}
-                            <div className="absolute bottom-20 right-20 w-64 h-64 bg-purple-400/30 rounded-full blur-2xl"></div>
-                            {/* Small Blue Orb - Top Left */}
-                            <div className="absolute top-8 left-8 w-40 h-40 bg-blue-300/30 rounded-full blur-xl"></div>
+                            {/* Large Navy Orb - Bottom Right */}
+                            <div className="absolute bottom-0 right-0 w-96 h-96 bg-gold-400/10 rounded-full blur-3xl translate-x-1/4 translate-y-1/4"></div>
+                            {/* Medium Gold Orb - Above and left of large orb */}
+                            <div className="absolute bottom-20 right-20 w-64 h-64 bg-gold-500/15 rounded-full blur-2xl"></div>
+                            {/* Small Navy Orb - Top Left */}
+                            <div className="absolute top-8 left-8 w-40 h-40 bg-gold-300/10 rounded-full blur-xl"></div>
                         </div>
 
                         {/* Content */}
@@ -48,33 +43,33 @@ const ContactInfoSection = () => {
                             <div className="space-y-4 md:space-y-5">
                                 {/* Email */}
                                 <div className="flex items-center gap-3">
-                                    <HiMail className="w-6 h-6 text-white shrink-0" />
-                                    <a href="mailto:support@privatily.com" className="text-white hover:text-white/80 transition-colors text-base md:text-lg">
-                                        support@privatily.com
+                                    <HiMail className="w-6 h-6 text-gold-300 shrink-0" />
+                                    <a href="mailto:support@incorporia.com" className="text-white hover:text-gold-300 transition-colors text-base md:text-lg">
+                                        support@incorporia.com
                                     </a>
                                 </div>
 
                                 {/* Phone */}
                                 <div className="flex items-center gap-3">
-                                    <HiPhone className="w-6 h-6 text-white shrink-0" />
-                                    <a href="tel:+15074104666" className="text-white hover:text-white/80 transition-colors text-base md:text-lg">
+                                    <HiPhone className="w-6 h-6 text-gold-300 shrink-0" />
+                                    <a href="tel:+15074104666" className="text-white hover:text-gold-300 transition-colors text-base md:text-lg">
                                         +1 (507) 410-4666
                                     </a>
                                 </div>
 
                                 {/* Instagram */}
                                 <div className="flex items-center gap-3">
-                                    <FaInstagram className="w-6 h-6 text-white shrink-0" />
-                                    <a href="#" className="text-white hover:text-white/80 transition-colors text-base md:text-lg">
-                                        @privatily
+                                    <FaInstagram className="w-6 h-6 text-gold-300 shrink-0" />
+                                    <a href="#" className="text-white hover:text-gold-300 transition-colors text-base md:text-lg">
+                                        @incorporia
                                     </a>
                                 </div>
 
                                 {/* Twitter */}
                                 <div className="flex items-center gap-3">
-                                    <FaTwitter className="w-6 h-6 text-white shrink-0" />
-                                    <a href="#" className="text-white hover:text-white/80 transition-colors text-base md:text-lg">
-                                        @privatily
+                                    <FaTwitter className="w-6 h-6 text-gold-300 shrink-0" />
+                                    <a href="#" className="text-white hover:text-gold-300 transition-colors text-base md:text-lg">
+                                        @incorporia
                                     </a>
                                 </div>
                             </div>

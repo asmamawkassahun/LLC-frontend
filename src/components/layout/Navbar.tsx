@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ROUTES } from '@/constants/routes';
 import { Button } from '@/components/ui/button';
+import Logo from '@/components/brand/Logo';
 import { HiOutlineMenuAlt1 } from 'react-icons/hi';
 import { HiX } from 'react-icons/hi';
 import { gsap } from 'gsap';
@@ -110,9 +111,14 @@ function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const linkClasses = (active: boolean) =>
+    `transition-colors font-medium cursor-pointer ${
+      active ? 'text-accent' : 'text-foreground hover:text-accent'
+    }`;
+
   return (
     <>
-      <nav className={`bg-background  fixed top-0 left-0 right-0 z-50 will-change-transform transition-transform duration-500 ease-in-out ${
+      <nav className={`bg-background/95 backdrop-blur fixed top-0 left-0 right-0 z-50 border-b border-border will-change-transform transition-transform duration-500 ease-in-out ${
         isVisible ? 'translate-y-0' : '-translate-y-full'
       }`}>
         <div className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 2xl:px-20 pt-6">
@@ -120,10 +126,11 @@ function Navbar() {
             <Link
               ref={logoRef}
               to={ROUTES.HOME}
-              className="text-xl font-bold text-primary cursor-pointer"
+              className="flex items-center cursor-pointer"
               onClick={closeMenu}
+              aria-label="Incorporia home"
             >
-              Privatily
+              <Logo markClassName="h-9 w-9" />
             </Link>
 
             {/* Desktop Navigation */}
@@ -131,40 +138,28 @@ function Navbar() {
               <Link
                 ref={homeRef}
                 to={ROUTES.HOME}
-                className={`${isActive(ROUTES.HOME)
-                  ? 'text-accent'
-                  : 'text-foreground hover:text-accent'
-                  } transition-colors font-medium cursor-pointer`}
+                className={linkClasses(isActive(ROUTES.HOME))}
               >
                 Home
               </Link>
               <Link
                 ref={aboutRef}
                 to={ROUTES.ABOUT}
-                className={`${isActive(ROUTES.ABOUT)
-                  ? 'text-accent'
-                  : 'text-foreground hover:text-accent'
-                  } transition-colors font-medium cursor-pointer`}
+                className={linkClasses(isActive(ROUTES.ABOUT))}
               >
                 About
               </Link>
               <Link
                 ref={pricingRef}
                 to={ROUTES.PRICING}
-                className={`${isActive(ROUTES.PRICING)
-                  ? 'text-accent'
-                  : 'text-foreground hover:text-accent'
-                  } transition-colors font-medium cursor-pointer`}
+                className={linkClasses(isActive(ROUTES.PRICING))}
               >
                 Pricing
               </Link>
               <Link
                 ref={contactRef}
                 to={ROUTES.CONTACT}
-                className={`${isActive(ROUTES.CONTACT)
-                  ? 'text-accent font-semibold'
-                  : 'text-foreground hover:text-accent'
-                  } transition-colors font-medium cursor-pointer`}
+                className={linkClasses(isActive(ROUTES.CONTACT))}
               >
                 Contact us
               </Link>

@@ -1,4 +1,5 @@
 import StepHeader from './StepHeader';
+import { ClipboardList } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import OwnersChart from './OwnersChart';
 import { FaPencil } from 'react-icons/fa6';
@@ -100,7 +101,7 @@ const Step6OrderSummary = ({ formData, onEditStep }: Step6OrderSummaryProps) => 
             <div className="flex flex-col gap-8">
                 {/* Header */}
                 <StepHeader
-                    icon="https://app.privatily.com/assets/img/header-icones/order-summary.png"
+                    icon={<ClipboardList className="w-12 h-12 md:w-16 md:h-16 text-accent" />}
                     title="Order summary"
                     subtitle="Double-check your details and move forward!"
                 />

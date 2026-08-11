@@ -201,7 +201,7 @@ const ResetPasswordForm = () => {
 
             {/* Copyright */}
             <p className="text-xs text-foreground font-bold mt-20 md:mt-12 text-center">
-                Copyright © 2019-2025 Privatily.
+                Copyright © 2019-2026 Incorporia.
             </p>
         </div>
     );

@@ -162,7 +162,7 @@ const CompanySelector = ({
                     <span className="text-sm">{getCountryFlag(selectedCompany.country?.name)}</span>
                     <span className="text-sm font-medium text-foreground">{selectedCompany.name}</span>
                 </div>
-                <div className='flex items-center justify-center w-5 h-5 rounded-full bg-blue-700'>
+                <div className='flex items-center justify-center w-5 h-5 rounded-full bg-primary'>
                     <HiChevronDown className={`w-4 h-4 text-background transition-transform ${isCompanyDropdownOpen ? 'rotate-180' : ''}`} />
                 </div>
             </button>

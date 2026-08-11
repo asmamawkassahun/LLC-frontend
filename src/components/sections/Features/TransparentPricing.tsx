@@ -6,6 +6,7 @@ import { gsap } from 'gsap';
 import { PiCheckLight } from 'react-icons/pi';
 import { VscArrowRight } from "react-icons/vsc";
 import { HiChat } from 'react-icons/hi';
+import { Banknote, UserCheck, Headset, Globe, Palette, Landmark } from 'lucide-react';
 
 interface TransparentPricingProps {
     variant?: 'features' | 'dashboard';
@@ -129,6 +130,14 @@ const TransparentPricing = ({ variant = 'features', defaultCountry = 'US' }: Tra
 
     const currentPricing = pricingData[selectedCountry];
 
+    const premiumBonuses = [
+        { icon: UserCheck, text: "Dedicated account manager" },
+        { icon: Headset, text: "Chat, email & phone support" },
+        { icon: Globe, text: "Business website, email & .com domain" },
+        { icon: Palette, text: "3 custom-designed logos" },
+        { icon: Landmark, text: "Business bank consultation" }
+    ];
+
     // Update selectedCountry when defaultCountry prop changes
     useEffect(() => {
         if (defaultCountry) {
@@ -161,11 +170,9 @@ const TransparentPricing = ({ variant = 'features', defaultCountry = 'US' }: Tra
                     <div className="text-center mb-8 md:mb-12">
                         {/* Icon */}
                         <div className="flex justify-center mb-4 md:mb-6">
-                            <img
-                                src="https://app.privatily.com/assets/img/header-icons/pricing.png"
-                                alt="Pricing icon"
-                                className="w-12 h-12 md:w-32 md:h-28"
-                            />
+                            <div className="w-14 h-14 md:w-20 md:h-20 rounded-2xl bg-gold-500/15 flex items-center justify-center">
+                                <Banknote className="w-8 h-8 md:w-11 md:h-11 text-gold-600" />
+                            </div>
                         </div>
 
                         {/* Title */}
@@ -180,11 +187,11 @@ const TransparentPricing = ({ variant = 'features', defaultCountry = 'US' }: Tra
 
                         {/* Country Selection Toggle */}
                         <div className="flex justify-center max-w-lg mx-auto">
-                            <div className="inline-flex w-full bg-accent/10 rounded-full p-1">
+                            <div className="inline-flex w-full bg-gold-500/15 rounded-full p-1">
                                 <button
                                     onClick={() => setSelectedCountry('US')}
                                     className={`flex w-full items-center justify-center gap-2 px-4 md:px-6 py-2 md:py-3 rounded-full text-sm md:text-base font-medium transition-all cursor-pointer ${selectedCountry === 'US'
-                                            ? 'bg-background text-foreground'
+                                            ? 'bg-background text-foreground shadow'
                                             : ' hover:text-foreground'
                                         }`}
                                 >
@@ -194,7 +201,7 @@ const TransparentPricing = ({ variant = 'features', defaultCountry = 'US' }: Tra
                                 <button
                                     onClick={() => setSelectedCountry('UK')}
                                     className={`flex w-full items-center justify-center gap-2 px-4 md:px-6 py-2 md:py-3 rounded-full text-sm md:text-base font-medium transition-all cursor-pointer ${selectedCountry === 'UK'
-                                            ? 'bg-background text-foreground'
+                                            ? 'bg-background text-foreground shadow'
                                             : ' hover:text-foreground'
                                         }`}
                                 >
@@ -213,11 +220,11 @@ const TransparentPricing = ({ variant = 'features', defaultCountry = 'US' }: Tra
                             <p className="text-base text-foreground">
                                 Where do you want to Incorporate?
                             </p>
-                            <div className="flex justify-center gap-2 max-w-64 mx-auto bg-purple-900/15 rounded-full py-2">
+                            <div className="flex justify-center gap-2 max-w-64 mx-auto bg-gold-500/15 rounded-full py-2">
                                 <button
                                     onClick={() => setSelectedCountry('US')}
                                     className={`flex items-center gap-2  px-4 rounded-full text-base font-medium transition-colors ${selectedCountry === 'US'
-                                        ? 'bg-card text-foreground '
+                                        ? 'bg-card text-foreground shadow'
                                         : ' text-foreground hover:bg-card cursor-pointer'
                                         }`}
                                 >
@@ -227,7 +234,7 @@ const TransparentPricing = ({ variant = 'features', defaultCountry = 'US' }: Tra
                                 <button
                                     onClick={() => setSelectedCountry('UK')}
                                     className={`flex items-center gap-2 p-3 rounded-full font-medium transition-colors ${selectedCountry === 'UK'
-                                        ? ' bg-card text-foreground'
+                                        ? ' bg-card text-foreground shadow'
                                         : ' text-foreground hover:bg-card cursor-pointer'
                                         }`}
                                 >
@@ -267,8 +274,8 @@ const TransparentPricing = ({ variant = 'features', defaultCountry = 'US' }: Tra
                     </div>
 
                     {/* Premium Plan Card */}
-                    <div className="bg-blue-700 rounded-lg px-4 md:px-6 pt-6 md:pt-8 relative">
-                        <div className="absolute top-4 right-4 bg-primary-foreground text-accent px-3 py-1 rounded-full text-xs font-medium">
+                    <div className="bg-navy-900 rounded-lg px-4 md:px-6 pt-6 md:pt-8 relative">
+                        <div className="absolute top-4 right-4 bg-gold-400 text-navy-950 px-3 py-1 rounded-full text-xs font-bold">
                             Priority Processing
                         </div>
                         <h2 className="text-xl font-semibold text-primary-foreground mb-4">Premium</h2>
@@ -288,13 +295,13 @@ const TransparentPricing = ({ variant = 'features', defaultCountry = 'US' }: Tra
                             {currentPricing.premium.features.map((feature, index) => (
                                 <li key={index} className="flex items-start gap-3">
                                     {feature.icon === 'arrow' && (
-                                        <VscArrowRight className="w-5 h-5 font-light text-primary-foreground shrink-0 mt-0.5" />
+                                        <VscArrowRight className="w-5 h-5 font-light text-gold-400 shrink-0 mt-0.5" />
                                     )}
                                     {feature.icon === 'lightning' && (
-                                        <BsLightning className="w-5 h-5 text-primary-foreground shrink-0 mt-0.5" />
+                                        <BsLightning className="w-5 h-5 text-gold-400 shrink-0 mt-0.5" />
                                     )}
                                     {feature.icon === 'check' && (
-                                        <PiCheckLight className="w-5 h-5 text-primary-foreground shrink-0 mt-0.5" />
+                                        <PiCheckLight className="w-5 h-5 text-gold-400 shrink-0 mt-0.5" />
                                     )}
                                     <span className="text-sm md:text-base lg:text-lg text-primary-foreground">{feature.text}</span>
                                 </li>
@@ -322,7 +329,7 @@ const TransparentPricing = ({ variant = 'features', defaultCountry = 'US' }: Tra
                                     <div className="text-3xl bg-accent-foreground rounded-full p-2 mb-4">🇭🇰</div>
                                     <h3 className="text-xl font-semibold text-foreground mb-3">Hong Kong</h3>
                                 </div>
-                                <div className=" bg-blue-700  text-primary-foreground  h-8 text-center justify-center py-2 px-2 rounded-sm text-sm font-medium">
+                                <div className=" bg-primary  text-primary-foreground  h-8 text-center justify-center py-2 px-2 rounded-sm text-sm font-medium">
                                     Join Waitlist
                                 </div>
                             </div>
@@ -338,7 +345,7 @@ const TransparentPricing = ({ variant = 'features', defaultCountry = 'US' }: Tra
                                     <div className="text-3xl bg-accent-foreground rounded-full p-2 mb-4">🇦🇪</div>
                                     <h3 className="text-xl font-semibold text-foreground mb-3">Dubai, UAE</h3>
                                 </div>
-                                <div className=" bg-blue-700  text-primary-foreground  h-8 text-center justify-center p-2 px-2 rounded-sm text-sm font-medium">
+                                <div className=" bg-primary  text-primary-foreground  h-8 text-center justify-center p-2 px-2 rounded-sm text-sm font-medium">
                                     Join Waitlist
                                 </div>
                             </div>
@@ -363,11 +370,22 @@ const TransparentPricing = ({ variant = 'features', defaultCountry = 'US' }: Tra
                         </p>
                     </div>
                     <div className="flex-1 w-full lg:w-auto">
-                        <img
-                            src="https://privatily.com/wp-content/uploads/2023/08/img-Bonuses-3-3-min.png"
-                            alt="Bonuses graphic"
-                            className="w-full h-auto"
-                        />
+                        <div className="rounded-2xl bg-navy-900 p-6 md:p-8 shadow-xl relative overflow-hidden">
+                            <div className="absolute -top-12 -right-12 w-40 h-40 bg-gold-500/20 rounded-full blur-3xl"></div>
+                            <div className="relative z-10 space-y-4">
+                                {premiumBonuses.map((bonus, index) => {
+                                    const Icon = bonus.icon;
+                                    return (
+                                        <div key={index} className="flex items-center gap-3 rounded-xl bg-white/5 border border-white/10 p-3.5">
+                                            <div className="w-9 h-9 rounded-lg bg-gold-500/20 flex items-center justify-center shrink-0">
+                                                <Icon className="w-5 h-5 text-gold-400" />
+                                            </div>
+                                            <p className="text-white/90 text-sm md:text-base">{bonus.text}</p>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
                     </div>
                 </div>
                 )}
@@ -376,8 +394,8 @@ const TransparentPricing = ({ variant = 'features', defaultCountry = 'US' }: Tra
             {/* Fixed Chat Icon - Only for dashboard variant */}
             {variant === 'dashboard' && (
                 <div className="fixed bottom-6 right-6 z-50">
-                    <button className="w-12 h-12 md:w-14 md:h-14 bg-purple hover:bg-purple-dark rounded-full flex items-center justify-center shadow-lg transition-colors">
-                        <HiChat className="w-6 h-6 md:w-7 md:h-7 text-white" />
+                    <button className="w-12 h-12 md:w-14 md:h-14 bg-gold-500 hover:bg-gold-600 text-navy-950 rounded-full flex items-center justify-center shadow-lg transition-colors cursor-pointer">
+                        <HiChat className="w-6 h-6 md:w-7 md:h-7" />
                     </button>
                 </div>
             )}

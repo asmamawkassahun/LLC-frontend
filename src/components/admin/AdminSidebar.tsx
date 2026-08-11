@@ -24,6 +24,7 @@ import {
   MessageSquare,
   MapPin,
 } from 'lucide-react';
+import Logo from '@/components/brand/Logo';
 
 const AdminSidebar = () => {
   const location = useLocation();
@@ -114,9 +115,7 @@ const AdminSidebar = () => {
     <Sidebar>
       <SidebarHeader>
         <div className="flex items-center gap-2 px-2">
-          <div className="relative w-32 shrink-0">
-            <img src="https://app.privatily.com/assets/img/logo.png" alt="privatily" />
-          </div>
+          <Logo markClassName="h-8 w-8" />
         </div>
       </SidebarHeader>
       <SidebarContent>

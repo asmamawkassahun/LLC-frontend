@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { LiaMinusSolid, LiaPlusSolid } from "react-icons/lia";
 import { gsap } from 'gsap';
+import { Globe } from 'lucide-react';
 
 
 const FAQSection = () => {
@@ -37,8 +38,8 @@ const FAQSection = () => {
             answer: {
                 subheading: "",
                 points: [
-                    "Great question! When it comes to taxes for your US LLC, we’ve got you covered. We’ll connect you with a professional tax firm that specializes in helping non-residents handle everything smoothly, so you don’t have to worry about the details.",
-                    "Since you’re not living in the US—and if you’re primarily selling outside the US—your tax obligations may be reduced significantly. The experts we connect you with will make sure you’re taking full advantage of any tax benefits available to non-residents. Rest assured, you’re in good hands!"
+                    "Great question! When it comes to taxes for your US LLC, we've got you covered. We'll connect you with a professional tax firm that specializes in helping non-residents handle everything smoothly, so you don't have to worry about the details.",
+                    "Since you're not living in the US—and if you're primarily selling outside the US—your tax obligations may be reduced significantly. The experts we connect you with will make sure you're taking full advantage of any tax benefits available to non-residents. Rest assured, you're in good hands!"
                 ]
             }
         },
@@ -47,7 +48,7 @@ const FAQSection = () => {
             answer: {
                 subheading: "",
                 points: [
-                    "Yes, we accept clients from most countries! However, if you are from or based in a country that is currently sanctioned by the United States, we may not be able to assist you in forming a company in the US. For an updated list of sanctioned countries, please refer to the U.S. Department of the Treasury’s Office of Foreign Assets Control (OFAC) website."
+                    "Yes, we accept clients from most countries! However, if you are from or based in a country that is currently sanctioned by the United States, we may not be able to assist you in forming a company in the US. For an updated list of sanctioned countries, please refer to the U.S. Department of the Treasury's Office of Foreign Assets Control (OFAC) website."
                 ]
             }
         },
@@ -58,7 +59,7 @@ const FAQSection = () => {
                 points: [
                     "We have answers for so many other questions in our Knowledgebase,",
                     "Check our helpdesk articles.",
-                    "Or you can simply ask our Support team and we’ll be more than happy to help!"
+                    "Or you can simply ask our Support team and we'll be more than happy to help!"
                 ]
             }
         }
@@ -90,17 +91,23 @@ const FAQSection = () => {
         });
     }, []);
 
+    const profiles = [
+        { position: "top-[12%] left-[18%]", gradient: "from-green-300 to-green-500", letter: "A" },
+        { position: "top-[8%] left-[38%]", gradient: "from-blue-300 to-blue-500", letter: "B" },
+        { position: "top-[42%] left-[10%]", gradient: "from-pink-300 to-pink-500", letter: "C" },
+        { position: "top-[30%] right-[16%]", gradient: "from-amber-300 to-amber-500", letter: "D" },
+        { position: "bottom-[30%] left-[42%]", gradient: "from-purple-300 to-purple-500", letter: "E" },
+        { position: "bottom-[22%] right-[16%]", gradient: "from-cyan-300 to-cyan-500", letter: "F" }
+    ];
+
     return (
         <div className=" py-12 md:py-16 lg:py-20">
-            <div className="max-w-96 md:max-w-3xl lg:max-w-7xl mx-auto bg-blue-500/5 rounded-xl  px-4 sm:px-6 lg:px-8 py-12">
+            <div className="max-w-96 md:max-w-3xl lg:max-w-7xl mx-auto bg-gold-500/10 rounded-xl  px-4 sm:px-6 lg:px-8 py-12">
                 <div className="max-w-4xl mx-auto text-center">
-                    {/* White Container Card */}
                     <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8 md:mb-12">
                         Frequently asked questions
                     </h1>
                     <div className="">
-                        {/* Title */}
-
                         {/* FAQ Items */}
                         <div className="space-y-4">
                             {faqs.map((faq, index) => {
@@ -121,9 +128,9 @@ const FAQSection = () => {
                                             </span>
                                             <div className="shrink-0">
                                                 {isOpen ? (
-                                                    <LiaMinusSolid className="w-6 h-6 text-purple" />
+                                                    <LiaMinusSolid className="w-6 h-6 text-gold-600" />
                                                 ) : (
-                                                    <LiaPlusSolid className="w-6 h-6 text-purple" />
+                                                    <LiaPlusSolid className="w-6 h-6 text-gold-600" />
                                                 )}
                                             </div>
                                         </button>
@@ -139,7 +146,7 @@ const FAQSection = () => {
                                                 <ul className="space-y-2">
                                                     {faq.answer.points.map((point, pointIndex) => (
                                                         <li key={pointIndex} className="flex items-start gap-3">
-                                                            <span className="text-purple">•</span>
+                                                            <span className="text-gold-600">•</span>
                                                             <span className="text-sm md:text-base text-muted-foreground  text-start leading-relaxed">
                                                                 {point}
                                                             </span>
@@ -161,155 +168,49 @@ const FAQSection = () => {
                     {/* Left Column - Text */}
                     <div className="flex-1 space-y-6">
                         <h1 className="text-[1.5rem] sm:text-3xl  lg:text-5xl font-semibold text-foreground leading-tight">
-                            Launch your company from <span className="text-blue-700">→ anywhere</span>
+                            Launch your company from <span className="text-accent">→ anywhere</span>
                         </h1>
                         <p className="text-sm px-2 sm:text-base lg:text-lg text-muted-foreground leading-relaxed">
                             Act now! Gain exclusive access to top-tier financial solutions, reserved solely for US-based companies, and significantly boost your business's potential for success.
                         </p>
                     </div>
 
-                    {/* Right Column - World Map Visual */}
-                    <div className="flex-1 bg-blue-700 rounded-xl w-full lg:w-auto relative overflow-hidden">
-                        {/* Background Image */}
-                        <img
-                            src="https://privatily.com/wp-content/uploads/2023/04/Team-Testimonial-BG.webp"
-                            alt="World map with team members"
-                            className="w-full h-100 md:h-76 object-contain"
-                        />
+                    {/* Right Column - World Visual */}
+                    <div className="flex-1 bg-navy-900 rounded-xl w-full lg:w-auto relative overflow-hidden min-h-[22rem]">
+                        {/* Glow */}
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-gold-500/15 rounded-full blur-3xl"></div>
+
+                        {/* Globe */}
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0">
+                            <div className="w-40 h-40 md:w-48 md:h-48 rounded-full bg-white/5 border border-gold-500/30 flex items-center justify-center">
+                                <Globe className="w-20 h-20 md:w-24 md:h-24 text-gold-400" />
+                            </div>
+                        </div>
 
                         {/* Profile Avatars with Location Pins and Square Wave Animations */}
                         <div className="absolute inset-0">
-                            {/* Profile 1 - Top-left (North Atlantic/Europe) - Light Green */}
-                            <div
-                                ref={(el) => {
-                                    if (el) profileRefs.current[0] = el;
-                                }}
-                                className="absolute top-[12%] left-[18%]"
-                            >
-                                <div className="relative">
-                                    {/* Square Wave Animations */}
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <div className="square-wave square-wave-1"></div>
-                                        <div className="square-wave square-wave-2"></div>
-                                    </div>
-                                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary-foreground border-2 border-primary-foreground shadow-lg overflow-hidden relative z-10">
-                                        <div className="w-full h-full bg-gradient-to-br from-green-300 to-green-500 flex items-center justify-center text-primary-foreground font-bold text-lg">
-                                            A
+                            {profiles.map((profile, index) => (
+                                <div
+                                    key={index}
+                                    ref={(el) => {
+                                        if (el) profileRefs.current[index] = el;
+                                    }}
+                                    className={`absolute ${profile.position}`}
+                                >
+                                    <div className="relative">
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <div className="square-wave square-wave-1"></div>
+                                            <div className="square-wave square-wave-2"></div>
                                         </div>
-                                    </div>
-                                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-8 border-l-transparent border-r-transparent border-t-primary-foreground"></div>
-                                </div>
-                            </div>
-
-                            {/* Profile 2 - Mid-top (North America) - Light Blue */}
-                            <div
-                                ref={(el) => {
-                                    if (el) profileRefs.current[1] = el;
-                                }}
-                                className="absolute top-[8%] left-[35%]"
-                            >
-                                <div className="relative">
-                                    {/* Square Wave Animations */}
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <div className="square-wave square-wave-1"></div>
-                                        <div className="square-wave square-wave-2"></div>
-                                    </div>
-                                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary-foreground border-2 border-primary-foreground shadow-lg overflow-hidden relative z-10">
-                                        <div className="w-full h-full bg-gradient-to-br from-blue-300 to-blue-500 flex items-center justify-center text-primary-foreground font-bold text-lg">
-                                            B
+                                        <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-navy-950 border-2 border-gold-400 shadow-lg overflow-hidden relative z-10">
+                                            <div className={`w-full h-full bg-gradient-to-br ${profile.gradient} flex items-center justify-center text-white font-bold text-lg`}>
+                                                {profile.letter}
+                                            </div>
                                         </div>
+                                        <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-8 border-l-transparent border-r-transparent border-t-gold-400"></div>
                                     </div>
-                                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-8 border-l-transparent border-r-transparent border-t-primary-foreground"></div>
                                 </div>
-                            </div>
-
-                            {/* Profile 3 - Mid-left (Africa) - Light Pink */}
-                            <div
-                                ref={(el) => {
-                                    if (el) profileRefs.current[2] = el;
-                                }}
-                                className="absolute top-[42%] left-[12%]"
-                            >
-                                <div className="relative">
-                                    {/* Square Wave Animations */}
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <div className="square-wave square-wave-1"></div>
-                                        <div className="square-wave square-wave-2"></div>
-                                    </div>
-                                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary-foreground border-2 border-primary-foreground shadow-lg overflow-hidden relative z-10">
-                                        <div className="w-full h-full bg-gradient-to-br from-pink-300 to-pink-500 flex items-center justify-center text-primary-foreground font-bold text-lg">
-                                            C
-                                        </div>
-                                    </div>
-                                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-8 border-l-transparent border-r-transparent border-t-primary-foreground"></div>
-                                </div>
-                            </div>
-
-                            {/* Profile 4 - Mid-right (Europe/Asia border) - Light Brown */}
-                            <div
-                                ref={(el) => {
-                                    if (el) profileRefs.current[3] = el;
-                                }}
-                                className="absolute top-[28%] right-[20%]"
-                            >
-                                <div className="relative">
-                                    {/* Square Wave Animations */}
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <div className="square-wave square-wave-1"></div>
-                                        <div className="square-wave square-wave-2"></div>
-                                    </div>
-                                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary-foreground border-2 border-primary-foreground shadow-lg overflow-hidden relative z-10">
-                                        <div className="w-full h-full bg-gradient-to-br from-amber-300 to-amber-500 flex items-center justify-center text-primary-foreground font-bold text-lg">
-                                            D
-                                        </div>
-                                    </div>
-                                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-8 border-l-transparent border-r-transparent border-t-primary-foreground"></div>
-                                </div>
-                            </div>
-
-                            {/* Profile 5 - Bottom-middle (southern Africa/Middle East) - Light Pink */}
-                            <div
-                                ref={(el) => {
-                                    if (el) profileRefs.current[4] = el;
-                                }}
-                                className="absolute bottom-[30%] left-[45%]"
-                            >
-                                <div className="relative">
-                                    {/* Square Wave Animations */}
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <div className="square-wave square-wave-1"></div>
-                                        <div className="square-wave square-wave-2"></div>
-                                    </div>
-                                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary-foreground border-2 border-primary-foreground shadow-lg overflow-hidden relative z-10">
-                                        <div className="w-full h-full bg-gradient-to-br from-pink-300 to-pink-500 flex items-center justify-center text-primary-foreground font-bold text-lg">
-                                            E
-                                        </div>
-                                    </div>
-                                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-8 border-l-transparent border-r-transparent border-t-primary-foreground"></div>
-                                </div>
-                            </div>
-
-                            {/* Profile 6 - Bottom-right (Southeast Asia/Oceania) - Light Brown */}
-                            <div
-                                ref={(el) => {
-                                    if (el) profileRefs.current[5] = el;
-                                }}
-                                className="absolute bottom-[20%] right-[18%]"
-                            >
-                                <div className="relative">
-                                    {/* Square Wave Animations */}
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <div className="square-wave square-wave-1"></div>
-                                        <div className="square-wave square-wave-2"></div>
-                                    </div>
-                                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary-foreground border-2 border-primary-foreground shadow-lg overflow-hidden relative z-10">
-                                        <div className="w-full h-full bg-gradient-to-br from-amber-300 to-amber-500 flex items-center justify-center text-primary-foreground font-bold text-lg">
-                                            F
-                                        </div>
-                                    </div>
-                                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-8 border-l-transparent border-r-transparent border-t-primary-foreground"></div>
-                                </div>
-                            </div>
+                            ))}
                         </div>
                     </div>
                 </div>

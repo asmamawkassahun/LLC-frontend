@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
-import DashboardHeader from "./DashboardHeader";
 import { Button } from "@/components/ui";
 import { HiChevronDown, HiEye, HiEyeOff } from 'react-icons/hi';
 import { getUniqueCountries } from '@/constants/countries';
 import userService from '@/services/userService';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Settings as SettingsIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import EmailUpdateModal from './EmailUpdateModal';
 
@@ -232,11 +231,17 @@ const Settings = () => {
     if (isLoading) {
         return (
             <div className="max-w-7xl mx-auto space-y-2 pb-6 px-6 sm:px-8">
-                <DashboardHeader
-                    imageUrl="https://app.privatily.com/assets/img/header-icones/settings.png"
-                    title="Settings"
-                    description="Manage and edit your profile."
-                />
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">
+                            Settings
+                        </h1>
+                        <p className="text-sm sm:text-base text-foreground/80">Manage and edit your profile.</p>
+                    </div>
+                    <div className="shrink-0">
+                        <SettingsIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 text-primary/70" />
+                    </div>
+                </div>
                 <div className="flex items-center justify-center py-12">
                     <div className="text-muted-foreground">Loading profile data...</div>
                 </div>
@@ -246,11 +251,17 @@ const Settings = () => {
 
     return (
         <div className="max-w-7xl mx-auto space-y-2 pb-6 px-2">
-            <DashboardHeader
-                imageUrl="https://app.privatily.com/assets/img/header-icones/settings.png"
-                title="Settings"
-                description="Manage and edit your profile."
-            />
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">
+                        Settings
+                    </h1>
+                    <p className="text-sm sm:text-base text-foreground/80">Manage and edit your profile.</p>
+                </div>
+                <div className="shrink-0">
+                    <SettingsIcon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 text-primary/70" />
+                </div>
+            </div>
 
             <div className="space-y-2">
                 {/* Basic Info Section */}

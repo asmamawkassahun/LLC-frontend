@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-import DashboardHeader from './DashboardHeader';
 import apiClient from '@/utils/api-helpers/apiClient';
-import { Loader2, Building2, MapPin, FileText, Users, DollarSign, Calendar, Tag, CheckCircle2, Clock, XCircle } from 'lucide-react';
+import { Loader2, Building2, MapPin, FileText, Users, DollarSign, Calendar, Tag, CheckCircle2, Clock, XCircle, Settings } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface CompanyOwner {
@@ -122,11 +121,17 @@ const CompanyDashboard = () => {
     if (!order || !order.company) {
         return (
             <div className="max-w-7xl mx-auto space-y-4 py-6 px-2">
-                <DashboardHeader
-                    imageUrl="https://app.privatily.com/assets/img/header-icones/settings.png"
-                    title="Company Dashboard"
-                    description="No primary company found."
-                />
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">
+                            Company Dashboard
+                        </h1>
+                        <p className="text-sm sm:text-base text-foreground/80">No primary company found.</p>
+                    </div>
+                    <div className="shrink-0">
+                        <Settings className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 text-primary/70" />
+                    </div>
+                </div>
             </div>
         );
     }
@@ -349,8 +354,8 @@ const CompanyDashboard = () => {
                 {/* Card 6: Company Addresses */}
                 <div className="bg-white border border-border rounded-lg p-6 shadow-sm">
                     <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 rounded-lg bg-pink-100 flex items-center justify-center">
-                            <MapPin className="w-5 h-5 text-pink-600" />
+                        <div className="w-10 h-10 rounded-lg bg-gold-100 flex items-center justify-center">
+                            <MapPin className="w-5 h-5 text-gold-600" />
                         </div>
                         <h3 className="text-lg font-semibold text-foreground">Company Addresses</h3>
                     </div>

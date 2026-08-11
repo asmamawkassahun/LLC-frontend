@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ROUTES } from '@/constants/routes';
+import Logo from '@/components/brand/Logo';
 import ResetPasswordForm from '@/components/sections/auth/ResetPasswordForm';
 import AuthDescription from '@/components/sections/auth/AuthDescription';
 
@@ -15,10 +16,7 @@ const ResetPasswordPage = () => {
                     {/* Mobile Logo */}
                     <div className="md:hidden mx-auto">
                         <Link to={ROUTES.HOME} className="flex items-center gap-2">
-                            <div className="w-10 h-10 bg-linear-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
-                                <span className="text-white font-bold text-lg">P</span>
-                            </div>
-                            <span className="text-xl font-semibold text-foreground">privatily</span>
+                            <Logo markClassName="h-10 w-10" />
                         </Link>
                     </div>
 

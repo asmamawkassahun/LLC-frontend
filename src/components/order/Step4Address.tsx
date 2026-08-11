@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { MapPinned } from 'lucide-react';
 import StepHeader from './StepHeader';
 import { COUNTRIES } from '../../constants/countries';
 import apiClient from '@/utils/api-helpers/apiClient';
@@ -138,7 +139,7 @@ const Step4Address = ({ address, onAddressChange, selectedState, useRegisteredAg
         <div className="max-w-sm lg:max-w-2xl mx-auto px-4 md:px-0 pb-6 md:pb-8 space-y-24">
             <div className="flex flex-col gap-16">
                 <StepHeader
-                    icon="https://app.privatily.com/assets/img/header-icones/adresse.png"
+                    icon={<MapPinned className="w-12 h-12 md:w-16 md:h-16 text-accent" />}
                     title="Company Address"
                     subtitle="This is the home address of your company."
                 />

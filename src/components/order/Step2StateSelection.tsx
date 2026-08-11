@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { MapPin } from 'lucide-react';
 import StepHeader from './StepHeader';
 import StateCard from './StateCard';
 
@@ -141,7 +142,7 @@ const Step2StateSelection = ({ selectedState, onStateChange, companyName = 'your
     return (
         <div className="max-w-5xl mx-auto">
             <StepHeader
-                icon="https://app.privatily.com/assets/img/header-icones/states.png"
+                icon={<MapPin className="w-12 h-12 md:w-16 md:h-16 text-accent" />}
                 title="Choose a State for your LLC Registration"
                 subtitle={`Select the state where ${companyName} journey begins.`}
             />

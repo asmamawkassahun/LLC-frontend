@@ -141,7 +141,8 @@ const PaymentSummaryCard = ({
 
                 {/* Payment Logos */}
                 <div className="flex items-center gap-4 mb-4 sm:mb-6 justify-center">
-                    <img src="https://app.privatily.com/assets/img/visa-master.webp" alt="Payment methods" className='w-24 h-8' />
+                    <span className="bg-navy-900 text-white text-xs font-bold px-3 py-1.5 rounded">VISA</span>
+                    <span className="bg-gold-500 text-navy-900 text-xs font-bold px-3 py-1.5 rounded">Mastercard</span>
                 </div>
 
                 {/* Refund Guarantee - Mobile layout */}

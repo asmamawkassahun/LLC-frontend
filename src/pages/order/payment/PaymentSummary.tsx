@@ -1,4 +1,5 @@
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { CreditCard } from 'lucide-react';
 import PaymentPage from "./Payment";
 import PremiumCard from '@/components/sections/payment/PremiumCard';
 import PaymentSummaryCard from './PaymentSummaryCard';
@@ -234,7 +235,7 @@ const PaymentSummary = () => {
                         <h1 className='text-2xl sm:text-4xl font-bold'>Final step</h1>
                         <p className='text-base text-foreground'>Proceed with Payment to bring mine LLC to life</p>
                     </div>
-                    <img src="https://app.privatily.com/assets/img/header-icons/icone-ayments-3.png" alt="" className='w-32 h-32' />
+                    <CreditCard className="w-12 h-12 text-primary" />
                 </div>
 
                 {/* Main Content - Two Column Layout */}

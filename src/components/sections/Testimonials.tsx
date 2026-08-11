@@ -1,16 +1,17 @@
 import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
+import { Quote } from 'lucide-react';
 
 const TestimonialsSection = () => {
     const testimonials = [
         {
-            quote: "Their speed and prices are unmatched! Starting my business in the U.S. with Privatily was very easy. Their team took care of everything, and I really can't thank them enough.",
+            quote: "Their speed and prices are unmatched! Starting my business in the U.S. with Incorporia was very easy. Their team took care of everything, and I really can't thank them enough.",
             name: "Yusuf",
             country: "Pakistan",
             flag: "🇵🇰"
         },
         {
-            quote: "Privatily provides excellent customer service. They are always responsive to concerns and keep you updated throughout the process. I was recommended to them by a friend and I highly recommend them to others.",
+            quote: "Incorporia provides excellent customer service. They are always responsive to concerns and keep you updated throughout the process. I was recommended to them by a friend and I highly recommend them to others.",
             name: "Chinedu",
             country: "Nigeria",
             flag: "🇳🇬"
@@ -91,7 +92,7 @@ const TestimonialsSection = () => {
     return (
         <div className="bg-background py-12 md:py-16 lg:py-20 relative overflow-hidden">
             {/* Gradient Background */}
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-200/30 via-blue-200/30 to-orange-200/30 blur-3xl -z-10"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-navy-100/60 via-gold-100/60 to-navy-100/60 blur-3xl -z-10"></div>
 
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 {/* Heading */}
@@ -118,8 +119,9 @@ const TestimonialsSection = () => {
                             ref={(el) => {
                                 if (el) cardRefs.current[index] = el;
                             }}
-                            className="bg-card rounded-lg shadow-md p-4 md:p-8 hover:shadow-lg transition-shadow max-w-84 md:max-w-md lg:max-w-6xl mx-auto"
+                            className="bg-card rounded-lg shadow-md p-4 md:p-8 hover:shadow-lg transition-shadow max-w-84 md:max-w-md lg:max-w-6xl mx-auto border-t-4 border-gold-500"
                         >
+                            <Quote className="w-8 h-8 text-gold-400 mb-4" />
                             {/* Quote */}
                             <p className="text-[0.9rem] md:text-base font-medium text-foreground mb-6 leading-relaxed">
                                 {testimonial.quote}

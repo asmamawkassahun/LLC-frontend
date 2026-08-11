@@ -18,7 +18,7 @@ const StoryMission = () => {
                         </h2>
                         <div className="space-y-4 text-sm md:text-base text-foreground/70 lading-relaxed">
                             <p>
-                                Privatily was born in 2019 with a simple yet powerful mission: to help online business owners overcome the challenges of accepting online payments and expanding their businesses internationally. We recognized that many entrepreneurs were struggling with complex legal and financial processes that were preventing them from focusing on what they do best—building and growing their businesses.
+                                Incorporia was born in 2019 with a simple yet powerful mission: to help online business owners overcome the challenges of accepting online payments and expanding their businesses internationally. We recognized that many entrepreneurs were struggling with complex legal and financial processes that were preventing them from focusing on what they do best—building and growing their businesses.
                             </p>
                             <p>
                                 Initially, we focused on UK company formation, helping entrepreneurs establish their presence in one of the world's most business-friendly environments. As we grew and learned from our clients' needs, we expanded our services to include US company formation in 2021, recognizing the unique opportunities and advantages that come with having a US-based company.
@@ -46,7 +46,7 @@ const StoryMission = () => {
                         </h2>
                         <div className="text-sm md:text-base text-foreground/70 lading-relaxed">
                             <p>
-                                Privatily's mission is to be the global partner for aspiring business owners, streamlining the path to company formation in the USA & the UK. We deliver a comprehensive suite of services, from LLC and LTD registrations to full business incorporation, designed for modern entrepreneurial needs. Our goal is to empower clients to quickly and confidently establish and grow their businesses worldwide.
+                                Incorporia's mission is to be the global partner for aspiring business owners, streamlining the path to company formation in the USA & the UK. We deliver a comprehensive suite of services, from LLC and LTD registrations to full business incorporation, designed for modern entrepreneurial needs. Our goal is to empower clients to quickly and confidently establish and grow their businesses worldwide.
                             </p>
                         </div>
                     </div>

@@ -194,10 +194,10 @@
 //                             id="terms"
 //                             checked={agreeToTerms}
 //                             onChange={(e) => setAgreeToTerms(e.target.checked)}
-//                             className="mt-1 w-4 h-4 border border-input rounded focus:ring-2 focus:ring-accent text-[var(--color-purple)] cursor-pointer"
+//                             className="mt-1 w-4 h-4 border border-input rounded focus:ring-2 focus:ring-accent text-[var(--color-gold-500)] cursor-pointer"
 //                         />
 //                         <label htmlFor="terms" className="text-sm text-foreground cursor-pointer">
-//                             I have read and agree to Privatily's{' '}
+//                             I have read and agree to Incorporia's{' '}
 //                             <Link to="/terms" className="text-accent hover:underline">
 //                                 Terms
 //                             </Link>
@@ -240,7 +240,7 @@
 //             <div>
 //                 {/* Copyright */}
 //             <p className="text-sm font-bold text-foreground mt-8 sm:mt-16 mb-4 text-center">
-//                 Copyright © 2019-2025 Privatily.
+//                 Copyright © 2019-2026 Incorporia.
 //             </p>
 //             </div>
 //         </div>
@@ -569,7 +569,7 @@ const RegisterForm = () => {
                             className="mt-1 w-4 h-4 border border-input rounded focus:ring-2 focus:ring-accent text-purple cursor-pointer disabled:opacity-50"
                         />
                         <label htmlFor="terms" className="text-sm text-foreground cursor-pointer">
-                            I have read and agree to Privatily's{' '}
+                            I have read and agree to Incorporia's{' '}
                             <Link to="/terms" className="text-accent hover:underline">
                                 Terms
                             </Link>
@@ -614,7 +614,7 @@ const RegisterForm = () => {
             <div>
                 {/* Copyright */}
             <p className="text-sm font-bold text-foreground mt-8 sm:mt-16 mb-4 text-center">
-                Copyright © 2019-2025 Privatily.
+                Copyright © 2019-2026 Incorporia.
             </p>
             </div>
         </div>

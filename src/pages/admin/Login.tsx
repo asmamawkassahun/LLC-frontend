@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import Logo from '@/components/brand/Logo';
 import adminAuthService from '@/services/adminAuthService';
 import { toast } from 'sonner';
 import { ROUTES } from '@/constants/routes';
@@ -37,7 +38,7 @@ const AdminLoginPage = () => {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <div className="flex justify-center mb-4">
-            <img src="https://app.privatily.com/assets/img/logo.png" alt="privatily" className="h-12" />
+            <Logo markClassName="h-14 w-14" />
           </div>
           <CardTitle className="text-2xl text-center">Admin Login</CardTitle>
           <CardDescription className="text-center">

@@ -7,6 +7,7 @@ import HelpDialog from "@/components/help/HelpDialog";
 import { useQuery } from "@tanstack/react-query";
 import supportService from "@/services/supportService";
 import authService from "@/services/authService";
+import Logo from "@/components/brand/Logo";
 
 const SuspendedNavbar = () => {
     const [helpDialogOpen, setHelpDialogOpen] = useState(false);
@@ -64,9 +65,7 @@ const SuspendedNavbar = () => {
                 {/* Left side - Logo */}
                 <div className="flex items-center gap-4 md:pl-4 lg:pl-6">
                     <Link to={ROUTES.HOME} className="flex items-center gap-2">
-                        <div className="relative w-24 shrink-0">
-                            <img src="https://app.privatily.com/assets/img/logo.png" alt="privatily" />
-                        </div>
+                        <Logo markClassName="h-7 w-7" />
                     </Link>
                 </div>
 
@@ -76,7 +75,7 @@ const SuspendedNavbar = () => {
                         variant="outline"
                         size="icon"
                         onClick={() => setHelpDialogOpen(true)}
-                        className="bg-blue-700 w-24 hover:bg-accent-dark text-white text-xs px-4 border-none rounded-full cursor-pointer relative"
+                        className="bg-primary w-24 hover:bg-accent-dark text-white text-xs px-4 border-none rounded-full cursor-pointer relative"
                     >
                         <GoQuestion className="w-6 h-6" />
                         Get help

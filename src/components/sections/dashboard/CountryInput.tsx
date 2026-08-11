@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { Building2 } from 'lucide-react';
 
 interface CountryInputProps {
     onCountrySelect?: (country: 'US' | 'UK') => void;
@@ -39,13 +40,9 @@ const CountryInput = ({ onCountrySelect }: CountryInputProps) => {
             <div className="max-w-2xl lg:max-w-3xl mx-auto ">
                 {/* Header Section */}
                 <div className="text-center mb-12 md:mb-4 lg:mb-8">
-                    {/* 3D Globe Icon */}
+                    {/* Globe Icon */}
                     <div className="flex justify-center ">
-                        <img
-                            src="https://app.privatily.com/assets/img/header-icones/incorporate.png"
-                            alt="Globe icon"
-                            className="w-20 h-24 md:w-28 md:h-32"
-                        />
+                        <Building2 className="w-20 h-24 md:w-28 md:h-32 text-primary/70" />
                     </div>
 
                     {/* Main Heading */}
@@ -55,7 +52,7 @@ const CountryInput = ({ onCountrySelect }: CountryInputProps) => {
 
                     {/* Subtitle */}
                     <p className="text-xs lg:text-sm text-foreground  max-w-sm md:max-w-md lg:max-w-3xl mx-auto leading-relaxed">
-                        Privatily is the only service that enables non-residents to easily form their company in their chosen country
+                        Incorporia is the only service that enables non-residents to easily form their company in their chosen country
                     </p>
                 </div>
 

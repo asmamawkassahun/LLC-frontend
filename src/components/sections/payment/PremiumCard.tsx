@@ -1,4 +1,5 @@
 import { PiCheckLight } from 'react-icons/pi';
+import { Crown } from 'lucide-react';
 
 const PremiumCard = () => {
     const features = [
@@ -36,13 +37,16 @@ const PremiumCard = () => {
                             ))}
                         </div>
 
-                        {/* Right Column - Image */}
+                        {/* Right Column - Premium Visual */}
                         <div className="hidden lg:flex justify-center lg:justify-end">
-                            <img 
-                                src="https://privatily.com/wp-content/uploads/2023/08/image-1-min-1.png" 
-                                alt="Premium client benefits" 
-                                className="w-full max-w-md lg:max-w-lg h-auto object-contain"
-                            />
+                            <div className="w-full max-w-md lg:max-w-lg rounded-xl bg-gradient-to-br from-navy-800 to-navy-950 p-12 flex flex-col items-center justify-center gap-5 text-center">
+                                <div className="w-20 h-20 rounded-full bg-gold-500 flex items-center justify-center">
+                                    <Crown className="w-10 h-10 text-navy-900" />
+                                </div>
+                                <span className="inline-block px-4 py-1.5 bg-gold-500 text-navy-900 text-xs font-bold uppercase tracking-wider rounded-full">
+                                    Premium
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>

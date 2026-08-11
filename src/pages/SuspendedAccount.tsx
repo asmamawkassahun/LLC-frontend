@@ -46,7 +46,7 @@ const SuspendedAccountPage = () => {
                   <div>
                     <p className="font-medium">Email Support</p>
                     <p className="text-sm text-muted-foreground">
-                      Send an email to: <a href="mailto:support@kimem.com" className="text-primary hover:underline">support@kimem.com</a>
+                      Send an email to: <a href="mailto:support@incorporia.com" className="text-primary hover:underline">support@incorporia.com</a>
                     </p>
                   </div>
                 </div>
