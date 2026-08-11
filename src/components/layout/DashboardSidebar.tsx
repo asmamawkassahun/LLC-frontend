@@ -41,7 +41,6 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
         queryFn: () => apiClient.get('/orders'),
     });
 
-    console.log("Orders data: ", orders?.data.total);
     const ordersCount = orders?.data.total;
 
     const navigationItems = [

@@ -22,8 +22,6 @@ import {
   Store,
   UsersRound,
   MessageSquare,
-  Settings,
-  FileText,
   MapPin,
 } from 'lucide-react';
 

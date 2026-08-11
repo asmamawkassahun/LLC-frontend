@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
-import { Plus, X, MoreVertical, Edit, Trash2, CheckCircle2, XCircle } from 'lucide-react';
+import { Plus, MoreVertical, Edit, Trash2, CheckCircle2, XCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import {
   DropdownMenu,

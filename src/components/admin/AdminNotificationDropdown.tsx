@@ -53,7 +53,7 @@ const AdminNotificationDropdown = () => {
   };
 
   // Build notification items
-  const notifications: NotificationItem[] = [
+  const notifications = ([
     {
       id: 'orders',
       type: 'order',
@@ -78,7 +78,7 @@ const AdminNotificationDropdown = () => {
       count: counts.pending_payouts,
       route: `${ROUTES.ADMIN_AFFILIATES}?tab=payouts`,
     },
-  ].filter((item) => item.count > 0); // Only show notifications with counts > 0
+  ] as NotificationItem[]).filter((item) => item.count > 0); // Only show notifications with counts > 0
 
   const handleNotificationClick = (route: string) => {
     navigate(route);

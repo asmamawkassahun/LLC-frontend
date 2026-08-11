@@ -19,17 +19,21 @@ const Referrals = () => {
     const queryClient = useQueryClient();
 
     // Check if user is already an affiliate
-    const { data: dashboardData, isLoading: isLoadingAffiliate } = useQuery({
+    const { data: dashboardData, isLoading: isLoadingAffiliate, error: dashboardError } = useQuery({
         queryKey: ['referrals-dashboard'],
         queryFn: () => referralService.getDashboard(),
         retry: false,
-        onError: (error: any) => {
-            // 404 means user is not an affiliate - that's fine
-            if (error?.response?.status !== 404) {
-                console.error('Error checking affiliate status:', error);
-            }
-        },
     });
+
+    useEffect(() => {
+        // 404 means user is not an affiliate - that's fine
+        if (dashboardError) {
+            const status = (dashboardError as { response?: { status?: number } })?.response?.status;
+            if (status !== 404) {
+                console.error('Error checking affiliate status:', dashboardError);
+            }
+        }
+    }, [dashboardError]);
 
     const registerMutation = useMutation({
         mutationFn: () => referralService.register(),

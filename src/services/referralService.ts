@@ -12,6 +12,10 @@ export interface Affiliate {
   joined_at: string;
 }
 
+export interface ReferralDashboard {
+  affiliate?: Affiliate;
+}
+
 export interface ReferralStats {
   users_referred: number;
   paid_users: number;
@@ -76,8 +80,8 @@ const referralService = {
     return response.data;
   },
 
-  async getDashboard() {
-    const response = await apiClient.get('/referrals/dashboard');
+  async getDashboard(): Promise<ReferralDashboard> {
+    const response = await apiClient.get<ReferralDashboard>('/referrals/dashboard');
     return response.data;
   },
 

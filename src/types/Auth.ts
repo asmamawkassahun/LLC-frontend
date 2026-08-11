@@ -5,6 +5,7 @@ export interface RegisterRequest {
     password_confirmation: string;
     phone?: string;
     country?: string;
+    referral_code?: string;
   }
   
   export interface RegisterResponse {

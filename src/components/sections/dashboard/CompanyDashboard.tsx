@@ -19,9 +19,9 @@ interface CompanyAddress {
     type: string;
     street_address?: string;
     city?: string;
-    state?: string;
+    state?: string | { id: number; name: string };
     zip_code?: string;
-    country?: string;
+    country?: string | { id: number; name: string };
     use_registered_agent?: boolean;
     is_active?: boolean;
 }
